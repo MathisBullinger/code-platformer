@@ -1,0 +1,21 @@
+{
+  "name": "code-platformer",
+  "version": "1.0.0",
+  "description": "CODE Platformer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisBullinger/code-platformer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MathisBullinger/code-platformer/issues"
+  },
+  "homepage": "https://github.com/MathisBullinger/code-platformer#readme"
+}
