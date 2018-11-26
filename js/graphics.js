@@ -1,5 +1,7 @@
 import { game_config } from './game_config'
 
+var renderer = undefined
+
 class Graphics {
 
   constructor() {
@@ -25,12 +27,14 @@ class Graphics {
 
     // create & config pixi app
     let container = wrap
-    this._app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
+    this.app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
       antialias: true, autoResize: false, resolution: window.devicePixelRatio})
-    this._app.renderer.backgroundColor = game_config.clear_color
+
+    renderer = this.app.renderer
+    renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
-    container.append(this._app.view)
+    container.append(this.app.view)
 
     // resize renderer when resizing game wrap
     window.addEventListener('resize', _ => this._HandleResize())
@@ -43,9 +47,27 @@ class Graphics {
     const canvas = this._game_wrap.getElementsByTagName('canvas')[0]
     canvas.width = this._game_wrap.offsetWidth * PIXI.settings.RESOLUTION
     canvas.height = this._game_wrap.offsetHeight * PIXI.settings.RESOLUTION
-    console.log(`resized renderer to ${this._app.renderer.width}px, ${this._app.renderer.height}px`)
+    console.log(`resized renderer to ${renderer.width}px, ${renderer.height}px`)
+  }
+
+  //
+  // Add Scene
+  //
+  AddScene(scene) {
+    this.app.stage.addChild(scene)
+  }
+
+  //
+  // Create Polygon Methods
+  //
+  static CreateRectangle(x = 0, y = 0, w = 1, h = 1) {
+    let rect = new PIXI.Graphics()
+    rect.beginFill(0xFFFFFF)
+    rect.drawRect(x, y, w, h)
+    rect.endFill()
+    return rect
   }
 
 }
 
-export { Graphics }
+export { Graphics, renderer }

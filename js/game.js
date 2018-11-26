@@ -1,10 +1,12 @@
-import { Graphics } from './graphics'
 import { game_config } from './game_config'
+import { Graphics } from './graphics'
+import { World } from './world'
 
 class Game {
 
   constructor() {
     this._graphics = new Graphics()
+    this._world
   }
 
   //
@@ -16,8 +18,11 @@ class Game {
 
     // init graphics
     this._graphics.Init(document.getElementById('game-wrap'))
-  }
 
+    // create game world
+    this._world = new World()
+    this._graphics.AddScene(this._world.scene)
+  }
 }
 
 //
