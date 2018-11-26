@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/MathisBullinger/code-platformer#readme",
   "dependencies": {
+    "config": "^3.0.0",
     "graphics": "^0.1.1-0",
     "pixi.js": "^4.8.2"
   }

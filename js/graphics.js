@@ -1,3 +1,5 @@
+import { game_config } from './game_config'
+
 class Graphics {
 
   constructor() {
@@ -19,13 +21,13 @@ class Graphics {
       ? 'WebGL'
       : 'canvas')
 
-    PIXI.settings.RESOLUTION = 2
+    PIXI.settings.RESOLUTION = game_config.resolution
 
     // create & config pixi app
     let container = wrap
     this._app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
       antialias: true, autoResize: false, resolution: window.devicePixelRatio})
-    this._app.renderer.backgroundColor = 0x888888
+    this._app.renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
     container.append(this._app.view)
