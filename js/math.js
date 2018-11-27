@@ -9,14 +9,12 @@ class Vec2D {
     this.y = y
   }
 
-  add(vec) {
-    this.x += vec.x
-    this.y += vec.y
+  static add(a, b) {
+    return new Vec2D(a.x + b.x, a.y + b.y)
   }
 
-  mult(num) {
-    this.x *= num
-    this.y *= num
+  static mult(vec, num) {
+    return new Vec2D(vec.x * num, vec.y * num)
   }
 
   toPixiPoint() {

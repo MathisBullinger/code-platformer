@@ -10,7 +10,6 @@ class Player extends Movable {
     this._move_acc = game_config.player_move_acc
     this._move_vel = game_config.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
-    console.log(this.graphic)
   }
 
   //
@@ -21,7 +20,7 @@ class Player extends Movable {
       const dir = key.IsDown('ArrowRight') ? 'right' : 'left'
       this.Move(dir, dt)
     } else {
-      if (Math.abs(this.vel.x) > 0.01)
+      if (Math.abs(this.vel.x) > 0.0001)
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
