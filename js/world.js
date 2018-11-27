@@ -25,26 +25,7 @@ class World {
 
   Update(dt) {
     if (this.player) {
-
-      const mov_acc = 30
-      const mov_vel_max = 8
-      // handle movement
-      if (Keyboard.IsDown('ArrowRight'))
-        this.player.velocity.x += mov_acc * (dt / 1000)
-      if (Keyboard.IsDown('ArrowLeft'))
-        this.player.velocity.x -= mov_acc * (dt / 1000)
-
-      if (this.player.velocity.x > mov_vel_max)
-        this.player.velocity.x = mov_vel_max
-      else if (this.player.velocity.x < mov_vel_max * -1)
-        this.player.velocity.x = mov_vel_max * -1
-
-      if (!Keyboard.IsDown('ArrowRight') && !Keyboard.IsDown('ArrowLeft'))
-        this.player.velocity.x /= 1 + mov_acc * (dt / 1000)
-
-      this.player.position.x += this.player.velocity.x * (dt / 1000)
-      this.player.position.y += this.player.velocity.y * (dt / 1000)
-      this.player.graphic.position = this.player.position.toPixiPoint()
+      this.player.Update(dt)
     }
   }
 

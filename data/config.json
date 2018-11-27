@@ -1,4 +1,6 @@
 {
   "resolution": 2,
-  "str_clear_color": "999999"
+  "str_clear_color": "999999",
+  "player_move_acc": 30,
+  "player_move_vel": 8
 }
