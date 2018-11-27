@@ -17,6 +17,8 @@ class Movable extends GameObject {
   Update(dt) {
     this.pos.x += this.vel.x * (dt / 1000)
     this.graphic.position = this.pos.toPixiPoint()
+    // this.graphic.position.x = this.pos.x + this.graphic.width / 2
+    // this.graphic.position.y = this.pos.y + this.graphic.height / 2
   }
 }
 

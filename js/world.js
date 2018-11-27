@@ -1,8 +1,8 @@
 import { Vec2D } from './math'
 import { GameObject, Movable } from './game_object'
-import { Player } from './player'
 import { renderer } from './graphics'
 import { Keyboard } from './interaction'
+import { Level } from './level'
 
 class Camera {
   constructor() {
@@ -19,14 +19,12 @@ class World {
 
   Create() {
     this._CreateScene()
-    this.player = new Player(new Vec2D(0, 1), new Vec2D(1, 1))
-    this.scene.addChild(this.player.graphic)
+    this.level = new Level()
+    this.level.GenTest(this.scene)
   }
 
   Update(dt) {
-    if (this.player) {
-      this.player.Update(dt)
-    }
+    this.level.Update(dt)
   }
 
   _CreateScene() {

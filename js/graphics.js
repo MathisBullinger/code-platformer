@@ -60,11 +60,13 @@ class Graphics {
   //
   // Create Polygon Methods
   //
-  static CreateRectangle(x = 0, y = 0, w = 1, h = 1) {
+  static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF) {
     let rect = new PIXI.Graphics()
-    rect.beginFill(0xFFFFFF)
-    rect.drawRect(x, y, w, h)
+    rect.lineStyle(0.005, 0x000000, 1);
+    rect.beginFill(color)
+    rect.drawRect(0, 0, w, h)
     rect.endFill()
+    rect.position.set(x, y)
     return rect
   }
 

@@ -5,10 +5,12 @@ import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
 
 class Player extends Movable {
-  constructor(pos = new Vec2D(0, 0), scale = new Vec2D(1, 1)) {
+  constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     super(pos, scale)
     this._move_acc = game_config.player_move_acc
     this._move_vel = game_config.player_move_vel
+    this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
+    console.log(this.graphic)
   }
 
   //
