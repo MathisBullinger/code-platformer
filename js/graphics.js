@@ -1,6 +1,6 @@
 import { game_config } from './game_config'
 
-var renderer = undefined
+var renderer, app
 
 class Graphics {
 
@@ -27,14 +27,14 @@ class Graphics {
 
     // create & config pixi app
     let container = wrap
-    this.app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
+    app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
       antialias: true, autoResize: false, resolution: window.devicePixelRatio})
 
-    renderer = this.app.renderer
+    renderer = app.renderer
     renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
-    container.append(this.app.view)
+    container.append(app.view)
 
     // resize renderer when resizing game wrap
     window.addEventListener('resize', _ => this._HandleResize())
@@ -54,7 +54,7 @@ class Graphics {
   // Add Scene
   //
   AddScene(scene) {
-    this.app.stage.addChild(scene)
+    app.stage.addChild(scene)
   }
 
   //
@@ -70,4 +70,4 @@ class Graphics {
 
 }
 
-export { Graphics, renderer }
+export { Graphics, renderer, app }

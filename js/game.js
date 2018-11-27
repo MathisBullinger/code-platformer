@@ -1,5 +1,6 @@
 import { game_config } from './game_config'
-import { Graphics } from './graphics'
+import { Graphics, app } from './graphics'
+import { Keyboard } from './interaction'
 import { World } from './world'
 
 class Game {
@@ -22,6 +23,15 @@ class Game {
     // create game world
     this._world = new World()
     this._graphics.AddScene(this._world.scene)
+
+    // start event listening
+    Keyboard.Listen()
+
+    app.ticker.add(_ => this._GameLoop(app.ticker.elapsedMS));
+  }
+
+  _GameLoop(dt) {
+    if (this._world) this._world.Update(dt)
   }
 }
 

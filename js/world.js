@@ -1,6 +1,8 @@
 import { Vec2D } from './math'
-import { GameObject } from './game_object'
+import { GameObject, Movable } from './game_object'
+import { Player } from './player'
 import { renderer } from './graphics'
+import { Keyboard } from './interaction'
 
 class Camera {
   constructor() {
@@ -17,8 +19,33 @@ class World {
 
   Create() {
     this._CreateScene()
-    this.test = new GameObject(new Vec2D(0, 1), new Vec2D(1, 1))
-    this.scene.addChild(this.test.graphic)
+    this.player = new Player(new Vec2D(0, 1), new Vec2D(1, 1))
+    this.scene.addChild(this.player.graphic)
+  }
+
+  Update(dt) {
+    if (this.player) {
+
+      const mov_acc = 30
+      const mov_vel_max = 8
+      // handle movement
+      if (Keyboard.IsDown('ArrowRight'))
+        this.player.velocity.x += mov_acc * (dt / 1000)
+      if (Keyboard.IsDown('ArrowLeft'))
+        this.player.velocity.x -= mov_acc * (dt / 1000)
+
+      if (this.player.velocity.x > mov_vel_max)
+        this.player.velocity.x = mov_vel_max
+      else if (this.player.velocity.x < mov_vel_max * -1)
+        this.player.velocity.x = mov_vel_max * -1
+
+      if (!Keyboard.IsDown('ArrowRight') && !Keyboard.IsDown('ArrowLeft'))
+        this.player.velocity.x /= 1 + mov_acc * (dt / 1000)
+
+      this.player.position.x += this.player.velocity.x * (dt / 1000)
+      this.player.position.y += this.player.velocity.y * (dt / 1000)
+      this.player.graphic.position = this.player.position.toPixiPoint()
+    }
   }
 
   _CreateScene() {
