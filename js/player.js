@@ -48,12 +48,18 @@ class Player extends Movable {
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
   }
 
+  //
+  // Jump
+  //
   Jump(dt) {
     const now = new Date().getTime()
+    // If jump timeout not reached => don't jump
     if (now - this._last_jump < this._jump_timeout) return
+    // If the jump counter modulo 3 is 2 => player has already jumped twice
     if (this._jump_counter % 3 === 2) return
     this._last_jump = now
     this.vel.y = this._jump_vel
+    // On jump has never ground contact. Also increase jump counter
     this.hasGroundContact = false
     this._jump_counter += 1
   }
