@@ -3,10 +3,16 @@ import { renderer } from './graphics'
 import { Level } from './level'
 
 class World {
+  /**
+    * Constructor
+    */
   constructor() {
     this.Create()
   }
 
+  /**
+    * Create new world
+    */
   Create() {
     const lvl_data = require('../data/level/map_extern.json')
     this._CreateScene()
@@ -18,10 +24,16 @@ class World {
     window.addEventListener('resize', _ => this._ResizeScene())
   }
 
+  /**
+    * Update world
+    */
   Update(dt) {
     this.level.Update(dt)
   }
 
+  /**
+    * Create new scene
+    */
   _CreateScene() {
     this.scene = new PIXI.Container()
     this.scene.transform.localTransform = new PIXI.Matrix(
@@ -41,6 +53,9 @@ class World {
     this.scene.scale.y *= this.pix_per_unit / renderer.resolution
   }
 
+  /**
+    * Resize scene to fit into screen and center scene
+    */
   _ResizeScene() {
     // rescale scene to fit into screen
     const scene_ratio = Math.abs(this.scene.height / this.scene.width)
