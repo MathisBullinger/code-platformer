@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi'
+import * as PIXI from 'pixi.js'
 import { game_config } from './game_config'
 
 var renderer, app

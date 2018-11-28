@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi'
+import * as PIXI from 'pixi.js'
 
 class Vec2D {
   constructor(x = 0, y = 0) {
