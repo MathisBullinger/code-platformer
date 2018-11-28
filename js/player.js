@@ -1,6 +1,6 @@
 import { Vec2D } from './math'
 import { Graphics } from './graphics'
-import { GameObject, Movable } from './game_object'
+import { Movable } from './game_object'
 import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
 
@@ -51,7 +51,7 @@ class Player extends Movable {
   //
   // Jump
   //
-  Jump(dt) {
+  Jump() {
     const now = new Date().getTime()
     // If jump timeout not reached => don't jump
     if (now - this._last_jump < this._jump_timeout) return
