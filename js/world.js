@@ -1,25 +1,25 @@
-import * as PIXI from 'pixi'
+import * as PIXI from 'pixi.js'
 import { renderer } from './graphics'
 import { Level } from './level'
 
 class Camera {
-  constructor() {
+  constructor(blocks_per_screen = 20) {
     this.pos = new PIXI.Point(0, 0)
-    const blocks_per_screen = 20
     this.scale = new PIXI.Point(blocks_per_screen, window.innerHeight / window.innerWidth * blocks_per_screen)
   }
 }
 
 class World {
   constructor() {
-    this.camera = new Camera()
     this.Create()
   }
 
   Create() {
+    const lvl_data = require('../data/level/map_extern.json')
+    this.camera = new Camera(lvl_data.canvas.width / 32)
     this._CreateScene()
     this.level = new Level()
-    this.level.Load(require('../data/level/test.json'), this.scene)
+    this.level.Load(lvl_data, this.scene)
   }
 
   Update(dt) {
@@ -40,9 +40,9 @@ class World {
     this.scene.position.y += window.innerHeight / renderer.resolution
     this.scene.scale.y *= -1
     // scale
-    const pix_per_unit = window.innerWidth / this.camera.scale.x
-    this.scene.scale.x *= pix_per_unit / renderer.resolution
-    this.scene.scale.y *= pix_per_unit / renderer.resolution
+    this.pix_per_unit = window.innerWidth / this.camera.scale.x
+    this.scene.scale.x *= this.pix_per_unit / renderer.resolution
+    this.scene.scale.y *= this.pix_per_unit / renderer.resolution
   }
 
 }

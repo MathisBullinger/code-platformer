@@ -18,16 +18,28 @@ class Level {
     * This loads the scene
     */
   Load(data, scene) {
-    console.log(data)
-    const blocks = data.level.blocks
-    const width = data.level.width
-    const height = data.level.height
-    if (blocks.length != width * height)
+    const layers = data.layers
+    let blocks = null
+    for (let layer of layers) {
+      if (layer.name == 'world') {
+        blocks = layer.data
+        break
+      }
+    }
+    if (!blocks) {
+      console.error('no world layer found in level file')
+      return
+    }
+
+    this.width = data.canvas.width / 32
+    this.height = blocks.length / this.width
+
+    if (blocks.length != this.width * this.height)
       console.warn('number of blocks doesn\'t match up height & width')
     for (let i = 0; i < blocks.length; i++) {
       const material = blocks[i]
-      if (!material) continue
-      let block = new GameObject(new Vec2D(Math.floor(i % width), height - Math.floor(i / width) - 1))
+      if (material != 1) continue
+      let block = new GameObject(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1))
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
