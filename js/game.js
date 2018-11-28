@@ -27,7 +27,7 @@ class Game {
     // start event listening
     Keyboard.Listen()
 
-    app.ticker.add(_ => this._GameLoop(app.ticker.elapsedMS));
+    app.ticker.add(() => this._GameLoop(app.ticker.elapsedMS))
   }
 
   _GameLoop(dt) {
