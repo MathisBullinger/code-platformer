@@ -1,5 +1,5 @@
-import {Vec2D, Line} from './math'
-import {Movable} from './game_object'
+import { Vec2D, Line } from './math'
+import { Movable } from './game_object'
 
 class Physics {
 
@@ -101,6 +101,4 @@ class Physics {
 
 }
 
-export {
-  Physics
-}
+export { Physics }

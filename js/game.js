@@ -31,6 +31,7 @@ class Game {
   }
 
   _GameLoop(dt) {
+    if (dt > 100) dt = 100 // prevent tunnelling
     if (this._world) this._world.Update(dt)
   }
 }
@@ -46,6 +47,4 @@ function Clone(src, tar) {
   }
 }
 
-export {
-  Game
-}
+export { Game }

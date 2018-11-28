@@ -14,20 +14,26 @@ class Level {
     Physics.Update(dt, this)
   }
 
-  GenTest(scene) {
-    this._player = new Player(new Vec2D(3.1, 3))
-    scene.addChild(this._player.graphic)
-    this._blocks = []
-    for (let i = 0; i < 10; i++) {
-      let block = new GameObject(new Vec2D(i, 1))
+  Load(data, scene) {
+    console.log(data)
+    const blocks = data.level.blocks
+    const width = data.level.width
+    const height = data.level.height
+    if (blocks.length != width * height)
+      console.warn("number of blocks doesn't match up height & width")
+    for (let i = 0; i < blocks.length; i++) {
+      const material = blocks[i]
+      if (!material) continue
+      let block = new GameObject(new Vec2D(Math.floor(i % width), height - Math.floor(i / width) - 1))
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
-    let block = new GameObject(new Vec2D(7, 2))
-    this._blocks.push(block)
-    scene.addChild(block.graphic)
+    // gravity
     this._gravity = new Vec2D(0, -25)
     this._GenLvlGrid()
+    // player
+    this._player = new Player(new Vec2D(5.1, 3))
+    scene.addChild(this._player.graphic)
   }
 
   //

@@ -7,7 +7,8 @@ import { Level } from './level'
 class Camera {
   constructor() {
     this.pos = new PIXI.Point(0, 0)
-    this.scale = new PIXI.Point(10, window.innerHeight / window.innerWidth * 10)
+    const blocks_per_screen = 20
+    this.scale = new PIXI.Point(blocks_per_screen, window.innerHeight / window.innerWidth * blocks_per_screen)
   }
 }
 
@@ -20,7 +21,8 @@ class World {
   Create() {
     this._CreateScene()
     this.level = new Level()
-    this.level.GenTest(this.scene)
+    // this.level.GenTest(this.scene)
+    this.level.Load(require('../data/level/test.json'), this.scene)
   }
 
   Update(dt) {
