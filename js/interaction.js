@@ -5,8 +5,7 @@ class Keyboard {
       Keyboard._keys_down = []
       window.addEventListener('keydown', this._HandleKeyDown)
       window.addEventListener('keyup', this._HandleKeyUp)
-    }
-    else {
+    } else {
       window.removeEventListener('keydown', this._HandleKeyDown)
       window.removeEventListener('keyup', this._HandleKeyUp)
     }

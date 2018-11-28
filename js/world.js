@@ -1,7 +1,5 @@
-import { Vec2D } from './math'
-import { GameObject, Movable } from './game_object'
+import * as PIXI from 'pixi'
 import { renderer } from './graphics'
-import { Keyboard } from './interaction'
 import { Level } from './level'
 
 class Camera {

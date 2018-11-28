@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi'
 import { game_config } from './game_config'
 
 var renderer, app
@@ -20,8 +21,8 @@ class Graphics {
 
     PIXI.utils.sayHello(
       PIXI.utils.isWebGLSupported()
-      ? 'WebGL'
-      : 'canvas')
+        ? 'WebGL'
+        : 'canvas')
 
     PIXI.settings.RESOLUTION = game_config.resolution
 
@@ -37,7 +38,7 @@ class Graphics {
     container.append(app.view)
 
     // resize renderer when resizing game wrap
-    window.addEventListener('resize', _ => this._HandleResize())
+    window.addEventListener('resize', () => this._HandleResize())
   }
 
   //
@@ -61,8 +62,8 @@ class Graphics {
   // Create Polygon Methods
   //
   static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF) {
-    let rect = new PIXI.Graphics()
-    rect.lineStyle(0.005, 0x000000, 1);
+    const rect = new PIXI.Graphics()
+    rect.lineStyle(0.005, 0x000000, 1)
     rect.beginFill(color)
     rect.drawRect(0, 0, w, h)
     rect.endFill()

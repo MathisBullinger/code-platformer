@@ -1,6 +1,6 @@
 import { GameObject } from './game_object'
 import { Player } from './player'
-import { Vec2D, Line } from './math'
+import { Vec2D } from './math'
 import { Physics } from './physics'
 
 class Level {
@@ -14,13 +14,16 @@ class Level {
     Physics.Update(dt, this)
   }
 
+  /**
+    * This loads the scene
+    */
   Load(data, scene) {
     console.log(data)
     const blocks = data.level.blocks
     const width = data.level.width
     const height = data.level.height
     if (blocks.length != width * height)
-      console.warn("number of blocks doesn't match up height & width")
+      console.warn('number of blocks doesn\'t match up height & width')
     for (let i = 0; i < blocks.length; i++) {
       const material = blocks[i]
       if (!material) continue
@@ -36,9 +39,9 @@ class Level {
     scene.addChild(this._player.graphic)
   }
 
-  //
-  // generate level grid from list of blocks
-  //
+  /**
+    * Generate level grid from list of blocks
+    */
   _GenLvlGrid() {
     // get max x & y
     let blocks = this._blocks
