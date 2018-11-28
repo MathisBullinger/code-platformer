@@ -19,6 +19,13 @@ class Physics {
       for (let col of collisions) {
         Physics._SolveCollision(lvl._player, col)
       }
+    } else {
+      // no collision => in air
+      if (lvl._player.hasGroundContact) {
+        console.log('falling')
+        lvl._player.jump_counter++
+        lvl._player.hasGroundContact = false
+      }
     }
   }
 
