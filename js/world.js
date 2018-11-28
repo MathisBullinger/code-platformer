@@ -14,17 +14,8 @@ class World {
     this.level.Load(lvl_data, this.scene)
 
     // rescale scene to fit into screen
-    const scene_ratio = Math.abs(this.scene.height / this.scene.width)
-    if (this.scene.width / window.innerWidth >= this.scene.height / window.innerHeight) {
-      this.scene.width = window.innerWidth / 2
-      this.scene.height = scene_ratio * this.scene.width * -1
-      const off_y = (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2
-      this.scene.y -= off_y + this.scene.height / renderer.resolution / 2
-    } else {
-      this.scene.height = window.innerHeight / 2 * -1
-      this.scene.width = 1 / scene_ratio * this.scene.height * -1
-    }
-
+    this._ResizeScene()
+    window.addEventListener('resize', _ => this._ResizeScene())
   }
 
   Update(dt) {
@@ -48,6 +39,20 @@ class World {
     this.pix_per_unit = window.innerWidth / 10
     this.scene.scale.x *= this.pix_per_unit / renderer.resolution
     this.scene.scale.y *= this.pix_per_unit / renderer.resolution
+  }
+
+  _ResizeScene() {
+    // rescale scene to fit into screen
+    const scene_ratio = Math.abs(this.scene.height / this.scene.width)
+    if (this.scene.width / window.innerWidth >= this.scene.height / window.innerHeight) {
+      this.scene.width = window.innerWidth / 2
+      this.scene.height = scene_ratio * this.scene.width * -1
+      const pos_y = (window.innerHeight - (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2) / renderer.resolution
+      this.scene.y = pos_y
+    } else {
+      this.scene.height = window.innerHeight / 2 * -1
+      this.scene.width = 1 / scene_ratio * this.scene.height * -1
+    }
   }
 
 }
