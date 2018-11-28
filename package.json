@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
-    "build": "parcel build --public-url . index.html"
+    "build": "parcel build --public-url . index.html",
+    "lint": "eslint js/**"
   },
   "repository": {
     "type": "git",
@@ -20,8 +21,12 @@
   "homepage": "https://github.com/MathisBullinger/code-platformer#readme",
   "dependencies": {
     "config": "^3.0.0",
+    "eslint": "^5.9.0",
     "graphics": "^0.1.1-0",
     "math": "0.0.3",
     "pixi.js": "^4.8.2"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.7"
   }
 }
