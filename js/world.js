@@ -18,6 +18,8 @@ class World {
     if (this.scene.width / window.innerWidth >= this.scene.height / window.innerHeight) {
       this.scene.width = window.innerWidth / 2
       this.scene.height = scene_ratio * this.scene.width * -1
+      const off_y = (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2
+      this.scene.y -= off_y + this.scene.height / renderer.resolution / 2
     } else {
       this.scene.height = window.innerHeight / 2 * -1
       this.scene.width = 1 / scene_ratio * this.scene.height * -1
