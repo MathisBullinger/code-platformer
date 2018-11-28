@@ -1,6 +1,6 @@
 import { GameObject } from './game_object'
 import { Player } from './player'
-import { Vec2D } from './math'
+import { Vec2D, Line } from './math'
 import { Physics } from './physics'
 
 class Level {
@@ -15,18 +15,18 @@ class Level {
   }
 
   GenTest(scene) {
-    this._player = new Player(new Vec2D(0, 5))
+    this._player = new Player(new Vec2D(3.1, 3))
     scene.addChild(this._player.graphic)
     this._blocks = []
     for (let i = 0; i < 10; i++) {
-      let block = new GameObject(new Vec2D(i, 0))
+      let block = new GameObject(new Vec2D(i, 1))
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
-    let block = new GameObject(new Vec2D(7, 1))
+    let block = new GameObject(new Vec2D(7, 2))
     this._blocks.push(block)
     scene.addChild(block.graphic)
-    this._gravity = new Vec2D(0, -9.81)
+    this._gravity = new Vec2D(0, -25)
     this._GenLvlGrid()
   }
 

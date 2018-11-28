@@ -2,3 +2,5 @@
 dist/
 min/
 node_modules/
+
+*_dpr.*
