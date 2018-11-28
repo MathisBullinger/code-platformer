@@ -23,5 +23,8 @@
     "graphics": "^0.1.1-0",
     "math": "0.0.3",
     "pixi.js": "^4.8.2"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.7"
   }
 }
