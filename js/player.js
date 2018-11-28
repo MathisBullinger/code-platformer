@@ -13,7 +13,7 @@ class Player extends Movable {
     this._last_jump = new Date().getTime()
     this._jump_timeout = 500
     this._jump_vel = 10
-    this.hasCollision = false
+    this.hasGroundContact = false
     this._jump_counter = 0
   }
 
@@ -33,7 +33,7 @@ class Player extends Movable {
     if (key.IsDown('ArrowUp')) {
       this.Jump(dt)
     }
-    if (this.hasCollision) {
+    if (this.hasGroundContact) {
       this._jump_counter = 0
     }
     super.Update(dt)
@@ -54,7 +54,7 @@ class Player extends Movable {
     if (this._jump_counter % 3 === 2) return
     this._last_jump = now
     this.vel.y = this._jump_vel
-    this.hasCollision = false
+    this.hasGroundContact = false
     this._jump_counter += 1
   }
 }

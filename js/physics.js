@@ -39,7 +39,7 @@ class Physics {
 
     if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
       // bottom collision
-      rect1.hasCollision = true
+      rect1.hasGroundContact = true
       rect1.vel.y = 0
       rect1.pos.y = rect2.y + rect2.height
     }
