@@ -13,6 +13,8 @@ class Player extends Movable {
     this._last_jump = new Date().getTime()
     this._jump_timeout = 500
     this._jump_vel = 10
+    this.hasCollision = false
+    this._jump_counter = 0
   }
 
   //
@@ -31,6 +33,9 @@ class Player extends Movable {
     if (key.IsDown('ArrowUp')) {
       this.Jump(dt)
     }
+    if (this.hasCollision) {
+      this._jump_counter = 0
+    }
     super.Update(dt)
   }
 
@@ -46,8 +51,11 @@ class Player extends Movable {
   Jump(dt) {
     const now = new Date().getTime()
     if (now - this._last_jump < this._jump_timeout) return
+    if (this._jump_counter % 3 === 2) return
     this._last_jump = now
     this.vel.y = this._jump_vel
+    this.hasCollision = false
+    this._jump_counter += 1
   }
 }
 
