@@ -21,7 +21,6 @@ class World {
   Create() {
     this._CreateScene()
     this.level = new Level()
-    // this.level.GenTest(this.scene)
     this.level.Load(require('../data/level/test.json'), this.scene)
   }
 
