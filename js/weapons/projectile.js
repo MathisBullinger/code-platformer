@@ -18,7 +18,7 @@ class Projectile {
     this.weapon = weapon
     this.scale = scale
     // Get projectile orientation and scale direction vector by velocity
-    this.vel = Vec2D.add(Vec2D.mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, - 0.25))
+    this.vel = Vec2D.add(Vec2D.mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
     this.pos = Projectile._GetNozzlePosition(weapon)
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
@@ -34,7 +34,7 @@ class Projectile {
     // Apply velocity
     this.pos = Vec2D.add(this.pos, Vec2D.mult(this.vel, dt / 1000))
     this.graphic.position = this.pos.toPixiPoint()
-    this.vel.y -= 0.25
+    this.vel.y -= 9.81 * (dt / 1000)
   }
 
   /**

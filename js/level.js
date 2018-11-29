@@ -74,7 +74,7 @@ class Level {
       scene.addChild(block.graphic)
     }
     // gravity
-    this._gravity = new Vec2D(0, -25)
+    this._gravity = new Vec2D(0, -35)
     this._GenLvlGrid()
     // player
     this._player = new Player(new Vec2D(5.1, 3))

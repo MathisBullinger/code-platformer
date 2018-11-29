@@ -29,7 +29,7 @@ class Physics {
       }
     } else {
       // no collision => in air
-      if (lvl._player.hasGroundContact) {
+      if (lvl._player.has_ground_contact) {
         console.log('falling')
         lvl._player.jump_counter++
         lvl._player.has_ground_contact = false
@@ -53,7 +53,7 @@ class Physics {
 
     if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
       // bottom collision
-      rect1.hasGroundContact = true
+      rect1.has_ground_contact = true
       rect1.vel.y = 0
       rect1.pos.y = rect2.y + rect2.height
     }
