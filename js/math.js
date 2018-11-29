@@ -19,8 +19,16 @@ class Vec2D {
     return new Vec2D(a.x + b.x, a.y + b.y)
   }
 
+  static Sub(a, b) {
+    return new Vec2D(a.x - b.x, a.y - b.y)
+  }
+
   static mult(vec, num) {
     return new Vec2D(vec.x * num, vec.y * num)
+  }
+
+  static Div(vec, num) {
+    return new Vec2D(vec.x / num, vec.y / num)
   }
 
   static equal(a, b) {

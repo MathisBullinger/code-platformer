@@ -6,11 +6,19 @@ class Physics {
   // Update
   //
   static Update(dt, lvl) {
-    // apply gravity
+    // apply gravity to player
     Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
-
-    // update position
+    // update player position
     lvl._player.Update(dt)
+
+    // update projectiles
+    for (let prj of lvl._projectiles) {
+      prj.Update(dt) // Update projectile
+      // If any collision => remove projectiles
+      if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
+        lvl.RemoveProjectiles(prj)
+      }
+    }
 
     // check for collisions
     const collisions = Physics._GetColliding(lvl._player, lvl._block_grid)
@@ -24,7 +32,7 @@ class Physics {
       if (lvl._player.hasGroundContact) {
         console.log('falling')
         lvl._player.jump_counter++
-        lvl._player.hasGroundContact = false
+        lvl._player.has_ground_contact = false
       }
     }
   }

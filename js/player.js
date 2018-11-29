@@ -1,8 +1,10 @@
+import * as PIXI from 'pixi.js'
 import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
+import { Bow } from './weapons/bow'
 
 class Player extends Movable {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
@@ -13,8 +15,18 @@ class Player extends Movable {
     this._last_jump = new Date().getTime()
     this._jump_timeout = 500
     this._jump_vel = 10
-    this.hasGroundContact = false
+    this.has_ground_contact = false
     this.jump_counter = 0
+
+    // Create weapon holster
+    // This will later be more useful for rotating the weapon around the player
+    this._weapon_holster = new PIXI.Container()
+    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667)
+    this.graphic.addChild(this._weapon_holster)
+
+    // Create weapon
+    this._weapon = new Bow()
+    this._weapon_holster.addChild(this._weapon.graphic)
   }
 
   //
@@ -33,9 +45,10 @@ class Player extends Movable {
     if (key.IsDown('ArrowUp')) {
       this.Jump(dt)
     }
-    if (this.hasGroundContact) {
-      this.jump_counter = 0
-    }
+    // If ground contact => reset jump counter
+    if (this.has_ground_contact) this.jump_counter = 0
+    // Update Weapon
+    this._weapon.Update(dt)
     super.Update(dt)
   }
 

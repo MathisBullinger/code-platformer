@@ -5,13 +5,43 @@ import { Physics } from './physics'
 
 class Level {
 
-  constructor() {
+  constructor(parent_scene) {
     this._blocks = []
     this._block_grid = []
+    this._projectiles = []
+    Level._active_level = this
+    this._parent_scene = parent_scene
   }
 
   Update(dt) {
     Physics.Update(dt, this)
+
+    // Only keep projectiles with an y pos >= -5
+    const delete_list = []
+    this._projectiles = this._projectiles.filter(prj => {
+      if (prj.pos.y >= -5) {
+        return true
+      } else {
+        delete_list.push(prj.graphic)
+        return false
+      }
+    })
+    // Remove "dead" projectiles from scene
+    this._parent_scene.removeChild(...delete_list)
+  }
+
+  static get ActiveLevel() {
+    return Level._active_level
+  }
+
+  AddProjectiles(...prj) {
+    this._projectiles.push(...prj)
+    this._parent_scene.addChild(...(prj.map(pr => pr.graphic)))
+  }
+
+  RemoveProjectiles(...prj) {
+    this._parent_scene.removeChild(...(prj.map(pr => pr.graphic)))
+    this._projectiles = this._projectiles.filter(pr => !([ ...prj ]).includes(pr))
   }
 
   /**
