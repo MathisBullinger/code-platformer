@@ -1,6 +1,6 @@
 import { game_config } from './game_config'
 import { Graphics, app } from './graphics'
-import { Keyboard } from './interaction'
+import { Keyboard, Mouse } from './interaction'
 import { World } from './world'
 
 class Game {
@@ -26,6 +26,7 @@ class Game {
 
     // start event listening
     Keyboard.Listen()
+    Mouse.Listen()
 
     app.ticker.add(() => this._GameLoop(app.ticker.elapsedMS))
   }
