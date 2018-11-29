@@ -46,7 +46,7 @@ class Projectile {
   static _GetNozzlePosition(weapon) {
     // Get graphics for all relevant entities. This is an ES6 notation, will fail on different es versions
     const [ holster_rot, holster_graphic, player_graphic ] = [ weapon.graphic.parent.rotation, weapon.graphic.parent, weapon.graphic.parent.parent ]
-    // Holster is at = player_graphic pos + holster_graphic_pos
+    // Holster is at pos = player_graphic pos + holster_graphic_pos
     const holster_pos = Vec2D.add(
       new Vec2D(player_graphic.position.x, player_graphic.position.y),
       new Vec2D(holster_graphic.position.x, holster_graphic.position.y)

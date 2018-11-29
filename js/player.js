@@ -15,7 +15,7 @@ class Player extends Movable {
     this._last_jump = new Date().getTime()
     this._jump_timeout = 500
     this._jump_vel = 10
-    this.hasGroundContact = false
+    this.has_ground_contact = false
     this.jump_counter = 0
 
     // Create weapon holster
@@ -45,9 +45,8 @@ class Player extends Movable {
     if (key.IsDown('ArrowUp')) {
       this.Jump(dt)
     }
-    if (this.hasGroundContact) {
-      this.jump_counter = 0
-    }
+    // If ground contact => reset jump counter
+    if (this.has_ground_contact) this.jump_counter = 0
     // Update Weapon
     this._weapon.Update(dt)
     super.Update(dt)
