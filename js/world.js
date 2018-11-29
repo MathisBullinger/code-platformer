@@ -16,7 +16,7 @@ class World {
   Create() {
     const lvl_data = require('../data/level/map_extern.json')
     this._CreateScene()
-    this.level = new Level()
+    this.level = new Level(this.scene)
     this.level.Load(lvl_data, this.scene)
 
     // rescale scene to fit into screen

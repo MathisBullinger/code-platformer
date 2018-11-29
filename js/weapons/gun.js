@@ -17,7 +17,7 @@ class Gun extends Weapon {
   Update(dt) {
     // Shoot Bullet
     if (Mouse.IsDown(0) && !this._HasCooldown) {
-      this._AddProjectile(new Bullet(this))
+      this._SpawnProjectile(new Bullet(this))
     }
     // Update base
     super.Update(dt)

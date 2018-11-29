@@ -6,11 +6,18 @@ class Physics {
   // Update
   //
   static Update(dt, lvl) {
-    // apply gravity
+    // apply gravity to player
     Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
-
-    // update position
+    // update player position
     lvl._player.Update(dt)
+    // update projectiles
+    for (let prj of lvl._projectiles) {
+      prj.Update(dt)
+
+      if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
+        lvl.RemoveProjectiles(prj)
+      }
+    }
 
     // check for collisions
     const collisions = Physics._GetColliding(lvl._player, lvl._block_grid)

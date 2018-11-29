@@ -1,5 +1,5 @@
 import { Vec2D } from './../math'
-import { Graphics, app } from './../graphics'
+import { Graphics } from './../graphics'
 
 /**
   * General projectile entity. This class is not meant to be instantiated
@@ -25,9 +25,6 @@ class Projectile {
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, 0)
     this.graphic.rotation = weapon.graphic.parent.rotation
-    // Add projectile to Scene
-    if (app.stage.children.length >= 1)
-      app.stage.children[0].addChild(this.graphic)
   }
 
   /**

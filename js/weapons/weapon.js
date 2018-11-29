@@ -1,5 +1,6 @@
-import { Graphics, renderer, app } from './../graphics'
+import { Graphics, renderer } from './../graphics'
 import { Vec2D } from './../math'
+import { Level } from './../level'
 
 /**
   * General weapon class
@@ -16,7 +17,6 @@ class Weapon {
     // Set attributes
     this.pos = pos
     this.scale = scale
-    this._projectiles = []
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
@@ -26,28 +26,10 @@ class Weapon {
   /**
     * Update weapon and projectiles
     */
-  Update(dt) {
+  Update() {
     // Look at mouse
     const dir = this._GetMouseDirection()
     this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
-
-    // Iterate shot projectiles and update them
-    for (let proj of this._projectiles) {
-      proj.Update(dt)
-    }
-
-    // Only keep projectiles pos.y >= -5
-    const delete_list = []
-    this._projectiles = this._projectiles.filter(prj => {
-      if (prj.pos.y >= -5) {
-        return true
-      } else {
-        delete_list.push(prj.graphic)
-        return false
-      }
-    })
-    // Remove projectiles from scene. (ES6: ... unfolds the array)
-    app.stage.children[0].removeChild(...delete_list)
   }
 
   /**
@@ -60,9 +42,9 @@ class Weapon {
   /**
     * Add projectile
     */
-  _AddProjectile(projectile) {
+  _SpawnProjectile(projectile) {
     this._last_fired = Date.now()
-    this._projectiles.push(projectile)
+    Level.ActiveLevel.AddProjectiles(projectile)
   }
 
   /**
