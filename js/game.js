@@ -32,7 +32,8 @@ class Game {
   }
 
   _GameLoop(dt) {
-    if (dt > 100) dt = 100 // prevent tunnelling
+    const max_timestep = 60
+    if (dt > max_timestep) dt = max_timestep
     if (this._world) this._world.Update(dt)
   }
 }
