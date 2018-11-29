@@ -2,39 +2,32 @@ import { Weapon } from './weapon'
 import { Vec2D } from './../math'
 import { Mouse } from './../interaction'
 import { Arrow } from './arrow'
-import { app } from './../graphics'
 
+/**
+  * Weapon specialization.
+  * Shoots slow arrows
+  */
 class Bow extends Weapon {
 
+  /**
+    * Initializes
+    */
   constructor() {
-    super(new Vec2D(0, 1.1), new Vec2D(0.9, 0.1))
-
-    this._shot_arrows = []
+    // Bow is held 1.1 units in front of player, "bow" shaped, 1000ms cooldown
+    super(new Vec2D(0, 1.1), new Vec2D(0.9, 0.1), 1000)
   }
 
+  /**
+    * Update bow
+    */
   Update(dt) {
-    // Update parent
+    // If left mouse button down and !_HasCooldown => spawn arrow
+    if (Mouse.IsDown(0) && !this._HasCooldown) {
+      this._AddProjectile(new Arrow(this))
+    }
+
+    // Update base
     super.Update(dt)
-
-    // If left mouse button down => spawn arrow
-    if (Mouse.IsDown(0)) {
-      this._shot_arrows.push(new Arrow(this))
-    }
-
-    // Update all shot arrows
-    for (let arr of this._shot_arrows) {
-      arr.Update(dt)
-    }
-
-    // Filter arrows. If y pos below 0 => delete
-    this._shot_arrows = this._shot_arrows.filter(arr => {
-      if (arr.pos.y >= 0){
-        return true
-      } else {
-        app.stage.children[0].removeChild(arr.graphic)
-        return false
-      }
-    })
   }
 }
 

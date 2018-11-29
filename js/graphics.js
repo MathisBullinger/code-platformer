@@ -70,7 +70,6 @@ class Graphics {
     rect.position.set(x, y)
     return rect
   }
-
 }
 
 export { Graphics, renderer, app }

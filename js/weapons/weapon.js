@@ -1,24 +1,84 @@
-import { Graphics, renderer } from './../graphics'
+import { Graphics, renderer, app } from './../graphics'
 import { Vec2D } from './../math'
 
+/**
+  * General weapon class
+  */
 class Weapon {
-  constructor(pos, scale) {
+  /**
+    * Initializes
+    */
+  constructor(pos, scale, cooldown) {
+    // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
+    if (new.target === Weapon) {
+      throw new TypeError('Cannot construct abstract Weapon instances directly')
+    }
+    // Set attributes
     this.pos = pos
     this.scale = scale
-    this.graphic = this._GetGraphic(pos, scale)
+    this._projectiles = []
+    this._cooldown = cooldown
+    this._last_fired = Date.now()
+    // Get graphics
+    this.graphic = Weapon._GetGraphic(pos, scale)
   }
 
-  Update() {
+  /**
+    * Update weapon and projectiles
+    */
+  Update(dt) {
+    // Look at mouse
     const dir = this._GetMouseDirection()
     this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
+
+    // Iterate shot projectiles and update them
+    for (let proj of this._projectiles) {
+      proj.Update(dt)
+    }
+
+    // Only keep projectiles pos.y >= -5
+    const delete_list = []
+    this._projectiles = this._projectiles.filter(prj => {
+      if (prj.pos.y >= -5) {
+        return true
+      } else {
+        delete_list.push(prj.graphic)
+        return false
+      }
+    })
+    // Remove projectiles from scene. (ES6: ... unfolds the array)
+    app.stage.children[0].removeChild(...delete_list)
   }
 
-  _GetGraphic(pos, scale) {
+  /**
+    * Check if weapon is on cooldown
+    */
+  get _HasCooldown() {
+    return (Date.now() - this._last_fired) < this._cooldown
+  }
+
+  /**
+    * Add projectile
+    */
+  _AddProjectile(projectile) {
+    this._last_fired = Date.now()
+    this._projectiles.push(projectile)
+  }
+
+  /**
+    * Create weapon graphic
+    */
+  static _GetGraphic(pos, scale) {
     const rect = Graphics.CreateRectangle(pos.x, pos.y, scale.x, scale.y, 0x000000)
     rect.pivot.set(scale.x / 2, scale.y / 2)
     return rect
   }
 
+  /**
+    * Get normalized direction vector from weapon holster to mouse.
+    * This is relativly long since the mouse position is in screen space (top, left)
+    * and the holster position is in our world grid position.
+    */
   _GetMouseDirection() {
     // Get screen coordinates (bottom-left based) for the mouse
     const screen_mouse_pos = new Vec2D(
@@ -26,8 +86,8 @@ class Weapon {
       window.innerHeight - renderer.plugins.interaction.mouse.global.y)
     // Get screen coordinates (bottom-left based) for the weapon holster
     const screen_holster_pos = new Vec2D(
-      this.graphic.parent.getGlobalPosition().x,
-      window.innerHeight - this.graphic.parent.getGlobalPosition().y)
+      this.graphic.parent.worldTransform.tx,
+      window.innerHeight - this.graphic.parent.worldTransform.ty)
     // Get the distance between the two => direction vector
     const distance = Vec2D.Sub(screen_mouse_pos, screen_holster_pos)
     return Vec2D.Div(distance, distance.magnitude) // normalize

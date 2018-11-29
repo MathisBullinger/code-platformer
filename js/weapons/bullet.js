@@ -1,15 +1,12 @@
 import { Vec2D } from './../math'
 import { Projectile } from './projectile'
 
-/**
-  * A special slow flying projectile
-  */
-class Arrow extends Projectile {
+class Bullet extends Projectile {
   /**
     * Initializes
     */
   constructor(bow) {
-    super(bow, new Vec2D(0.1, 0.6), 40)
+    super(bow, new Vec2D(0.2, 0.2), 100)
   }
 
   /**
@@ -20,4 +17,4 @@ class Arrow extends Projectile {
   }
 }
 
-export { Arrow }
+export { Bullet }
