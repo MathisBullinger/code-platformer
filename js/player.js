@@ -5,6 +5,7 @@ import { Movable } from './game_object'
 import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
 import { Bow } from './weapons/bow'
+import { Gun } from './weapons/gun'
 
 class Player extends Movable {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
@@ -21,7 +22,7 @@ class Player extends Movable {
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
     this._weapon_holster = new PIXI.Container()
-    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667)
+    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
     this.graphic.addChild(this._weapon_holster)
 
     // Create weapon
@@ -50,6 +51,12 @@ class Player extends Movable {
     // Update Weapon
     this._weapon.Update(dt)
     super.Update(dt)
+  }
+
+  SetWeapon(weapon) {
+    this._weapon_holster.removeChild(this._weapon.graphic)
+    this._weapon = weapon
+    this._weapon_holster.addChild(this._weapon.graphic)
   }
 
   //

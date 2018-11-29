@@ -2,19 +2,31 @@ import { GameObject } from './game_object'
 import { Player } from './player'
 import { Vec2D } from './math'
 import { Physics } from './physics'
+import { Spawns } from './spawns'
 
 class Level {
 
   constructor(parent_scene) {
+    // Declare attributes for later
+    this._gravity = null
+    this._player = null
+    // List of per level entities
     this._blocks = []
     this._block_grid = []
     this._projectiles = []
-    Level._active_level = this
+    // Spawns system
+    this._spawns = new Spawns()
+    // Save parent scene and current level
     this._parent_scene = parent_scene
+    Level._active_level = this
+
   }
 
   Update(dt) {
+    // Apply physics to this level
     Physics.Update(dt, this)
+    // Update Spawns
+    this._spawns.Update(dt, this._player)
 
     // Only keep projectiles with an y pos >= -5
     const delete_list = []
@@ -48,30 +60,43 @@ class Level {
     * This loads the scene
     */
   Load(data, scene) {
+    // Prepare variables
     const layers = data.layers
     let blocks = null
+    let spawnpoints = null
+    // Iterate all layers and assign helpers
     for (let layer of layers) {
       if (layer.name == 'world') {
         blocks = layer.data
-        break
+      } else if (layer.name === 'spawnpoints') {
+        spawnpoints = layer.data
       }
     }
+    // We need level data
     if (!blocks) {
       console.error('no world layer found in level file')
       return
     }
-
+    // Calculate width and height
     this.width = data.canvas.width / 32
     this.height = blocks.length / this.width
-
+    // Check level intact
     if (blocks.length != this.width * this.height)
       console.warn('number of blocks doesn\'t match up height & width')
+    // Iterate the data and add blocks to level
     for (let i = 0; i < blocks.length; i++) {
       const material = blocks[i]
       if (material != 1) continue
       let block = new GameObject(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1))
       this._blocks.push(block)
       scene.addChild(block.graphic)
+    }
+    if (spawnpoints !== null) {
+      // Iterate the "spawnpoints" data and add _spawnpoints
+      for (let i = 0; i < spawnpoints.length; i++) {
+        if (spawnpoints[i] !== 1) continue
+        this._spawns.AddWeaponSpawn(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1), scene)
+      }
     }
     // gravity
     this._gravity = new Vec2D(0, -35)
