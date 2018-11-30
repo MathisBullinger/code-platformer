@@ -1,6 +1,6 @@
 import { game_config } from './game_config'
 import { Graphics, app } from './graphics'
-import { Keyboard } from './interaction'
+import { Keyboard, Mouse } from './interaction'
 import { World } from './world'
 
 class Game {
@@ -26,12 +26,15 @@ class Game {
 
     // start event listening
     Keyboard.Listen()
+    Mouse.Listen()
 
     app.ticker.add(() => this._GameLoop(app.ticker.elapsedMS))
   }
 
   _GameLoop(dt) {
-    if (dt > 100) dt = 100 // prevent tunnelling
+    const max_timestep = 60
+    if (dt > max_timestep) dt = max_timestep
+    Keyboard.Update(dt)
     if (this._world) this._world.Update(dt)
   }
 }

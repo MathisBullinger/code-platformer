@@ -2,15 +2,23 @@ import { Vec2D } from './math'
 
 class Physics {
 
-  //
-  // Update
-  //
+  /*
+   * Update
+   */
   static Update(dt, lvl) {
-    // apply gravity
+    // apply gravity to player
     Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
-
-    // update position
+    // update player position
     lvl._player.Update(dt)
+
+    // update projectiles
+    for (let prj of lvl._projectiles) {
+      prj.Update(dt) // Update projectile
+      // If any collision => remove projectiles
+      if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
+        lvl.RemoveProjectiles(prj)
+      }
+    }
 
     // check for collisions
     const collisions = Physics._GetColliding(lvl._player, lvl._block_grid)
@@ -21,49 +29,67 @@ class Physics {
       }
     } else {
       // no collision => in air
-      if (lvl._player.hasGroundContact) {
-        console.log('falling')
+      if (lvl._player.has_ground_contact) {
         lvl._player.jump_counter++
-        lvl._player.hasGroundContact = false
+        lvl._player.has_ground_contact = false
       }
     }
+
   }
 
-  //
-  // Solve Collision
-  //
+  /*
+   * Solve Collision
+   */
   static _SolveCollision(rect1, rect2) {
-    const rect1_bottom = rect1.y + rect1.height
-    const rect2_bottom = rect2.y + rect2.height
-    const rect1_right = rect1.x + rect1.width
-    const rect2_right = rect2.x + rect2.width
 
-    const b_collision = rect2_bottom - rect1.y
-    const t_collision = rect1_bottom - rect2.y
-    const l_collision = rect1_right - rect2.x
-    const r_collision = rect2_right - rect1.x
+    const GetCollisionFace = () => {
+      let faces = []
+      //rect2.x + rect2.width - rect1.x
+      if (rect2._collision_sides.right) faces.push({name: 'right', value: rect2.x + rect2.width - rect1.x})
+      if (rect2._collision_sides.bottom) faces.push({name: 'bottom', value: rect1.y + rect1.height - rect2.y})
+      if (rect2._collision_sides.left) faces.push({name: 'left', value: rect1.x + rect1.width - rect2.x})
+      if (rect2._collision_sides.top) faces.push({name: 'top', value: rect2.y + rect2.height - rect1.y})
+      for (let face of faces) {
+        if (face.value > rect1.width / 2)
+          faces.splice(faces.indexOf(face), 1)
+      }
+      return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
+    }
 
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
-      // bottom collision
-      rect1.hasGroundContact = true
-      rect1.vel.y = 0
-      rect1.pos.y = rect2.y + rect2.height
+    const offset = 0
+    switch(GetCollisionFace()) {
+      case 'top':
+        rect1.has_ground_contact = true
+        if (rect1.vel.y < 0) rect1.vel.y = 0
+        rect1.pos.y = rect2.y + rect2.height + offset
+        break
+      case 'bottom':
+        if (rect1.vel.y > 0) rect1.vel.y = 0
+        rect1.pos.y = rect2.y - rect1.height - offset
+        break
+      case 'right':
+        if (rect1.vel.x < 0) rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x + rect2.width + offset
+        break
+      case 'left':
+        if (rect1.vel.x > 0) rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x - rect1.width - offset
+        break
     }
-    else if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
-      // top collision
-      rect1.vel.y = 0
-      rect1.pos.y = rect2.y - rect1.height
-    }
-    else if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
-      // right collision
-      rect1.vel.x = 0
-      rect1.pos.x = rect2.pos.x + rect2.width
-    }
-    else if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
-      // left collision
-      rect1.vel.x = 0
-      rect1.pos.x = rect2.pos.x - rect1.width
-    }
+
+  }
+
+  /**
+   * bool DoBoxesIntersect(Box a, Box b) {
+   * return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+   *      (abs(a.y - b.y) * 2 < (a.height + b.height));
+   * }
+   */
+  static DoBoxesIntersect(a, b) {
+    return (a.pos.x < b.pos.x + b.scale.x &&
+            a.pos.x + a.scale.x > b.pos.x &&
+            a.pos.y < b.pos.y + b.scale.y &&
+            a.pos.y + a.scale.y > b.pos.y)
   }
 
   //
@@ -92,18 +118,11 @@ class Physics {
   }
 
   //
-  // check collision of point & rect
-  //
-  static _CollidePointRect(point, rect) {
-    return (point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height)
-  }
-
-  //
   // Apply Acceleration
   //
   static _Accelerate(tar, acc, dt) {
-    const tar_new = Vec2D.add(tar, Vec2D.mult(acc, dt / 1000))
-    tar.set(tar_new.x, tar_new.y)
+    const tar_new = Vec2D.Add(tar, Vec2D.Mult(acc, dt / 1000))
+    tar.Set(tar_new.x, tar_new.y)
   }
 
 }

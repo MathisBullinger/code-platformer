@@ -28,8 +28,10 @@ class Graphics {
 
     // create & config pixi app
     let container = wrap
+    console.log(window)
     app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
-      antialias: true, autoResize: false, resolution: window.devicePixelRatio})
+      antialias: true, autoResize: false, resolution: window.devicePixelRatio
+    })
 
     renderer = app.renderer
     renderer.backgroundColor = game_config.clear_color
@@ -70,7 +72,6 @@ class Graphics {
     rect.position.set(x, y)
     return rect
   }
-
 }
 
 export { Graphics, renderer, app }
