@@ -18,8 +18,12 @@ class Level {
     Physics.Update(dt, this)
 
     // kill player if below death cap
-    if (this._player.alive && this._player.y < this._lower_death_cap)
+    if (!this._player.dead && this._player.y < this._lower_death_cap)
       this._player.Kill()
+
+    // respawn player if dead
+    if (this._player.dead)
+      this._player.Respawn()
 
     // remove projectiles below death cap
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
