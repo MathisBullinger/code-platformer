@@ -79,6 +79,19 @@ class Physics {
 
   }
 
+  /**
+   * bool DoBoxesIntersect(Box a, Box b) {
+   * return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+   *      (abs(a.y - b.y) * 2 < (a.height + b.height));
+   * }
+   */
+  static DoBoxesIntersect(a, b) {
+    return (a.pos.x < b.pos.x + b.scale.x &&
+            a.pos.x + a.scale.x > b.pos.x &&
+            a.pos.y < b.pos.y + b.scale.y &&
+            a.pos.y + a.scale.y > b.pos.y)
+  }
+
   //
   // Get Colliding
   // returns array of blocks that rect collides with
@@ -102,13 +115,6 @@ class Physics {
         collisions.push(grid_comp[p.x][p.y])
     }
     return collisions
-  }
-
-  //
-  // check collision of point & rect
-  //
-  static _CollidePointRect(point, rect) {
-    return (point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height)
   }
 
   //

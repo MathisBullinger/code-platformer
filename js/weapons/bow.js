@@ -20,14 +20,13 @@ class Bow extends Weapon {
   /**
     * Update bow
     */
-  Update(dt) {
-    // If left mouse button down and !_HasCooldown => spawn arrow
-    if (Mouse.IsDown(0) && !this._HasCooldown) {
-      this._SpawnProjectile(new Arrow(this))
-    }
-
+  Update(dt) {    
     // Update base
     super.Update(dt)
+    // If left mouse button down and !_HasCooldown => spawn arrow
+    if (Mouse.IsDown(0) && !this._hasCooldown) {
+      this._SpawnProjectile(new Arrow(this))
+    }
   }
 }
 

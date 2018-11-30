@@ -19,14 +19,13 @@ class Player extends Movable {
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
-    console.log(this._jump_vel)
     this.has_ground_contact = false
     this.jump_counter = 0
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
     this._weapon_holster = new PIXI.Container()
-    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667)
+    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
     this.graphic.addChild(this._weapon_holster)
 
     // Create weapon
@@ -53,7 +52,7 @@ class Player extends Movable {
     key.BindKey('Shift', () => this.Dash(), true)
   }
 
-  /*
+  /**
    * Update
    */
   Update(dt) {
@@ -82,7 +81,13 @@ class Player extends Movable {
     this._moved = false
   }
 
-  /*
+  SetWeapon(weapon) {
+    this._weapon_holster.removeChild(this._weapon.graphic)
+    this._weapon = weapon
+    this._weapon_holster.addChild(this._weapon.graphic)
+  }
+
+  /**
    * Move
    */
   Move(dir, dt) {
@@ -107,7 +112,7 @@ class Player extends Movable {
     this._dashing = true
   }
 
-  /*
+  /**
    * Jump
    */
   Jump() {
@@ -122,7 +127,7 @@ class Player extends Movable {
     this.jump_counter += 1
   }
 
-  /*
+  /**
    * Damage Player Health
    */
   Damage(hp) {
