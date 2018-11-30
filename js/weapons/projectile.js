@@ -18,7 +18,7 @@ class Projectile {
     this.weapon = weapon
     this.scale = scale
     // Get projectile orientation and scale direction vector by velocity
-    this.vel = Vec2D.add(Vec2D.mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
+    this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
     this.pos = Projectile._GetNozzlePosition(weapon)
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
@@ -32,8 +32,8 @@ class Projectile {
     */
   Update(dt) {
     // Apply velocity
-    this.pos = Vec2D.add(this.pos, Vec2D.mult(this.vel, dt / 1000))
-    this.graphic.position = this.pos.toPixiPoint()
+    this.pos = Vec2D.Add(this.pos, Vec2D.Mult(this.vel, dt / 1000))
+    this.graphic.position = this.pos.ToPixiPoint()
     this.vel.y -= 9.81 * (dt / 1000)
   }
 
@@ -47,7 +47,7 @@ class Projectile {
     // Get graphics for all relevant entities. This is an ES6 notation, will fail on different es versions
     const [ holster_rot, holster_graphic, player_graphic ] = [ weapon.graphic.parent.rotation, weapon.graphic.parent, weapon.graphic.parent.parent ]
     // Holster is at pos = player_graphic pos + holster_graphic_pos
-    const holster_pos = Vec2D.add(
+    const holster_pos = Vec2D.Add(
       new Vec2D(player_graphic.position.x, player_graphic.position.y),
       new Vec2D(holster_graphic.position.x, holster_graphic.position.y)
     )
@@ -55,7 +55,7 @@ class Projectile {
     const [ cs, sn ] = [ Math.cos(holster_rot), Math.sin(holster_rot) ]
     // x = x * cs - y * sn;
     // y = x * sn + y * cs;
-    return Vec2D.add(holster_pos, new Vec2D(
+    return Vec2D.Add(holster_pos, new Vec2D(
       weapon.pos.x * cs - weapon.pos.y * sn,
       weapon.pos.x * sn + weapon.pos.y * cs
     ))

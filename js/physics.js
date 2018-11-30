@@ -110,8 +110,8 @@ class Physics {
   // Apply Acceleration
   //
   static _Accelerate(tar, acc, dt) {
-    const tar_new = Vec2D.add(tar, Vec2D.mult(acc, dt / 1000))
-    tar.set(tar_new.x, tar_new.y)
+    const tar_new = Vec2D.Add(tar, Vec2D.Mult(acc, dt / 1000))
+    tar.Set(tar_new.x, tar_new.y)
   }
 
 }
