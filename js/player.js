@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
-import { game_config } from './game_config'
+import { game_config as conf } from './game_config'
 import { Keyboard as key } from './interaction'
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
@@ -14,11 +14,12 @@ class Player extends Movable {
    */
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     super(pos, scale)
-    this._move_acc = game_config.player_move_acc
-    this._move_vel = game_config.player_move_vel
+    this._move_acc = conf.player_move_acc
+    this._move_vel = conf.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
-    this._jump_vel = 13
+    this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
+    console.log(this._jump_vel)
     this.has_ground_contact = false
     this.jump_counter = 0
 
@@ -33,13 +34,13 @@ class Player extends Movable {
     this._weapon_holster.addChild(this._weapon.graphic)
 
     // player health
-    this._hp_total = 100
+    this._hp_total = conf.player_hp
     this._hp_current = this._health_total
     this._alive = true
 
     this._dashing = false
-    this._dash_time = 100
-    this._dash_vel = 15
+    this._dash_time = conf.player_dash_time
+    this._dash_vel = conf.player_dash_vel
     this._move_dir = null
 
     // bind keys
