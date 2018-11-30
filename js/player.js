@@ -5,7 +5,6 @@ import { Movable } from './game_object'
 import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
 import { Bow } from './weapons/bow'
-import { Gun } from './weapons/gun'
 
 class Player extends Movable {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {

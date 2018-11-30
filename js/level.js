@@ -38,7 +38,7 @@ class Level {
 
     // remove projectiles below death cap
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
-    this.RemoveProjectiles(delete_list)
+    if (delete_list.length > 0) this.RemoveProjectiles(...delete_list)
 
   }
 
@@ -52,13 +52,13 @@ class Level {
   }
 
   RemoveProjectiles(...prj) {
-    this._parent_scene.removeChild(...(prj.map(pr => pr.graphic)))
-    this._projectiles = this._projectiles.filter(pr => !([ ...prj ]).includes(pr))
+    this._parent_scene.removeChild(...([...prj].map(pr => pr.graphic)))
+    this._projectiles = this._projectiles.filter(pr => !([...prj]).includes(pr))
   }
 
   /**
-    * This loads the scene
-    */
+   * This loads the scene
+   */
   Load(data, scene) {
     // Prepare variables
     const layers = data.layers
@@ -94,8 +94,8 @@ class Level {
     if (spawnpoints !== null) {
       // Iterate the "spawnpoints" data and add _spawnpoints
       for (let i = 0; i < spawnpoints.length; i++) {
-        if (spawnpoints[i] !== 1) continue
-        this._spawns.AddWeaponSpawn(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1), scene)
+        const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+        this._spawns.AddWeaponSpawn(spawnpoints[i], pos, scene)
       }
     }
     // gravity
@@ -103,12 +103,13 @@ class Level {
     this._GenLvlGrid()
     // player
     this._player = new Player(new Vec2D(5.1, 3))
+    console.log(this._player)
     scene.addChild(this._player.graphic)
   }
 
   /**
-    * Generate level grid from list of blocks
-    */
+   * Generate level grid from list of blocks
+   */
   _GenLvlGrid() {
     // get max x & y
     let blocks = this._blocks
