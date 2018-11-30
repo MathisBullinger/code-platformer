@@ -35,7 +35,7 @@ class Weapon {
   /**
     * Check if weapon is on cooldown
     */
-  get _HasCooldown() {
+  get _hasCooldown() {
     return (Date.now() - this._last_fired) < this._cooldown
   }
 
