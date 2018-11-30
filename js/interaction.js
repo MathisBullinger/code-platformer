@@ -1,4 +1,8 @@
 class Keyboard {
+  // constructor() {
+  //   this._keybindings = []
+  // }
+
   static Listen(b = true) {
     if (b) {
       Keyboard._keys_down = []
@@ -11,17 +15,43 @@ class Keyboard {
   }
 
   static IsDown(key) {
-    return Keyboard._keys_down.includes(key)
+    return Keyboard._keys_down.includes(key.toLowerCase())
   }
 
   static _HandleKeyDown(e) {
-    if (!Keyboard._keys_down.includes(e.key))
-      Keyboard._keys_down.push(e.key)
+    if (!Keyboard._keys_down.includes(e.key.toLowerCase()))
+      Keyboard._keys_down.push(e.key.toLowerCase())
   }
 
   static _HandleKeyUp(e) {
-    if (Keyboard._keys_down.includes(e.key))
-      Keyboard._keys_down.splice(Keyboard._keys_down.indexOf(e.key), 1)
+    if (Keyboard._keys_down.includes(e.key.toLowerCase()))
+      Keyboard._keys_down.splice(Keyboard._keys_down.indexOf(e.key.toLowerCase()), 1)
+  }
+
+  /*
+   * bind function to keypress
+   */
+  static BindKey(key, callback) {
+    key = key.toLowerCase()
+    if (!this._keybindings) this._keybindings = []
+    // add key if not alrady bound
+    if (!this._keybindings.map(bind => bind.key).includes(key))
+      this._keybindings.push({key: key, actions: []})
+    // bind callback to key
+    const binding = this._keybindings.find(bind => bind.key == key)
+    if (!binding.actions.includes(callback)) binding.actions.push(callback)
+  }
+
+  /*
+   * Update (call functions bound to keys)
+   */
+  static Update(dt) {
+    for (let binding of this._keybindings) {
+      if (Keyboard.IsDown(binding.key)) {
+        for (let callback of binding.actions)
+          callback(dt)
+      }
+    }
   }
 }
 

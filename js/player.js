@@ -32,39 +32,50 @@ class Player extends Movable {
     this._hp_total = 100
     this._hp_current = this._health_total
     this._alive = true
+
+    // bind keys
+    key.BindKey('a', dt => this.MoveLeft(dt))
+    key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
+    key.BindKey('d', dt => this.MoveRight(dt))
+    key.BindKey('ArrowRight', dt => this.MoveRight(dt))
+    key.BindKey('w', dt => this.Jump(dt))
+    key.BindKey('ArrowUp', dt => this.Jump(dt))
   }
 
   //
   // Update
   //
   Update(dt) {
-    if (key.IsDown('ArrowRight') || key.IsDown('ArrowLeft')) {
-      const dir = key.IsDown('ArrowRight') ? 'right' : 'left'
-      this.Move(dir, dt)
-    } else {
+    if (!this._moved) {
       if (Math.abs(this.vel.x) > 0.0001)
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
-    }
-    if (key.IsDown('ArrowUp')) {
-      this.Jump(dt)
     }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
     // Update Weapon
     this._weapon.Update(dt)
     super.Update(dt)
+    this._moved = false
   }
 
   //
   // Move
   //
   Move(dir, dt) {
+    this._moved = true
     if (!this._alive) return
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
+  }
+
+  MoveRight(dt) {
+    this.Move('right', dt)
+  }
+  MoveLeft(dt) {
+    this.Move('left', dt)
   }
 
   //
