@@ -2,9 +2,9 @@ import { Vec2D } from './math'
 
 class Physics {
 
-  //
-  // Update
-  //
+  /*
+   * Update
+   */
   static Update(dt, lvl) {
     // apply gravity to player
     Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
@@ -30,11 +30,11 @@ class Physics {
     } else {
       // no collision => in air
       if (lvl._player.has_ground_contact) {
-        console.log('falling')
         lvl._player.jump_counter++
         lvl._player.has_ground_contact = false
       }
     }
+
   }
 
   /*
@@ -44,30 +44,36 @@ class Physics {
 
     const GetCollisionFace = () => {
       let faces = []
-      if (rect2._collision_sides.right) faces.push({name: 'right', value: rect1.x + rect1.width - rect2.x})
+      //rect2.x + rect2.width - rect1.x
+      if (rect2._collision_sides.right) faces.push({name: 'right', value: rect2.x + rect2.width - rect1.x})
       if (rect2._collision_sides.bottom) faces.push({name: 'bottom', value: rect1.y + rect1.height - rect2.y})
-      if (rect2._collision_sides.left) faces.push({name: 'left', value: rect2.x + rect2.width - rect1.x})
+      if (rect2._collision_sides.left) faces.push({name: 'left', value: rect1.x + rect1.width - rect2.x})
       if (rect2._collision_sides.top) faces.push({name: 'top', value: rect2.y + rect2.height - rect1.y})
-      return faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name
+      for (let face of faces) {
+        if (face.value > rect1.width / 2)
+          faces.splice(faces.indexOf(face), 1)
+      }
+      return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
     }
 
+    const offset = 0
     switch(GetCollisionFace()) {
       case 'top':
         rect1.has_ground_contact = true
-        rect1.vel.y = 0
-        rect1.pos.y = rect2.y + rect2.height
+        if (rect1.vel.y < 0) rect1.vel.y = 0
+        rect1.pos.y = rect2.y + rect2.height + offset
         break
       case 'bottom':
-        rect1.vel.y = 0
-        rect1.pos.y = rect2.y - rect1.height
-        break
-      case 'left':
-        rect1.vel.x = 0
-        rect1.pos.x = rect2.pos.x + rect2.width
+        if (rect1.vel.y > 0) rect1.vel.y = 0
+        rect1.pos.y = rect2.y - rect1.height - offset
         break
       case 'right':
-        rect1.vel.x = 0
-        rect1.pos.x = rect2.pos.x - rect1.width
+        if (rect1.vel.x < 0) rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x + rect2.width + offset
+        break
+      case 'left':
+        if (rect1.vel.x > 0) rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x - rect1.width - offset
         break
     }
 
