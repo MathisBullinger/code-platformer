@@ -37,41 +37,40 @@ class Physics {
     }
   }
 
-  //
-  // Solve Collision
-  //
+  /*
+   * Solve Collision
+   */
   static _SolveCollision(rect1, rect2) {
-    const rect1_bottom = rect1.y + rect1.height
-    const rect2_bottom = rect2.y + rect2.height
-    const rect1_right = rect1.x + rect1.width
-    const rect2_right = rect2.x + rect2.width
 
-    const b_collision = rect2_bottom - rect1.y
-    const t_collision = rect1_bottom - rect2.y
-    const l_collision = rect1_right - rect2.x
-    const r_collision = rect2_right - rect1.x
+    const GetCollisionFace = () => {
+      let faces = []
+      if (rect2._collision_sides.right) faces.push({name: 'right', value: rect1.x + rect1.width - rect2.x})
+      if (rect2._collision_sides.bottom) faces.push({name: 'bottom', value: rect1.y + rect1.height - rect2.y})
+      if (rect2._collision_sides.left) faces.push({name: 'left', value: rect2.x + rect2.width - rect1.x})
+      if (rect2._collision_sides.top) faces.push({name: 'top', value: rect2.y + rect2.height - rect1.y})
+      return faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name
+    }
 
-    if (b_collision < t_collision && b_collision < l_collision && b_collision < r_collision) {
-      // bottom collision
-      rect1.has_ground_contact = true
-      rect1.vel.y = 0
-      rect1.pos.y = rect2.y + rect2.height
+    switch(GetCollisionFace()) {
+      case 'top':
+        rect1.has_ground_contact = true
+        rect1.vel.y = 0
+        rect1.pos.y = rect2.y + rect2.height
+        break
+      case 'bottom':
+        rect1.vel.y = 0
+        rect1.pos.y = rect2.y - rect1.height
+        break
+      case 'left':
+        rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x + rect2.width
+        break
+      case 'right':
+        rect1.vel.x = 0
+        rect1.pos.x = rect2.pos.x - rect1.width
+        break
     }
-    else if (t_collision < b_collision && t_collision < l_collision && t_collision < r_collision) {
-      // top collision
-      rect1.vel.y = 0
-      rect1.pos.y = rect2.y - rect1.height
-    }
-    else if (r_collision < l_collision && r_collision < t_collision && r_collision < b_collision) {
-      // right collision
-      rect1.vel.x = 0
-      rect1.pos.x = rect2.pos.x + rect2.width
-    }
-    else if (l_collision < r_collision && l_collision < t_collision && l_collision < b_collision) {
-      // left collision
-      rect1.vel.x = 0
-      rect1.pos.x = rect2.pos.x - rect1.width
-    }
+
   }
 
   //

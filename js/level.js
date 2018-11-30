@@ -101,8 +101,10 @@ class Level {
     // lookup block at position
     let GetBlock = (x, y) => {
       for (let block of this._blocks) {
-        if (block.x == x && block.y == y)
+        if (block.x == x && block.y == y) {
+          block['_collision_sides'] = {left: true, top: true, right: true, bottom: true}
           return block
+        }
       }
       return null
     }
