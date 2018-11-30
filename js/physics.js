@@ -30,7 +30,6 @@ class Physics {
     } else {
       // no collision => in air
       if (lvl._player.has_ground_contact) {
-        console.log('falling')
         lvl._player.jump_counter++
         lvl._player.has_ground_contact = false
       }
