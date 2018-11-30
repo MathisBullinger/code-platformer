@@ -11,23 +11,24 @@ class Level {
     this._projectiles = []
     Level._active_level = this
     this._parent_scene = parent_scene
+    this._lower_death_cap = -5 // kill below
   }
 
   Update(dt) {
     Physics.Update(dt, this)
 
-    // Only keep projectiles with an y pos >= -5
-    const delete_list = []
-    this._projectiles = this._projectiles.filter(prj => {
-      if (prj.pos.y >= -5) {
-        return true
-      } else {
-        delete_list.push(prj.graphic)
-        return false
-      }
-    })
-    // Remove "dead" projectiles from scene
-    this._parent_scene.removeChild(...delete_list)
+    // kill player if below death cap
+    if (!this._player.dead && this._player.y < this._lower_death_cap)
+      this._player.Kill()
+
+    // respawn player if dead
+    if (this._player.dead)
+      this._player.Respawn()
+
+    // remove projectiles below death cap
+    const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
+    this.RemoveProjectiles(delete_list)
+
   }
 
   static get ActiveLevel() {

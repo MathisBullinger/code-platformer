@@ -27,6 +27,11 @@ class Player extends Movable {
     // Create weapon
     this._weapon = new Bow()
     this._weapon_holster.addChild(this._weapon.graphic)
+
+    // player health
+    this._hp_total = 100
+    this._hp_current = this._health_total
+    this._alive = true
   }
 
   //
@@ -56,6 +61,7 @@ class Player extends Movable {
   // Move
   //
   Move(dir, dt) {
+    if (!this._alive) return
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
@@ -65,6 +71,7 @@ class Player extends Movable {
   // Jump
   //
   Jump() {
+    if (!this._alive) return
     const now = new Date().getTime()
     // If jump timeout not reached => don't jump
     if (now - this._last_jump < this._jump_timeout) return
@@ -75,6 +82,43 @@ class Player extends Movable {
     // On jump has never ground contact. Also increase jump counter
     this.has_ground_contact = false
     this.jump_counter += 1
+  }
+
+  /*
+   * Damage Player Health
+   */
+  Damage(hp) {
+    this._hp_current -= hp
+    if (this._hp_current <= 0)
+      this.Die()
+  }
+
+  DamagePercent(hp) {
+    this.Damage(hp / 100 * this._hp_total)
+  }
+
+  /*
+   * Kill (cause and trigger on death)
+   */
+  Kill() {
+    this._hp_current = 0
+    this._alive = false
+    console.log('player died')
+  }
+
+  get dead() {
+    return !this._alive
+  }
+
+  /*
+   * Respawn
+   */
+  Respawn() {
+    console.log('respawn player')
+    this._alive = true
+    this._hp_current = this._hp_total
+    this.pos.set(5.1, 3) // replace with proper spawn system
+    this.vel.set(0, 0)
   }
 }
 
