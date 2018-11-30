@@ -18,7 +18,7 @@ class Player extends Movable {
     this._move_vel = game_config.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
-    this._jump_vel = 12
+    this._jump_vel = 13
     this.has_ground_contact = false
     this.jump_counter = 0
 
