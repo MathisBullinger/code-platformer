@@ -77,6 +77,7 @@ class Level {
     // gravity
     this._gravity = new Vec2D(0, -35)
     this._GenLvlGrid()
+    this._GenCollisionFaces()
     // player
     this._player = new Player(new Vec2D(5.1, 3))
     scene.addChild(this._player.graphic)
@@ -119,9 +120,50 @@ class Level {
     this._LogGrid()
   }
 
-  //
-  // print block grid to console
-  //
+  /*
+   * Generate Collision Faces
+   */
+  _GenCollisionFaces() {
+    const blocks = this._block_grid
+
+    const collides_left = (x, y) => {
+      if (x == 0) return false
+      if (blocks[x-1][y]) return false
+      return true
+    }
+    const collides_right = (x, y) => {
+      if (x == blocks.length - 1) return true
+      if (blocks[x+1][y]) return false
+      return true
+    }
+    const collides_top = (x, y) => {
+      if (y == blocks[x].length - 1) return true
+      if (blocks[x][y+1]) return false
+      return true
+    }
+    const collides_bottom = (x, y) => {
+      if (y == 0) return true
+      if (blocks[x][y-1]) return false
+      return true
+    }
+
+    for (let y = blocks[0].length - 1; y >= 0 ; y--) {
+      for (let x = 0; x < blocks.length; x++) {
+        if (blocks[x][y]) {
+          blocks[x][y]['_collision_sides'] = {
+            left: collides_left(x, y), top: collides_top(x, y),
+            right: collides_right(x, y), bottom: collides_bottom(x, y)
+          }
+        }
+      }
+    }
+
+    this._LogCollisionGrid()
+  }
+
+  /*
+   * print block grid to console
+   */
   _LogGrid() {
     let str = '\u250C' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2510\n'
     if (this._block_grid.length > 0) {
@@ -135,6 +177,39 @@ class Level {
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2518'
     console.log(' =Block Grid=\n\n' + str)
+  }
+
+  /*
+   * print collision grid to console
+   */
+  _LogCollisionGrid() {
+    const c_top = '\u2564', c_left = '\u255F', c_right = '\u2562', c_bottom = '\u2567'
+    let str = '\u250C' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2510\n'
+    if (this._block_grid.length > 0) {
+      for (let y = this._block_grid[0].length - 1; y >= 0 ; y--) {
+        str += '\u2502 '
+        // top
+        for (let x = 0; x < this._block_grid.length; x++) {
+          str += this._block_grid[x][y] && this._block_grid[x][y]._collision_sides.top ? '  ' + c_top + '  ' : '     '
+        }
+        str += ' \u2502\n'
+        // left & right
+        str += '\u2502 '
+        for (let x = 0; x < this._block_grid.length; x++) {
+          str += !this._block_grid[x][y] ? '     ' :
+            (this._block_grid[x][y]._collision_sides.left ? ' ' + c_left : '  ') + '\u2593' + (this._block_grid[x][y]._collision_sides.right ? c_right + ' ' : '  ')
+        }
+        str += ' \u2502\n'
+        // bottom
+        str += '\u2502 '
+        for (let x = 0; x < this._block_grid.length; x++) {
+          str += this._block_grid[x][y] && this._block_grid[x][y]._collision_sides.bottom ? '  ' + c_bottom + '  ' : '     '
+        }
+        str += ' \u2502\n'
+      }
+    }
+    str += '\u2514' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2518'
+    console.log('%c =Collision Grid=\n\n' + str, 'font-size: 7px; line-height: 12px')
   }
 
 }
