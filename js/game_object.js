@@ -49,8 +49,8 @@ class Movable extends GameObject {
 
   Update(dt = -1) {
     if (dt == -1) throw new Error('call Update() with delta time in ms!')
-    this.pos = Vec2D.add(this.pos, Vec2D.mult(this.vel, dt / 1000))
-    this.graphic.position = this.pos.toPixiPoint()
+    this.pos = Vec2D.Add(this.pos, Vec2D.Mult(this.vel, dt / 1000))
+    this.graphic.position = this.pos.ToPixiPoint()
   }
 }
 
