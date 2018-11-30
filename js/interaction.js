@@ -1,7 +1,4 @@
 class Keyboard {
-  // constructor() {
-  //   this._keybindings = []
-  // }
 
   static Listen(b = true) {
     if (b) {
@@ -14,18 +11,31 @@ class Keyboard {
     }
   }
 
-  static IsDown(key) {
-    return Keyboard._keys_down.includes(key.toLowerCase())
+  /*
+   * check key status
+   */
+  static _GetKeyObj(key) {
+    return Keyboard._keys_down.find(i => i.key === key)
   }
 
+  static IsActive(key) { // active = pressed & not blocked
+    const obj_key = Keyboard._GetKeyObj(key)
+    return !obj_key ? false : !obj_key.blocked
+  }
+
+  /*
+   * handle JS key events
+   */
   static _HandleKeyDown(e) {
-    if (!Keyboard._keys_down.includes(e.key.toLowerCase()))
-      Keyboard._keys_down.push(e.key.toLowerCase())
+    if (!Keyboard._keys_down.map(i => i.key).includes(e.key.toLowerCase()))
+      Keyboard._keys_down.push({key: e.key.toLowerCase(), blocked: false})
   }
 
   static _HandleKeyUp(e) {
-    if (Keyboard._keys_down.includes(e.key.toLowerCase()))
-      Keyboard._keys_down.splice(Keyboard._keys_down.indexOf(e.key.toLowerCase()), 1)
+    const obj_key = Keyboard._GetKeyObj(e.key.toLowerCase())
+    if (obj_key) {
+      Keyboard._keys_down.splice(Keyboard._keys_down.indexOf(obj_key), 1)
+    }
   }
 
   /*
@@ -47,11 +57,11 @@ class Keyboard {
    */
   static Update(dt) {
     for (let binding of this._keybindings) {
-      if (Keyboard.IsDown(binding.key)) {
+      if (Keyboard.IsActive(binding.key)) {
         for (let callback of binding.actions)
           callback(dt)
         if (binding.key_reset)
-          this._HandleKeyUp({key: binding.key})
+          Keyboard._GetKeyObj(binding.key).blocked = true
       }
     }
   }
