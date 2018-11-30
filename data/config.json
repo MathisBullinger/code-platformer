@@ -1,6 +1,11 @@
 {
   "resolution": 2,
   "str_clear_color": "999999",
+  "gravity": 35,
   "player_move_acc": 30,
-  "player_move_vel": 8
+  "player_move_vel": 8,
+  "player_dash_vel": 15,
+  "player_dash_time": 300,
+  "player_jump_height": 2.2,
+  "player_hp": 100
 }
