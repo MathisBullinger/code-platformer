@@ -31,12 +31,12 @@ class Keyboard {
   /*
    * bind function to keypress
    */
-  static BindKey(key, callback) {
+  static BindKey(key, callback, key_reset = false) {
     key = key.toLowerCase()
     if (!this._keybindings) this._keybindings = []
     // add key if not alrady bound
     if (!this._keybindings.map(bind => bind.key).includes(key))
-      this._keybindings.push({key: key, actions: []})
+      this._keybindings.push({key: key, actions: [], key_reset: key_reset})
     // bind callback to key
     const binding = this._keybindings.find(bind => bind.key == key)
     if (!binding.actions.includes(callback)) binding.actions.push(callback)
@@ -50,6 +50,8 @@ class Keyboard {
       if (Keyboard.IsDown(binding.key)) {
         for (let callback of binding.actions)
           callback(dt)
+        if (binding.key_reset)
+          this._HandleKeyUp({key: binding.key})
       }
     }
   }

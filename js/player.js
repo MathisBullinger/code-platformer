@@ -13,7 +13,7 @@ class Player extends Movable {
     this._move_vel = game_config.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
-    this._jump_timeout = 500
+    this._jump_timeout = 100
     this._jump_vel = 12
     this.has_ground_contact = false
     this.jump_counter = 0
@@ -38,8 +38,8 @@ class Player extends Movable {
     key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
     key.BindKey('d', dt => this.MoveRight(dt))
     key.BindKey('ArrowRight', dt => this.MoveRight(dt))
-    key.BindKey('w', dt => this.Jump(dt))
-    key.BindKey('ArrowUp', dt => this.Jump(dt))
+    key.BindKey('w', dt => this.Jump(dt), true)
+    key.BindKey('ArrowUp', dt => this.Jump(dt), true)
   }
 
   //
