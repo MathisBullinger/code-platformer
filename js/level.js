@@ -2,6 +2,7 @@ import { GameObject } from './game_object'
 import { Player } from './player'
 import { Vec2D } from './math'
 import { Physics } from './physics'
+import { game_config as conf } from './game_config'
 
 class Level {
 
@@ -75,7 +76,7 @@ class Level {
       scene.addChild(block.graphic)
     }
     // gravity
-    this._gravity = new Vec2D(0, -35)
+    this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
     // player
