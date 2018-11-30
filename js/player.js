@@ -5,6 +5,7 @@ import { Movable } from './game_object'
 import { game_config } from './game_config'
 import { Keyboard as key } from './interaction'
 import { Bow } from './weapons/bow'
+import { Gun } from './weapons/gun'
 
 class Player extends Movable {
 
@@ -28,7 +29,7 @@ class Player extends Movable {
     this.graphic.addChild(this._weapon_holster)
 
     // Create weapon
-    this._weapon = new Bow()
+    this._weapon = Math.round(Math.random()) ? new Gun() : new Bow()
     this._weapon_holster.addChild(this._weapon.graphic)
 
     // player health
