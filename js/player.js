@@ -19,7 +19,6 @@ class Player extends Movable {
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
-    console.log(this._jump_vel)
     this.has_ground_contact = false
     this.jump_counter = 0
 

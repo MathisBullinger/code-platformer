@@ -105,7 +105,6 @@ class Level {
     this._GenCollisionFaces()
     // player
     this._player = new Player(new Vec2D(5.1, 3))
-    console.log(this._player)
     scene.addChild(this._player.graphic)
   }
 

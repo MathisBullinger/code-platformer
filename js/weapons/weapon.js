@@ -51,8 +51,9 @@ class Weapon {
     * Create weapon graphic
     */
   static _GetGraphic(pos, scale) {
-    const rect = Graphics.CreateRectangle(pos.x, pos.y, scale.x, scale.y, 0x000000)
+    const rect = Graphics.CreateRectangle(0, 0, scale.x, scale.y, 0x000000)
     rect.pivot.set(scale.x / 2, scale.y / 2)
+    rect.position.set(pos.x, pos.y)
     return rect
   }
 

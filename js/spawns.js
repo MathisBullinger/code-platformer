@@ -1,4 +1,5 @@
 import { RandomWeaponSpawn } from './weapon_spawns/random_weapon_spawn'
+import { NormalWeaponSpawn } from './weapon_spawns/normal_weapon_spawn'
 import { Physics } from './physics'
 
 /**
@@ -36,6 +37,9 @@ class Spawns {
     switch (type) {
       case 1:
         spawn = new RandomWeaponSpawn(pos)
+        break
+      case 2:
+        spawn = new NormalWeaponSpawn(pos)
         break
       default:
         return
