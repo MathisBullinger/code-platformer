@@ -7,13 +7,16 @@ import { Keyboard as key } from './interaction'
 import { Bow } from './weapons/bow'
 
 class Player extends Movable {
+
+  /*
+   * Constructor
+   */
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     super(pos, scale)
     this._move_acc = game_config.player_move_acc
     this._move_vel = game_config.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
-    this._jump_timeout = 500
     this._jump_vel = 12
     this.has_ground_contact = false
     this.jump_counter = 0
@@ -38,13 +41,13 @@ class Player extends Movable {
     key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
     key.BindKey('d', dt => this.MoveRight(dt))
     key.BindKey('ArrowRight', dt => this.MoveRight(dt))
-    key.BindKey('w', dt => this.Jump(dt))
-    key.BindKey('ArrowUp', dt => this.Jump(dt))
+    key.BindKey('w', dt => this.Jump(dt), true)
+    key.BindKey('ArrowUp', dt => this.Jump(dt), true)
   }
 
-  //
-  // Update
-  //
+  /*
+   * Update
+   */
   Update(dt) {
     if (!this._moved) {
       if (Math.abs(this.vel.x) > 0.0001)
@@ -60,9 +63,9 @@ class Player extends Movable {
     this._moved = false
   }
 
-  //
-  // Move
-  //
+  /*
+   * Move
+   */
   Move(dir, dt) {
     this._moved = true
     if (!this._alive) return
@@ -78,14 +81,12 @@ class Player extends Movable {
     this.Move('left', dt)
   }
 
-  //
-  // Jump
-  //
+  /*
+   * Jump
+   */
   Jump() {
     if (!this._alive) return
     const now = new Date().getTime()
-    // If jump timeout not reached => don't jump
-    if (now - this._last_jump < this._jump_timeout) return
     // jump_counter >= 2 => player has already jumped twice
     if (this.jump_counter >= 2) return
     this._last_jump = now
