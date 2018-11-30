@@ -70,10 +70,12 @@ class Physics {
       case 'right':
         if (rect1.vel.x < 0) rect1.vel.x = 0
         rect1.pos.x = rect2.pos.x + rect2.width + offset
+        if (rect1._dashing) rect1.StopDash()
         break
       case 'left':
         if (rect1.vel.x > 0) rect1.vel.x = 0
         rect1.pos.x = rect2.pos.x - rect1.width - offset
+        if (rect1._dashing) rect1.StopDash()
         break
     }
 

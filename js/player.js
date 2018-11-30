@@ -19,7 +19,6 @@ class Player extends Movable {
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
-    console.log(this._jump_vel)
     this.has_ground_contact = false
     this.jump_counter = 0
 
@@ -69,8 +68,7 @@ class Player extends Movable {
     if (this._dashing) {
       const dir = this._move_dir == 'right' ? 1 : -1
       if (new Date().getTime() - this._dash_start >= this._dash_time) {
-        this._dashing = false
-        this.vel.x = this._move_vel * dir
+        this.StopDash()
       }
       this.vel.x = this._dash_vel * dir
     }
@@ -101,10 +99,19 @@ class Player extends Movable {
     this.Move('left', dt)
   }
 
+  /*
+   * Dash
+   */
   Dash() {
     if (!this._move_dir) return
     this._dash_start = new Date().getTime()
     this._dashing = true
+  }
+
+  StopDash() {
+    const dir = this._move_dir == 'right' ? 1 : -1
+    this._dashing = false
+    this.vel.x = this._move_vel * dir
   }
 
   /*
@@ -141,7 +148,6 @@ class Player extends Movable {
   Kill() {
     this._hp_current = 0
     this._alive = false
-    console.log('player died')
   }
 
   get dead() {
@@ -152,7 +158,6 @@ class Player extends Movable {
    * Respawn
    */
   Respawn() {
-    console.log('respawn player')
     this._alive = true
     this._hp_current = this._hp_total
     this.pos.Set(5.1, 3) // replace with proper spawn system
