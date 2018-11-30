@@ -117,8 +117,8 @@ class Player extends Movable {
     console.log('respawn player')
     this._alive = true
     this._hp_current = this._hp_total
-    this.pos.set(5.1, 3) // replace with proper spawn system
-    this.vel.set(0, 0)
+    this.pos.Set(5.1, 3) // replace with proper spawn system
+    this.vel.Set(0, 0)
   }
 }
 

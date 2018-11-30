@@ -72,7 +72,7 @@ class Weapon {
       window.innerHeight - this.graphic.parent.worldTransform.ty)
     // Get the distance between the two => direction vector
     const distance = Vec2D.Sub(screen_mouse_pos, screen_holster_pos)
-    return Vec2D.Div(distance, distance.magnitude) // normalize
+    return Vec2D.Div(distance, distance.Magnitude) // normalize
   }
 }
 
