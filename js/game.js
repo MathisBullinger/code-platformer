@@ -34,6 +34,7 @@ class Game {
   _GameLoop(dt) {
     const max_timestep = 60
     if (dt > max_timestep) dt = max_timestep
+    Keyboard.Update(dt)
     if (this._world) this._world.Update(dt)
   }
 }
