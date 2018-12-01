@@ -97,7 +97,7 @@ class Level {
     }
     // We need at least one spawn point
     if (!player_sp) {
-      console.error('We player spawn points were found for this level.')
+      console.error('No player spawn points were found for this level.')
       return
     }
     // Iterate the "player_sp" data and add _spawnpoints
@@ -166,6 +166,15 @@ class Level {
   _GenCollisionFaces() {
     const blocks = this._block_grid
 
+    const diag_top_left = (x, y) => {
+      if (x == 0 || y == blocks[x].length - 1) return true
+      return blocks[x-1][y+1]
+    }
+    const diag_top_right = (x, y) => {
+      if (x == blocks.length - 1 || y == blocks[x].length - 1) return true
+      return blocks[x+1][y+1]
+    }
+
     const collides_left = (x, y) => {
       if (x == 0) return false
       if (blocks[x-1][y]) return false
@@ -178,7 +187,13 @@ class Level {
     }
     const collides_top = (x, y) => {
       if (y == blocks[x].length - 1) return true
-      if (blocks[x][y+1]) return false
+      if (blocks[x][y+1]) {
+        if (!collides_left(x, y) && !collides_right)
+          return false
+        else {
+          return !diag_top_left(x, y) && !diag_top_right(x, y)
+        }
+      }
       return true
     }
     const collides_bottom = (x, y) => {
