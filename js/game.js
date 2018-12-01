@@ -28,7 +28,7 @@ class Game {
     Keyboard.Listen()
     Mouse.Listen()
 
-    app.ticker.add(() => this._GameLoop(app.ticker.elapsedMS))
+    app.ticker.add(this._GameLoop.bind(this, app.ticker.elapsedMS))
   }
 
   _GameLoop(dt) {

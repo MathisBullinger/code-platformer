@@ -13,11 +13,11 @@ class Physics {
 
     // update projectiles
     for (let prj of lvl._projectiles) {
-      prj.Update(dt) // Update projectile
       // If any collision => remove projectiles
       if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
         lvl.RemoveProjectiles(prj)
       }
+      prj.Update(dt) // Update projectile
     }
 
     // check for collisions
