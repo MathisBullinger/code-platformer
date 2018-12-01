@@ -33,9 +33,9 @@ class Level {
     if (!this._player.dead && this._player.y < this._lower_death_cap)
       this._player.Kill()
 
-    // respawn player if dead
+    // respawn player if dead at a random position
     if (this._player.dead)
-      this._player.Respawn()
+      this._player.Respawn(this._spawns.GetRandomPlayerSpawn())
 
     // remove projectiles below death cap
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
@@ -64,13 +64,16 @@ class Level {
     // Prepare variables
     const layers = data.layers
     let blocks = null
-    let spawnpoints = null
+    let weapon_sp = null
+    let player_sp = null
     // Iterate all layers and assign helpers
     for (let layer of layers) {
       if (layer.name == 'world') {
         blocks = layer.data
-      } else if (layer.name === 'spawnpoints') {
-        spawnpoints = layer.data
+      } else if (layer.name === 'weapon_sp') {
+        weapon_sp = layer.data
+      } else if (layer.name === 'player_sp') {
+        player_sp = layer.data
       }
     }
     // We need level data
@@ -92,19 +95,31 @@ class Level {
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
-    if (spawnpoints !== null) {
-      // Iterate the "spawnpoints" data and add _spawnpoints
-      for (let i = 0; i < spawnpoints.length; i++) {
+    // We need at least one spawn point
+    if (!player_sp) {
+      console.error('We player spawn points were found for this level.')
+      return
+    }
+    // Iterate the "player_sp" data and add _spawnpoints
+    for (let i = 0; i < player_sp.length; i++) {
+      if (player_sp[i] !== 1) continue
+      const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+      this._spawns.AddPlayerSpawn(pos)
+    }
+    // Check if any weapon spawn data was found
+    if (weapon_sp) {
+      // Iterate the "weapon_sp" data and add _spawnpoints
+      for (let i = 0; i < weapon_sp.length; ++i) {
         const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
-        this._spawns.AddWeaponSpawn(spawnpoints[i], pos, scene)
+        this._spawns.AddWeaponSpawn(weapon_sp[i], pos, scene)
       }
     }
     // gravity
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
-    // player
-    this._player = new Player(new Vec2D(5.1, 3))
+    // Create the player at a random position
+    this._player = new Player(this._spawns.GetRandomPlayerSpawn())
     scene.addChild(this._player.graphic)
   }
 

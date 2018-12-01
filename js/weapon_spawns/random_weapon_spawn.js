@@ -15,7 +15,7 @@ class RandomWeaponSpawn extends WeaponSpawn {
    */
   constructor(pos) {
     // Position, cooldown, active color, inactive color
-    super(pos, 2500, 0xFF0000, 0x000000)
+    super(pos, 5000, 0xFF0000, 0x000000)
     // Create question mark text
     this._text = RandomWeaponSpawn._CreateQuestionMark()
     this.graphic.addChild(this._text)
@@ -34,7 +34,7 @@ class RandomWeaponSpawn extends WeaponSpawn {
   TakeWeapon() {
     super.TakeWeapon()
     this.graphic.removeChild(this._text)
-    return Math.random() >= 0.5 ? new Bow() : new Gun()
+    return Math.round(Math.random()) ? new Bow() : new Gun()
   }
 
   ResetWeapon() {
@@ -47,7 +47,7 @@ class RandomWeaponSpawn extends WeaponSpawn {
   }
 
   static _CreateQuestionMark() {
-    const text = new PIXI.Text('?', { fill: '#FFFFFF', fontSize: 24, fontWeight: 'bold' })
+    const text = new PIXI.Text('?', { fill: '#FFFFFF', fontSize: 64, fontWeight: 'bold' })
     const ratio = text.width / text.height
     text.height = 0.6
     text.width = text.height * ratio
