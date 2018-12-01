@@ -26,7 +26,7 @@ class Weapon {
   /**
     * Update weapon and projectiles
     */
-  Update() {
+  Update(dt) {
     // Look at mouse
     const dir = this._GetMouseDirection()
     this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)

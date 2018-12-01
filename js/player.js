@@ -21,6 +21,7 @@ class Player extends Movable {
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
     this.jump_counter = 0
+    this._mass = 60
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
@@ -76,7 +77,7 @@ class Player extends Movable {
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
     // Update Weapon
-    this._weapon.Update(dt)
+    this._weapon.Update(dt, this)
     super.Update(dt)
     this._moved = false
   }
@@ -151,6 +152,10 @@ class Player extends Movable {
 
   get dead() {
     return !this._alive
+  }
+
+  get mass() {
+    return this._mass
   }
 
   /*

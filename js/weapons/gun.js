@@ -14,12 +14,15 @@ class Gun extends Weapon {
     super(new Vec2D(0, 0.4), new Vec2D(0.2, 0.6), 400)
   }
 
-  Update(dt) {
+  Update(dt, player) {
     // Update base
     super.Update(dt)
     // Shoot Bullet
     if (Mouse.IsDown(0) && !this._hasCooldown) {
-      this._SpawnProjectile(new Bullet(this))
+      const bullet = new Bullet(this)
+      this._SpawnProjectile(bullet)
+      player.vel = Vec2D.Add(player.vel, Vec2D.Mult(this._GetMouseDirection(), -(bullet.GetImpulse() / player.mass)))
+
     }
   }
 }

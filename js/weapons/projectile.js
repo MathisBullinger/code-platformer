@@ -9,7 +9,7 @@ class Projectile {
   /**
     * Initializes a new projectile
     */
-  constructor(weapon, scale, shooting_velocity) {
+  constructor(weapon, scale, shooting_velocity, mass) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Projectile) {
       throw new TypeError('Cannot construct abstract Projectile instances directly')
@@ -17,6 +17,7 @@ class Projectile {
     // Set attributes
     this.weapon = weapon
     this.scale = scale
+    this.mass = mass
     // Get projectile orientation and scale direction vector by velocity
     this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
@@ -60,6 +61,14 @@ class Projectile {
       weapon.pos.x * cs - (weapon.pos.y + scale.y / 2) * sn,
       weapon.pos.x * sn + (weapon.pos.y + scale.y / 2) * cs
     ))
+  }
+
+  /**
+   * Gets the projectiles current impulse.
+   * p = m * v
+   */
+  GetImpulse() {
+    return this.mass * Math.sqrt(Math.pow(this.vel.x, 2) + Math.pow(this.vel.y, 2))
   }
 
   /**

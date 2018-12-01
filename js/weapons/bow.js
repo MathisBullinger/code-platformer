@@ -20,12 +20,14 @@ class Bow extends Weapon {
   /**
     * Update bow
     */
-  Update(dt) {    
+  Update(dt, player) {
     // Update base
     super.Update(dt)
     // If left mouse button down and !_HasCooldown => spawn arrow
     if (Mouse.IsDown(0) && !this._hasCooldown) {
-      this._SpawnProjectile(new Arrow(this))
+      const arr = new Arrow(this)
+      this._SpawnProjectile(arr)
+      player.vel = Vec2D.Add(player.vel, Vec2D.Mult(this._GetMouseDirection(), -(arr.GetImpulse() / player.mass)))
     }
   }
 }
