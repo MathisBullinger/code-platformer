@@ -1,3 +1,5 @@
+import { Vec2D } from './math'
+
 /*
  * Keyboard Class
  */
@@ -141,6 +143,15 @@ class Gamepad {
     // bind callback to input
     const binding = this._inputbindings.find(bind => bind.input == input.toLowerCase())
     if (!binding.actions.includes(callback)) binding.actions.push(callback)
+  }
+
+  /*
+   * Get Direction of Stick
+   */
+  static GetStick(stick = 'left') {
+    return stick == 'left' ?
+      new Vec2D(navigator.getGamepads()[0].axes[0], navigator.getGamepads()[0].axes[1]) :
+      new Vec2D(navigator.getGamepads()[0].axes[2], navigator.getGamepads()[0].axes[3])
   }
 
   /*
