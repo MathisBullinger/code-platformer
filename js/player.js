@@ -52,7 +52,12 @@ class Player extends Movable {
     key.BindKey('ArrowUp', dt => this.Jump(dt), true)
     key.BindKey('Shift', () => this.Dash(), true)
 
-    Gamepad.BindInput('A', () => {console.log('pressed A!')})
+    // bind gamepad actions
+    Gamepad.BindInput('stick_left_x', (dt, value) => {
+      if (value > 0) this.MoveRight(dt)
+      else this.MoveLeft(dt)
+    })
+    Gamepad.BindInput('A', dt => this.Jump(dt))
   }
 
   /**
@@ -93,7 +98,8 @@ class Player extends Movable {
   /**
    * Move
    */
-  Move(dir, dt) {
+  Move(dir, dt = -1) {
+    if (dt == -1) console.error('call move with delta time!')
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return

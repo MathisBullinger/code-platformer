@@ -152,7 +152,7 @@ class Gamepad {
     for (let binding of this._inputbindings) {
       if (pad.inputs[binding.input]) {
         for (let callback of binding.actions) {
-          callback(dt)
+          callback(dt, pad.inputs[binding.input])
         }
       }
     }
@@ -176,37 +176,33 @@ class XboxController {
   constructor(pad) {
     this.inputs = {
       // face buttons
-      a: pad.buttons[0],
-      b: pad.buttons[1],
-      x: pad.buttons[2],
-      y: pad.buttons[3],
+      a: pad.buttons[0].value,
+      b: pad.buttons[1].value,
+      x: pad.buttons[2].value,
+      y: pad.buttons[3].value,
       // bumpers
-      LB: pad.buttons[4],
-      RB: pad.buttons[5],
+      LB: pad.buttons[4].value,
+      RB: pad.buttons[5].value,
       // triggers
-      LT: pad.buttons[6],
-      RT: pad.buttons[7],
+      LT: pad.buttons[6].value,
+      RT: pad.buttons[7].value,
       // control buttons
-      back: pad.buttons[8],
-      start: pad.buttons[9],
-      l3: pad.buttons[10],
-      r3: pad.buttons[11],
+      back: pad.buttons[8].value,
+      start: pad.buttons[9].value,
+      l3: pad.buttons[10].value,
+      r3: pad.buttons[11].value,
       // d-pad
-      d_up: pad.buttons[12],
-      d_down: pad.buttons[13],
-      d_left: pad.buttons[14],
-      d_right: pad.buttons[15],
+      d_up: pad.buttons[12].value,
+      d_down: pad.buttons[13].value,
+      d_left: pad.buttons[14].value,
+      d_right: pad.buttons[15].value,
       // xbox button
-      guide: pad.buttons[16],
+      guide: pad.buttons[16].value,
       // sticks
-      stick_left: {
-        x: pad.axes[0],
-        y: pad.axes[1] * -1
-      },
-      stick_right: {
-        x: pad.axes[2],
-        y: pad.axes[3] * -1
-      }
+      stick_left_x: pad.axes[0],
+      stick_left_y: pad.axes[1] * -1,
+      stick_right_x: pad.axes[2],
+      stick_right_y: pad.axes[3] * -1
     }
   }
 }
