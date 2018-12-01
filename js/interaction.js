@@ -134,10 +134,10 @@ class Gamepad {
   /*
    * Bind Input
    */
-  static BindInput(input, callback) {
+  static BindInput(input, callback, input_reset = false) {
     if (!this._inputbindings) this._inputbindings = []
     if (!this._inputbindings.map(bind => bind.input).includes(input))
-      this._inputbindings.push({input: input.toLowerCase(), actions: []})
+      this._inputbindings.push({input: input.toLowerCase(), actions: [], input_reset: input_reset})
     // bind callback to input
     const binding = this._inputbindings.find(bind => bind.input == input.toLowerCase())
     if (!binding.actions.includes(callback)) binding.actions.push(callback)
@@ -151,9 +151,16 @@ class Gamepad {
     const pad = new XboxController(navigator.getGamepads()[0])
     for (let binding of this._inputbindings) {
       if (pad.inputs[binding.input]) {
-        for (let callback of binding.actions) {
-          callback(dt, pad.inputs[binding.input])
+        if (!binding.blocked) {
+          for (let callback of binding.actions) {
+            callback(dt, pad.inputs[binding.input])
+          }
         }
+        if (binding.input_reset)
+          binding.blocked = true
+      } else {
+        if (binding.input_reset)
+          binding.blocked = false
       }
     }
   }

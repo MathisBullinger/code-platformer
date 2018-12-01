@@ -57,7 +57,7 @@ class Player extends Movable {
       if (value > 0) this.MoveRight(dt)
       else this.MoveLeft(dt)
     })
-    Gamepad.BindInput('A', dt => this.Jump(dt))
+    Gamepad.BindInput('A', dt => this.Jump(dt), true)
   }
 
   /**
