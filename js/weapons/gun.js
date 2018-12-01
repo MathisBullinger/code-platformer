@@ -1,4 +1,4 @@
-import { Weapon } from './weapon'
+import { Firearm } from './firearm'
 import { Vec2D } from './../math'
 import { Bullet } from './bullet'
 import { Mouse } from './../interaction'
@@ -6,7 +6,7 @@ import { Mouse } from './../interaction'
 /**
   * Weapon specialization. Shoots fast (not yet)
   */
-class Gun extends Weapon {
+class Gun extends Firearm {
   /**
     * Initializes
     */
@@ -22,7 +22,6 @@ class Gun extends Weapon {
       const bullet = new Bullet(this)
       this._SpawnProjectile(bullet)
       player.vel = Vec2D.Add(player.vel, Vec2D.Mult(this._GetMouseDirection(), -(bullet.GetImpulse() / player.mass)))
-
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Weapon } from './weapon'
+import { Firearm } from './firearm'
 import { Vec2D } from './../math'
 import { Mouse } from './../interaction'
 import { Arrow } from './arrow'
@@ -7,7 +7,7 @@ import { Arrow } from './arrow'
   * Weapon specialization.
   * Shoots slow arrows
   */
-class Bow extends Weapon {
+class Bow extends Firearm {
 
   /**
     * Initializes
