@@ -1,3 +1,6 @@
+/*
+ * Keyboard Class
+ */
 class Keyboard {
 
   static Listen(b = true) {
@@ -112,4 +115,100 @@ class Mouse {
   }
 }
 
-export { Keyboard, Mouse }
+/*
+ * Gamepad Class
+ */
+class Gamepad {
+
+  /*
+   * enable / disable gamepad listening
+   */
+  static Listen(b = true) {
+    if (b) {
+      window.addEventListener('gamepadconnected', e => this._HandleGamepadConnected(e))
+    } else {
+      window.removeEventListener('gamepadconnected', this._HandleGamepadConnected)
+    }
+  }
+
+  /*
+   * Bind Input
+   */
+  static BindInput(input, callback) {
+    if (!this._inputbindings) this._inputbindings = []
+    if (!this._inputbindings.map(bind => bind.input).includes(input))
+      this._inputbindings.push({input: input.toLowerCase(), actions: []})
+    // bind callback to input
+    const binding = this._inputbindings.find(bind => bind.input == input.toLowerCase())
+    if (!binding.actions.includes(callback)) binding.actions.push(callback)
+  }
+
+  /*
+   * Update (call actions if bound input is active)
+   */
+  static Update(dt) {
+    if (!this._controllers || this._controllers.length == 0) return
+    const pad = new XboxController(navigator.getGamepads()[0])
+    for (let binding of this._inputbindings) {
+      if (pad.inputs[binding.input]) {
+        for (let callback of binding.actions) {
+          callback(dt)
+        }
+      }
+    }
+  }
+
+  /*
+   * connect gamepad
+   */
+  static _HandleGamepadConnected(e) {
+    if (!this._controllers) this._controllers = []
+    console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
+      e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length)
+    this._controllers.push(e.gamepad.id)
+  }
+}
+
+/*
+ * Xbox 360 Interface for Gamepad
+ */
+class XboxController {
+  constructor(pad) {
+    this.inputs = {
+      // face buttons
+      a: pad.buttons[0],
+      b: pad.buttons[1],
+      x: pad.buttons[2],
+      y: pad.buttons[3],
+      // bumpers
+      LB: pad.buttons[4],
+      RB: pad.buttons[5],
+      // triggers
+      LT: pad.buttons[6],
+      RT: pad.buttons[7],
+      // control buttons
+      back: pad.buttons[8],
+      start: pad.buttons[9],
+      l3: pad.buttons[10],
+      r3: pad.buttons[11],
+      // d-pad
+      d_up: pad.buttons[12],
+      d_down: pad.buttons[13],
+      d_left: pad.buttons[14],
+      d_right: pad.buttons[15],
+      // xbox button
+      guide: pad.buttons[16],
+      // sticks
+      stick_left: {
+        x: pad.axes[0],
+        y: pad.axes[1] * -1
+      },
+      stick_right: {
+        x: pad.axes[2],
+        y: pad.axes[3] * -1
+      }
+    }
+  }
+}
+
+export { Keyboard, Mouse, Gamepad }

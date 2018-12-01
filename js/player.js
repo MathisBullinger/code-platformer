@@ -3,7 +3,7 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Keyboard as key } from './interaction'
+import { Keyboard as key, Gamepad } from './interaction'
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 
@@ -51,6 +51,8 @@ class Player extends Movable {
     key.BindKey('w', dt => this.Jump(dt), true)
     key.BindKey('ArrowUp', dt => this.Jump(dt), true)
     key.BindKey('Shift', () => this.Dash(), true)
+
+    Gamepad.BindInput('A', () => {console.log('pressed A!')})
   }
 
   /**
