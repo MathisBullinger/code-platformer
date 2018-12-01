@@ -33,7 +33,7 @@ class Level {
     if (!this._player.dead && this._player.y < this._lower_death_cap)
       this._player.Kill()
 
-    // respawn player if dead
+    // respawn player if dead at a random position
     if (this._player.dead)
       this._player.Respawn(this._spawns.GetRandomPlayerSpawn())
 
@@ -118,7 +118,7 @@ class Level {
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
-    // player
+    // Create the player at a random position
     this._player = new Player(this._spawns.GetRandomPlayerSpawn())
     scene.addChild(this._player.graphic)
   }
