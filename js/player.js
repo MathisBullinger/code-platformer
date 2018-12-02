@@ -3,7 +3,7 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Keyboard as key, Gamepad } from './interaction'
+import { Keyboard as key, Gamepad, Mouse } from './interaction'
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 
@@ -58,6 +58,8 @@ class Player extends Movable {
       else this.MoveLeft(dt)
     })
     Gamepad.BindInput('A', dt => this.Jump(dt), true)
+
+    Gamepad.BindInput('RB', () => this.Attack())
   }
 
   /**
@@ -83,6 +85,8 @@ class Player extends Movable {
     }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
+    // Shoot when mouse down
+    if (Mouse.IsDown()) this.Attack()
     // Update Weapon
     this._weapon.Update(dt, this)
     super.Update(dt)
@@ -134,6 +138,15 @@ class Player extends Movable {
     // On jump has never ground contact. Also increase jump counter
     this.has_ground_contact = false
     this.jump_counter += 1
+  }
+
+  /*
+   * Attack
+   */
+  Attack() {
+    const recoil = this._weapon.Shoot()
+    // console.log(recoil)
+    this.vel = Vec2D.Add(this.vel, recoil)
   }
 
   /**

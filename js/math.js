@@ -58,6 +58,10 @@ class Vec2D {
     return new Vec2D(vec.x / num, vec.y / num)
   }
 
+  static Normalize(vec) {
+    return Vec2D.Div(vec, vec.Magnitude)
+  }
+
   ToPixiPoint() {
     return new PIXI.Point(this.x, this.y)
   }

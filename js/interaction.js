@@ -94,7 +94,7 @@ class Mouse {
   /**
     * Check if mouse button is pressed
     */
-  static IsDown(button) {
+  static IsDown(button = 0) {
     return Mouse._button_down.includes(button)
   }
 
@@ -184,6 +184,7 @@ class Gamepad {
     console.log('Gamepad connected at index %d: %s. %d buttons, %d axes.',
       e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length)
     this._controllers.push(e.gamepad.id)
+    console.log(new XboxController(e.gamepad))
   }
 }
 
@@ -199,11 +200,11 @@ class XboxController {
       x: pad.buttons[2].value,
       y: pad.buttons[3].value,
       // bumpers
-      LB: pad.buttons[4].value,
-      RB: pad.buttons[5].value,
+      lb: pad.buttons[4].value,
+      rb: pad.buttons[5].value,
       // triggers
-      LT: pad.buttons[6].value,
-      RT: pad.buttons[7].value,
+      lt: pad.buttons[6].value,
+      rt: pad.buttons[7].value,
       // control buttons
       back: pad.buttons[8].value,
       start: pad.buttons[9].value,
