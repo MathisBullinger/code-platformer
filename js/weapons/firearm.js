@@ -18,7 +18,7 @@ class Firearm extends Weapon {
     const projectile = new this.ammunition(this)
     if (this._hasCooldown) return new Vec2D(0, 0)
     this._SpawnProjectile(projectile)
-    return Vec2D.Mult(Vec2D.Normalize(projectile.vel), -1)
+    return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse())
   }
 
 

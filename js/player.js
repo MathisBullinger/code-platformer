@@ -21,7 +21,7 @@ class Player extends Movable {
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
     this.jump_counter = 0
-    this._mass = 60
+    this._mass = 30
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
@@ -58,7 +58,7 @@ class Player extends Movable {
       else this.MoveLeft(dt)
     })
     Gamepad.BindInput('A', dt => this.Jump(dt), true)
-
+    Gamepad.BindInput('LB', dt => this.Jump(dt), true)
     Gamepad.BindInput('RB', () => this.Attack())
   }
 
@@ -144,8 +144,7 @@ class Player extends Movable {
    * Attack
    */
   Attack() {
-    const recoil = this._weapon.Shoot()
-    // console.log(recoil)
+    const recoil = Vec2D.Div(this._weapon.Shoot(), this._mass)
     this.vel = Vec2D.Add(this.vel, recoil)
   }
 
@@ -186,7 +185,7 @@ class Player extends Movable {
     console.log('respawn player')
     this._alive = true
     this._hp_current = this._hp_total
-    this.pos.Set(spawn_pos.x, spawn_pos.y) // replace with proper spawn system
+    this.pos.Set(spawn_pos.x, spawn_pos.y)
     this.vel.Set(0, 0)
   }
 }
