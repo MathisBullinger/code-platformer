@@ -1,6 +1,7 @@
 import { Graphics, renderer } from './../graphics'
 import { Vec2D } from './../math'
 import { Level } from './../level'
+import { Gamepad } from './../interaction'
 
 /**
   * General weapon class
@@ -21,15 +22,27 @@ class Weapon {
     this._last_fired = Date.now()
     // Get graphics
     this.graphic = Weapon._GetGraphic(pos, scale)
+
+    this._last_mouse_pos = this._GetMousePos()
   }
 
   /**
     * Update weapon and projectiles
     */
-  Update(dt) {
-    // Look at mouse
-    const dir = this._GetMouseDirection()
-    this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
+  Update() {
+    // look at mouse if moved or gamepad
+    const mouse_moved = !Vec2D.Equal(this._GetMousePos(), this._last_mouse_pos)
+    if (mouse_moved) {
+      this._last_mouse_pos = this._GetMousePos()
+      // Look at mouse
+      const dir = this._GetMouseDirection()
+      this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
+    } else {
+      // if gamepad right stick moved, adjust rotation
+      const stick_dir = Gamepad.GetStick('right')
+      if (stick_dir.x || stick_dir.y)
+        this.graphic.parent.rotation = -Math.atan2(stick_dir.x, stick_dir.y * -1)
+    }
   }
 
   /**
@@ -64,9 +77,7 @@ class Weapon {
     */
   _GetMouseDirection() {
     // Get screen coordinates (bottom-left based) for the mouse
-    const screen_mouse_pos = new Vec2D(
-      renderer.plugins.interaction.mouse.global.x,
-      window.innerHeight - renderer.plugins.interaction.mouse.global.y)
+    const screen_mouse_pos = this._GetMousePos()
     // Get screen coordinates (bottom-left based) for the weapon holster
     const screen_holster_pos = new Vec2D(
       this.graphic.parent.worldTransform.tx,
@@ -74,6 +85,13 @@ class Weapon {
     // Get the distance between the two => direction vector
     const distance = Vec2D.Sub(screen_mouse_pos, screen_holster_pos)
     return Vec2D.Div(distance, distance.Magnitude) // normalize
+  }
+
+  _GetMousePos() {
+    return new Vec2D(
+      renderer.plugins.interaction.mouse.global.x,
+      window.innerHeight - renderer.plugins.interaction.mouse.global.y
+    )
   }
 }
 

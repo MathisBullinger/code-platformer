@@ -1,6 +1,6 @@
 import { game_config } from './game_config'
 import { Graphics, app } from './graphics'
-import { Keyboard, Mouse } from './interaction'
+import { Keyboard, Mouse, Gamepad } from './interaction'
 import { World } from './world'
 
 class Game {
@@ -27,6 +27,7 @@ class Game {
     // start event listening
     Keyboard.Listen()
     Mouse.Listen()
+    Gamepad.Listen()
 
     app.ticker.add(this._GameLoop.bind(this, app.ticker.elapsedMS))
   }
@@ -35,6 +36,7 @@ class Game {
     const max_timestep = 60
     if (dt > max_timestep) dt = max_timestep
     Keyboard.Update(dt)
+    Gamepad.Update(dt)
     if (this._world) this._world.Update(dt)
   }
 }
