@@ -149,6 +149,7 @@ class Gamepad {
    * Get Direction of Stick
    */
   static GetStick(stick = 'left') {
+    if (!this._controllers || this._controllers.length == 0) return new Vec2D(0, 0)
     return stick == 'left' ?
       new Vec2D(navigator.getGamepads()[0].axes[0], navigator.getGamepads()[0].axes[1]) :
       new Vec2D(navigator.getGamepads()[0].axes[2], navigator.getGamepads()[0].axes[3])
