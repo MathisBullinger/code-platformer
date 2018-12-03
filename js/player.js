@@ -4,8 +4,7 @@ import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
 import { Keyboard as key, Gamepad, Mouse } from './interaction'
-import { Bow } from './weapons/bow'
-import { Gun } from './weapons/gun'
+import { Weapons, Bow } from './weapons'
 
 class Player extends Movable {
 
@@ -31,7 +30,7 @@ class Player extends Movable {
     this.graphic.addChild(this._weapon_holster)
 
     // Create weapon
-    this._weapon = Math.round(Math.random()) ? new Gun() : new Bow()
+    this._weapon = Weapons.GetRandomWeapon()
     this._weapon_holster.addChild(this._weapon.graphic)
     // If weapon is a bow, add the remaing arrows indicator
     if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)

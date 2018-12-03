@@ -9,7 +9,7 @@ class Projectile {
   /**
     * Initializes a new projectile
     */
-  constructor(weapon, scale, shooting_velocity, mass) {
+  constructor(weapon, scale, shooting_velocity, mass, radians_offset = 0) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Projectile) {
       throw new TypeError('Cannot construct abstract Projectile instances directly')
@@ -19,7 +19,7 @@ class Projectile {
     this.scale = scale
     this.mass = mass
     // Get projectile orientation and scale direction vector by velocity
-    this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
+    this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
     this.pos = Projectile._GetNozzlePosition(weapon, scale)
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
@@ -75,8 +75,8 @@ class Projectile {
     * Takes a weapon and converts the rotation of the weapon holster
     * from radians to a direction vector.
     */
-  static _RadiansToVector(weapon) {
-    const radians = weapon.graphic.parent.rotation
+  static _RadiansToVector(weapon, radians_offset = 0) {
+    const radians = weapon.graphic.parent.rotation + radians_offset
     const [ cs, sn ] = [ Math.cos(radians), Math.sin(radians) ]
     return new Vec2D(
       weapon.pos.x * cs - weapon.pos.y * sn,

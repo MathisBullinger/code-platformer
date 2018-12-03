@@ -1,6 +1,5 @@
 import { WeaponSpawn } from './weapon_spawn'
-import { Bow } from './../weapons/bow'
-import { Gun } from './../weapons/gun'
+import { Weapons } from './../weapons'
 
 /**
  * Implementation for the normal weapon spawn
@@ -48,19 +47,12 @@ class NormalWeaponSpawn extends WeaponSpawn {
    * Render the next weapon at an 45° angle inside the weapon spawn block
    */
   _SetNextWeapon() {
-    this._next_weapon = NormalWeaponSpawn._GetRandomWeapon()
+    this._next_weapon = Weapons.GetRandomWeapon()
     const wp_graphic = this._next_weapon.graphic.clone()
     wp_graphic.position.set(0.5, 0.5 )
     wp_graphic.pivot.set(wp_graphic.width / 2, wp_graphic.height / 2)
     wp_graphic.rotation = -Math.PI / 4
     this.graphic.addChild(wp_graphic)
-  }
-
-  /**
-   * Get a random weapon
-   */
-  static _GetRandomWeapon() {
-    return Math.round(Math.random()) ? new Bow() : new Gun()
   }
 }
 
