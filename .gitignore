@@ -2,6 +2,7 @@
 dist/
 min/
 node_modules/
+tmp/
 
 *_dpr.*
 .DS_Store

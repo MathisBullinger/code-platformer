@@ -39,6 +39,31 @@ class GameObject {
     segments.push(new Line(new Vec2D(vert[3].x, vert[3].y), new Vec2D(vert[0].x, vert[0].y)))
     return segments
   }
+
+  RenderCollisionFaces(scene) {
+    const off = 0.1
+    const color = 0xFF0000
+    if (this._collision_sides.top) {
+      const line = Graphics.CreateLine(this.graphic.x, this.graphic.y + this.graphic.height - off,
+        this.graphic.x + this.graphic.width, this.graphic.y + this.graphic.height - off, 0.05, color)
+      scene.addChild(line)
+    }
+    if (this._collision_sides.bottom) {
+      const line = Graphics.CreateLine(this.graphic.x, this.graphic.y + off,
+        this.graphic.x + this.graphic.width, this.graphic.y + off, 0.05, color)
+      scene.addChild(line)
+    }
+    if (this._collision_sides.left) {
+      const line = Graphics.CreateLine(this.graphic.x + off, this.graphic.y + this.graphic.height,
+        this.graphic.x + off, this.graphic.y, 0.05, color)
+      scene.addChild(line)
+    }
+    if (this._collision_sides.right) {
+      const line = Graphics.CreateLine(this.graphic.x + this.graphic.width - off, this.graphic.y + this.graphic.height,
+        this.graphic.x + this.graphic.width - off, this.graphic.y, 0.05, color)
+      scene.addChild(line)
+    }
+  }
 }
 
 class Movable extends GameObject {
