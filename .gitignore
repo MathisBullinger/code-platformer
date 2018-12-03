@@ -4,3 +4,4 @@ min/
 node_modules/
 
 *_dpr.*
+.DS_Store
