@@ -22,21 +22,28 @@ class Level {
     this._parent_scene = parent_scene
     Level._active_level = this
     this._lower_death_cap = -5 // kill below
+    // list of players
+    this._players = []
   }
 
   Update(dt) {
     // Apply physics to this level
     Physics.Update(dt, this)
-    // Update Spawns
-    this._spawns.Update(dt, this._player)
 
-    // kill player if below death cap
-    if (!this._player.dead && this._player.y < this._lower_death_cap)
-      this._player.Kill()
+    this._players.forEach(player => {
 
-    // respawn player if dead at a random position
-    if (this._player.dead)
-      this._player.Respawn(this._spawns.GetRandomPlayerSpawn())
+      // Update Spawns
+      this._spawns.Update(dt, player)
+
+      // kill player if below death cap
+      if (!player.dead && player.y < this._lower_death_cap)
+        player.Kill()
+
+      // respawn player if dead at a random position
+      if (player.dead)
+        player.Respawn(this._spawns.GetRandomPlayerSpawn())
+
+    })
 
     // remove projectiles below death cap
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
@@ -120,8 +127,13 @@ class Level {
     this._GenLvlGrid()
     this._GenCollisionFaces()
     // Create the player at a random position
-    this._player = new Player(this._spawns.GetRandomPlayerSpawn())
-    scene.addChild(this._player.graphic)
+    const player = new Player(this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player.graphic)
+    this._players.push(player)
+
+    const player2 = new Player(this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player2.graphic)
+    this._players.push(player2)
 
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
