@@ -14,7 +14,8 @@ class World {
     * Create new world
     */
   Create() {
-    const lvl_data = require('../data/level/map_extern.json')
+    // const lvl_data = require('../data/level/map_extern.json')
+    const lvl_data = require('../data/level/Basement.json')
     this._CreateScene()
     this.level = new Level(this.scene)
     this.level.Load(lvl_data, this.scene)
@@ -59,7 +60,7 @@ class World {
   _ResizeScene() {
     // rescale scene to fit into screen
     const scene_ratio = Math.abs(this.scene.height / this.scene.width)
-    if (this.scene.width / window.innerWidth >= this.scene.height / window.innerHeight) {
+    if (this.scene.width / window.innerWidth >= Math.abs(this.scene.height / window.innerHeight)) {
       this.scene.width = window.innerWidth / window.devicePixelRatio
       this.scene.height = scene_ratio * this.scene.width * -1
       const pos_y = (window.innerHeight - (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2) / renderer.resolution
@@ -67,6 +68,8 @@ class World {
     } else {
       this.scene.height = window.innerHeight / 2 * -1
       this.scene.width = 1 / scene_ratio * this.scene.height * -1
+      const pos_x = ((window.innerWidth - Math.abs(this.scene.width * renderer.resolution)) / 2) / renderer.resolution
+      this.scene.x = pos_x
     }
   }
 
