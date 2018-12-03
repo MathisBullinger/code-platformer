@@ -9,7 +9,7 @@ class Projectile {
   /**
     * Initializes a new projectile
     */
-  constructor(weapon, scale, shooting_velocity) {
+  constructor(weapon, scale, shooting_velocity, mass) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Projectile) {
       throw new TypeError('Cannot construct abstract Projectile instances directly')
@@ -17,13 +17,14 @@ class Projectile {
     // Set attributes
     this.weapon = weapon
     this.scale = scale
+    this.mass = mass
     // Get projectile orientation and scale direction vector by velocity
     this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
-    this.pos = Projectile._GetNozzlePosition(weapon)
+    this.pos = Projectile._GetNozzlePosition(weapon, scale)
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
     // Center pivot and apply holster rotation
-    this.graphic.pivot.set(scale.x / 2, 0)
+    this.graphic.pivot.set(scale.x / 2, scale.y / 2)
     this.graphic.rotation = weapon.graphic.parent.rotation
   }
 
@@ -34,6 +35,7 @@ class Projectile {
     // Apply velocity
     this.pos = Vec2D.Add(this.pos, Vec2D.Mult(this.vel, dt / 1000))
     this.graphic.position = this.pos.ToPixiPoint()
+    this.graphic.rotation = Math.atan2(this.vel.y, this.vel.x) + (Math.PI / 2)
     this.vel.y -= 9.81 * (dt / 1000)
   }
 
@@ -43,7 +45,7 @@ class Projectile {
     * it already include the inverse y and scene scaling.
     * (Most likely there is a way but I don't want to do the math for that)
     */
-  static _GetNozzlePosition(weapon) {
+  static _GetNozzlePosition(weapon, scale) {
     // Get graphics for all relevant entities. This is an ES6 notation, will fail on different es versions
     const [ holster_rot, holster_graphic, player_graphic ] = [ weapon.graphic.parent.rotation, weapon.graphic.parent, weapon.graphic.parent.parent ]
     // Holster is at pos = player_graphic pos + holster_graphic_pos
@@ -56,9 +58,17 @@ class Projectile {
     // x = x * cs - y * sn;
     // y = x * sn + y * cs;
     return Vec2D.Add(holster_pos, new Vec2D(
-      weapon.pos.x * cs - weapon.pos.y * sn,
-      weapon.pos.x * sn + weapon.pos.y * cs
+      weapon.pos.x * cs - (weapon.pos.y + scale.y / 2) * sn,
+      weapon.pos.x * sn + (weapon.pos.y + scale.y / 2) * cs
     ))
+  }
+
+  /**
+   * Gets the projectiles current impulse.
+   * p = m * v
+   */
+  GetImpulse() {
+    return this.mass * Math.sqrt(Math.pow(this.vel.x, 2) + Math.pow(this.vel.y, 2))
   }
 
   /**

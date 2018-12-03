@@ -3,7 +3,7 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Keyboard as key } from './interaction'
+import { Keyboard as key, Gamepad, Mouse } from './interaction'
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 
@@ -21,6 +21,7 @@ class Player extends Movable {
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
     this.jump_counter = 0
+    this._mass = 30
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
@@ -50,6 +51,15 @@ class Player extends Movable {
     key.BindKey('w', dt => this.Jump(dt), true)
     key.BindKey('ArrowUp', dt => this.Jump(dt), true)
     key.BindKey('Shift', () => this.Dash(), true)
+
+    // bind gamepad actions
+    Gamepad.BindInput('stick_left_x', (dt, value) => {
+      if (value > 0) this.MoveRight(dt)
+      else this.MoveLeft(dt)
+    })
+    Gamepad.BindInput('A', dt => this.Jump(dt), true)
+    Gamepad.BindInput('LB', dt => this.Jump(dt), true)
+    Gamepad.BindInput('RB', () => this.Attack())
   }
 
   /**
@@ -75,8 +85,10 @@ class Player extends Movable {
     }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
+    // Shoot when mouse down
+    if (Mouse.IsDown()) this.Attack()
     // Update Weapon
-    this._weapon.Update(dt)
+    this._weapon.Update(dt, this)
     super.Update(dt)
     this._moved = false
   }
@@ -90,7 +102,8 @@ class Player extends Movable {
   /**
    * Move
    */
-  Move(dir, dt) {
+  Move(dir, dt = -1) {
+    if (dt == -1) console.error('call move with delta time!')
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
@@ -127,6 +140,14 @@ class Player extends Movable {
     this.jump_counter += 1
   }
 
+  /*
+   * Attack
+   */
+  Attack() {
+    const recoil = Vec2D.Div(this._weapon.Shoot(), this._mass)
+    this.vel = Vec2D.Add(this.vel, recoil)
+  }
+
   /**
    * Damage Player Health
    */
@@ -153,14 +174,18 @@ class Player extends Movable {
     return !this._alive
   }
 
+  get mass() {
+    return this._mass
+  }
+
   /*
    * Respawn
    */
-  Respawn() {
+  Respawn(spawn_pos) {
     console.log('respawn player')
     this._alive = true
     this._hp_current = this._hp_total
-    this.pos.Set(5.1, 3) // replace with proper spawn system
+    this.pos.Set(spawn_pos.x, spawn_pos.y)
     this.vel.Set(0, 0)
   }
 }

@@ -13,7 +13,7 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   constructor(pos) {
     // Position, cooldown, active color, inactive color
-    super(pos, 2500, 0xFF0000, 0x000000)
+    super(pos, 5000, 0xFF0000, 0x000000)
     // Next weapon
     this._SetNextWeapon()
   }
@@ -60,7 +60,7 @@ class NormalWeaponSpawn extends WeaponSpawn {
    * Get a random weapon
    */
   static _GetRandomWeapon() {
-    return Math.random() >= 0.5 ? new Bow() : new Gun()
+    return Math.round(Math.random()) ? new Bow() : new Gun()
   }
 }
 

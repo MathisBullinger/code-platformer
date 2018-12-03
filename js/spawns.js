@@ -8,6 +8,7 @@ import { Physics } from './physics'
 class Spawns {
   constructor() {
     this._weapon_spawns = []
+    this._player_spawns = []
   }
 
   /**
@@ -47,6 +48,20 @@ class Spawns {
     // Add weapon spawn to list and scene
     this._weapon_spawns.push(spawn)
     scene.addChild(spawn.graphic)
+  }
+
+  /**
+   * Adds another point to the collection of player spawn points
+   */
+  AddPlayerSpawn(pos) {
+    this._player_spawns.push(pos)
+  }
+
+  /**
+   * Gets a random spawn point from the collection
+   */
+  GetRandomPlayerSpawn() {
+    return this._player_spawns[Math.floor(Math.random() * this._player_spawns.length)]
   }
 }
 
