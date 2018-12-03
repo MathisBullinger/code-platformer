@@ -1,6 +1,7 @@
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 import { Minigun } from './weapons/minigun'
+import { Shotgun } from './weapons/shotgun'
 
 class Weapons {
   static GetRandomWeapon() {
@@ -9,6 +10,6 @@ class Weapons {
     return new wpn()
   }
 }
-Weapons._weapons = [ Bow, Gun, Minigun ]
+Weapons._weapons = [ Bow, Gun, Minigun, Shotgun ]
 
-export { Weapons, Bow, Gun, Minigun }
+export { Weapons, Bow, Gun, Minigun, Shotgun }

@@ -15,8 +15,8 @@ class Firearm extends Weapon {
    */
   Shoot() {
     if (!this.ammunition) throw new Error('undefined ammunition')
-    const projectile = new this.ammunition(this)
     if (this._hasCooldown) return new Vec2D(0, 0)
+    const projectile = new this.ammunition(this)
     this._SpawnProjectile(projectile)
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse())
   }
