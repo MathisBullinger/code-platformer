@@ -33,6 +33,8 @@ class Player extends Movable {
     // Create weapon
     this._weapon = Math.round(Math.random()) ? new Gun() : new Bow()
     this._weapon_holster.addChild(this._weapon.graphic)
+    // If weapon is a bow, add the remaing arrows indicator
+    if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
 
     // player health
     this._hp_total = conf.player_hp
@@ -94,10 +96,19 @@ class Player extends Movable {
     this._moved = false
   }
 
+  /**
+   * Set the players weapon
+   */
   SetWeapon(weapon) {
+    // Remove the weapon
     this._weapon_holster.removeChild(this._weapon.graphic)
+    // If weapon was a bow, also remove the arrow indicator
+    if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
+    // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
     this._weapon_holster.addChild(this._weapon.graphic)
+    // If new weapon is a bow, also add the arrow indicator
+    if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
   }
 
   /**
