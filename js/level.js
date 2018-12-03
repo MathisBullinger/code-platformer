@@ -172,39 +172,46 @@ class Level {
     const blocks = this._block_grid
 
     const diag_top_left = (x, y) => {
-      if (x == 0 || y == blocks[x].length - 1) return true
+      if (x == 0 || y == blocks[x].length - 1) return false
       return blocks[x-1][y+1]
     }
     const diag_top_right = (x, y) => {
-      if (x == blocks.length - 1 || y == blocks[x].length - 1) return true
+      if (x == blocks.length - 1 || y == blocks[x].length - 1) return false
       return blocks[x+1][y+1]
     }
 
     const collides_left = (x, y) => {
       if (x == 0) return true
-      if (blocks[x-1][y]) return false
-      return true
+      return !blocks[x-1][y]
     }
     const collides_right = (x, y) => {
       if (x == blocks.length - 1) return true
-      if (blocks[x+1][y]) return false
-      return true
+      return !blocks[x+1][y]
     }
     const collides_top = (x, y) => {
-      if (y == blocks[x].length - 1) return true
+      const args = [x, y]
+      // topmost block => false
+      if (y == blocks[x].length - 1) {
+        return true
+      }
+      // block on top...
       if (blocks[x][y+1]) {
-        if (!collides_left(x, y) && !collides_right)
+        // ...no block left & right => false
+        if (collides_left(...args) && collides_right(...args)) {
           return false
-        else {
-          return !diag_top_left(x, y) && !diag_top_right(x, y)
+        // ...block at top...
+        } else {
+          // ...block left and no block top right or
+          // block right and no block top left ? true : false
+          return  (!diag_top_left(...args) && collides_right(...args) ||
+                  (!diag_top_right(...args) && collides_left(...args)))
         }
       }
       return true
     }
     const collides_bottom = (x, y) => {
       if (y == 0) return true
-      if (blocks[x][y-1]) return false
-      return true
+      return !blocks[x][y-1]
     }
 
     for (let y = blocks[0].length - 1; y >= 0 ; y--) {
@@ -225,6 +232,7 @@ class Level {
    * print block grid to console
    */
   _LogGrid() {
+    console.groupCollapsed('= BLOCK GRID =')
     let str = '\u250C' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2510\n'
     if (this._block_grid.length > 0) {
       for (let y = this._block_grid[0].length - 1; y >= 0 ; y--) {
@@ -236,13 +244,15 @@ class Level {
       }
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2518'
-    console.log(' =Block Grid=\n\n' + str)
+    console.log('\n' + str)
+    console.groupEnd()
   }
 
   /*
    * print collision grid to console
    */
   _LogCollisionGrid() {
+    console.groupCollapsed('= COLLISION GRID =')
     const c_top = '\u2564', c_left = '\u255F', c_right = '\u2562', c_bottom = '\u2567'
     let str = '\u250C' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2510\n'
     if (this._block_grid.length > 0) {
@@ -269,7 +279,8 @@ class Level {
       }
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2518'
-    console.log('%c =Collision Grid=\n\n' + str, 'font-size: 7px; line-height: 12px')
+    console.log('%c\n' + str, 'font-size: 7px; line-height: 12px')
+    console.groupEnd()
   }
 
   /*
