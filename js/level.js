@@ -4,6 +4,7 @@ import { Vec2D } from './math'
 import { Physics } from './physics'
 import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
+import { GetUrlParam } from './util'
 
 class Level {
 
@@ -121,6 +122,10 @@ class Level {
     // Create the player at a random position
     this._player = new Player(this._spawns.GetRandomPlayerSpawn())
     scene.addChild(this._player.graphic)
+
+    // render collision faces
+    if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
+      this._RenderCollisionFaces(scene)
   }
 
   /**
@@ -265,6 +270,15 @@ class Level {
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2518'
     console.log('%c =Collision Grid=\n\n' + str, 'font-size: 7px; line-height: 12px')
+  }
+
+  /*
+   * Render Collision Faces
+   */
+  _RenderCollisionFaces(scene) {
+    for (let block of this._blocks) {
+      block.RenderCollisionFaces(scene)
+    }
   }
 
 }
