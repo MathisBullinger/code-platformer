@@ -13,6 +13,7 @@ class Player extends Movable {
    * Constructor
    */
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
+    console.log('spawn player at ', pos)
     super(pos, scale)
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
@@ -182,7 +183,7 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
-    console.log('respawn player')
+    console.log('respawn player', spawn_pos)
     this._alive = true
     this._hp_current = this._hp_total
     this.pos.Set(spawn_pos.x, spawn_pos.y)
