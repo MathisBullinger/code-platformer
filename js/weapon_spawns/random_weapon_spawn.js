@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { WeaponSpawn } from './weapon_spawn'
-import { Bow } from './../weapons/bow'
-import { Gun } from './../weapons/gun'
+import { Weapons } from './../weapons'
 
 /**
  * Implementation for a randomizing weapon spawn.
@@ -34,7 +33,7 @@ class RandomWeaponSpawn extends WeaponSpawn {
   TakeWeapon() {
     super.TakeWeapon()
     this.graphic.removeChild(this._text)
-    return Math.round(Math.random()) ? new Bow() : new Gun()
+    return Weapons.GetRandomWeapon()
   }
 
   ResetWeapon() {
