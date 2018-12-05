@@ -1,5 +1,6 @@
 import { Vec2D, Line } from './math'
 import { Graphics } from './graphics'
+import { game_config } from './game_config'
 
 class GameObject {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(1, 1)) {
@@ -74,8 +75,31 @@ class Movable extends GameObject {
 
   Update(dt = -1) {
     if (dt == -1) throw new Error('call Update() with delta time in ms!')
+    this._last_vert = this.GetVertices()
     this.pos = Vec2D.Add(this.pos, Vec2D.Mult(this.vel, dt / 1000))
     this.graphic.position = this.pos.ToPixiPoint()
+    if (game_config.display_mov_vector) this.RenderMoveVec()
+  }
+
+  RenderMoveVec() {
+    if (!game_config.scene) return
+    if (this._mov_vecs) {
+      this._mov_vecs.forEach(vec => game_config.scene.removeChild(vec))
+    } else {
+      this._mov_vecs = []
+    }
+    const vertices = this.GetVertices()
+    for (let i in vertices) {
+      const line = Graphics.CreateLine(vertices[i].x, vertices[i].y,
+        this._last_vert[i].x, this._last_vert[i].y, 0.1, 0x00FF00)
+      this._mov_vecs.push(line)
+      game_config.scene.addChild(line)
+    }
+  }
+
+  RemoveMoveVec() {
+    if (!this._mov_vecs || !game_config.scene) return
+    this._mov_vecs.forEach(vec => game_config.scene.removeChild(vec))
   }
 }
 

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { renderer } from './graphics'
 import { Level } from './level'
+import { game_config } from './game_config'
 
 class World {
   /**
@@ -51,6 +52,7 @@ class World {
     this.pix_per_unit = window.innerWidth / 10
     this.scene.scale.x *= this.pix_per_unit / renderer.resolution
     this.scene.scale.y *= this.pix_per_unit / renderer.resolution
+    game_config.scene = this.scene
   }
 
   /**

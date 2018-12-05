@@ -7,5 +7,6 @@
   "player_dash_vel": 15,
   "player_dash_time": 300,
   "player_jump_height": 2.2,
-  "player_hp": 100
+  "player_hp": 100,
+  "display_mov_vector": true
 }
