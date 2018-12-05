@@ -65,7 +65,7 @@ class World {
       const pos_y = (window.innerHeight - (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2) / renderer.resolution
       this.scene.y = pos_y
     } else {
-      this.scene.height = window.innerHeight / 2 * -1
+      this.scene.height = window.innerHeight / window.devicePixelRatio * -1
       this.scene.width = 1 / scene_ratio * this.scene.height * -1
       const pos_x = ((window.innerWidth - Math.abs(this.scene.width * renderer.resolution)) / 2) / renderer.resolution
       this.scene.x = pos_x

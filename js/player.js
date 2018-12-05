@@ -37,7 +37,7 @@ class Player extends Movable {
 
     // player health
     this._hp_total = conf.player_hp
-    this._hp_current = this._health_total
+    this._hp_current = this._hp_total
     this._alive = true
 
     this._dashing = false
@@ -187,6 +187,10 @@ class Player extends Movable {
 
   get mass() {
     return this._mass
+  }
+
+  get health() {
+    return this._hp_current
   }
 
   /*
