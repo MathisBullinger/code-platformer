@@ -6,10 +6,12 @@ class Physics {
    * Update
    */
   static Update(dt, lvl) {
-    // apply gravity to player
-    Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
-    // update player position
-    lvl._player.Update(dt)
+    lvl._players.forEach(player => {
+      // apply gravity to player
+      Physics._Accelerate(player.vel, lvl._gravity, dt)
+      // update player position
+      player.Update(dt)
+    })
 
     // update projectiles
     for (let prj of lvl._projectiles) {
@@ -20,20 +22,22 @@ class Physics {
       prj.Update(dt) // Update projectile
     }
 
-    // check for collisions
-    const collisions = Physics._GetColliding(lvl._player, lvl._block_grid)
-    if (collisions.length > 0) {
-      // solve collisions
-      for (let col of collisions) {
-        Physics._SolveCollision(lvl._player, col)
+    lvl._players.forEach(player => {
+      // check for collisions
+      const collisions = Physics._GetColliding(player, lvl._block_grid)
+      if (collisions.length > 0) {
+        // solve collisions
+        for (let col of collisions) {
+          Physics._SolveCollision(player, col)
+        }
+      } else {
+        // no collision => in air
+        if (player.has_ground_contact) {
+          player.jump_counter++
+          player.has_ground_contact = false
+        }
       }
-    } else {
-      // no collision => in air
-      if (lvl._player.has_ground_contact) {
-        lvl._player.jump_counter++
-        lvl._player.has_ground_contact = false
-      }
-    }
+    })
 
   }
 
