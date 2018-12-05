@@ -19,6 +19,8 @@ class Physics {
       if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
         lvl.RemoveProjectiles(prj)
       }
+      // apply gravity to bullet
+      Physics._Accelerate(prj.vel, lvl._gravity, dt)
       prj.Update(dt) // Update projectile
     }
 
