@@ -61,6 +61,9 @@ class Level {
   }
 
   RemoveProjectiles(...prj) {
+    prj.forEach(p => {
+      p.RemoveMoveVec()
+    })
     this._parent_scene.removeChild(...([...prj].map(pr => pr.graphic)))
     this._projectiles = this._projectiles.filter(pr => !([...prj]).includes(pr))
   }
@@ -128,6 +131,7 @@ class Level {
     this._GenCollisionFaces()
     // Create the player at a random position
     const player = new Player(this._spawns.GetRandomPlayerSpawn())
+    // player.is_fast = true
     scene.addChild(player.graphic)
     this._players.push(player)
 
