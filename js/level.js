@@ -131,13 +131,13 @@ class Level {
     this._GenCollisionFaces()
     // Create the player at a random position
     const player = new Player(this._spawns.GetRandomPlayerSpawn())
-    player.is_fast = true
+    // player.is_fast = true
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    // const player2 = new Player(this._spawns.GetRandomPlayerSpawn())
-    // scene.addChild(player2.graphic)
-    // this._players.push(player2)
+    const player2 = new Player(this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player2.graphic)
+    this._players.push(player2)
 
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
