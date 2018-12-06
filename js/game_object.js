@@ -71,6 +71,7 @@ class Movable extends GameObject {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(1, 1)) {
     super(pos, scale)
     this.vel = new Vec2D(0, 0)
+    this.is_fast = false  // vector collision detection
   }
 
   Update(dt = -1) {

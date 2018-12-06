@@ -1,4 +1,4 @@
-import { Vec2D } from './math'
+import { Vec2D, Line } from './math'
 
 class Physics {
 
@@ -63,7 +63,7 @@ class Physics {
       return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
     }
 
-    const offset = 0
+    const offset = 0.000001
     switch(GetCollisionFace()) {
       case 'top':
         rect1.has_ground_contact = true
@@ -104,6 +104,11 @@ class Physics {
   // returns array of blocks that rect collides with
   //
   static _GetColliding(rect, grid_comp) {
+    const collision_func = rect.is_fast ? this._GetCollidingVec : this._GetCollidingStep
+    return collision_func(rect, grid_comp)
+  }
+
+  static _GetCollidingStep(rect, grid_comp) {
     // rasterize player
     let collision_points = []
     for (let x = Math.floor(rect.x); x <= Math.floor(rect.x + rect.width); x++) {
@@ -120,6 +125,39 @@ class Physics {
         continue
       if (grid_comp[p.x][p.y])
         collisions.push(grid_comp[p.x][p.y])
+    }
+    return collisions
+  }
+
+  static _GetCollidingVec(rect, grid_comp) {
+    if (!rect._last_vert) return
+    let vertex_lines = []
+    const vertices = rect.GetVertices()
+    for (let i in vertices) {
+      vertex_lines.push(new Line(rect._last_vert[i], vertices[i]))
+    }
+
+    let collisions = []
+    for (let line of vertex_lines) {
+      // coordinates of line
+      const x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
+        x2 = Math.floor(line.x2), y2 = Math.floor(line.y2)
+      // continue if out of level
+      if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) ||
+        (x1 >= grid_comp.length && x2 >= grid_comp.length) ||
+        (y1 >= grid_comp[0].length && y2 >= grid_comp[0].length)) {
+        continue
+      }
+      // check blocks in movement range for collisions
+      for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+        for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+
+          if (grid_comp[x][y]) {
+            collisions.push(grid_comp[x][y])
+          }
+
+        }
+      }
     }
     return collisions
   }
