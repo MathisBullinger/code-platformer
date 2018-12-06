@@ -2,7 +2,6 @@ import { game_config } from './game_config'
 import { Graphics, app } from './graphics'
 import { Keyboard, Mouse, Gamepad } from './interaction'
 import { World } from './world'
-import { UI } from './ui/user_interface'
 
 class Game {
 
@@ -25,9 +24,6 @@ class Game {
     this._world = new World()
     this._graphics.AddScene(this._world.scene)
 
-    this._ui = new UI()
-    this._graphics.AddScene(this._ui.graphic)
-
     // start event listening
     Keyboard.Listen()
     Mouse.Listen()
@@ -41,10 +37,7 @@ class Game {
     if (dt > max_timestep) dt = max_timestep
     Keyboard.Update(dt)
     Gamepad.Update(dt)
-    if (this._world) {
-      this._world.Update(dt)
-      this._ui.Update()
-    }
+    if (this._world) this._world.Update(dt)
   }
 }
 

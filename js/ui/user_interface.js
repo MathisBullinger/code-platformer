@@ -16,7 +16,7 @@ class UI {
 
   _setLevel(lvl) {
     this._current_level = lvl
-    this._player_ui = new PlayerUI([this._current_level._player])
+    this._player_ui = new PlayerUI(this._current_level._players)
     this.graphic.addChild(this._player_ui.graphic)
   }
 }

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { renderer } from './graphics'
 import { Level } from './level'
+import { UI } from './ui/user_interface'
 
 class World {
   /**
@@ -19,6 +20,9 @@ class World {
     this.level = new Level(this.scene)
     this.level.Load(lvl_data, this.scene)
 
+    this.ui = new UI()
+    this.scene.addChild(this.ui.graphic)
+
     // rescale scene to fit into screen
     this._ResizeScene()
     window.addEventListener('resize', () => this._ResizeScene())
@@ -29,6 +33,7 @@ class World {
     */
   Update(dt) {
     this.level.Update(dt)
+    this.ui.Update()
   }
 
   /**

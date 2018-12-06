@@ -5,6 +5,7 @@ import { Physics } from './physics'
 import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
 import { GetUrlParam } from './util'
+import { Sprites } from './sprites'
 
 class Level {
 
@@ -99,7 +100,11 @@ class Level {
     for (let i = 0; i < blocks.length; i++) {
       const material = blocks[i]
       if (material != 1) continue
-      let block = new GameObject(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1))
+      const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+      let block = new GameObject(pos)
+      block.graphic = Sprites.Wall
+      block.graphic.scale.set(1 / 256)
+      block.graphic.position.set(pos.x, pos.y)
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }

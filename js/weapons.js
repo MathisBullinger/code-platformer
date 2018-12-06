@@ -2,7 +2,7 @@ import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 import { Minigun } from './weapons/minigun'
 import { Shotgun } from './weapons/shotgun'
-import { Images } from './images'
+import { Sprites } from './sprites'
 
 class Weapons {
   static GetRandomWeapon() {
@@ -14,16 +14,28 @@ class Weapons {
     let weapon = undefined
     switch (wpn.constructor) {
       case Gun:
-        weapon = Images.Gun
-        weapon.anchor.set(0.5, 0.5)
+        weapon = Sprites.Gun
+        weapon.scale.set(0.0015)
+        break
+      case Bow:
+          weapon = Sprites.Bow
+          weapon.scale.set(2 / 512)
+          break
+      case Minigun:
+        weapon = Sprites.Minigun
+        weapon.scale.set(0.0015)
+        break
+      case Shotgun:
+        weapon = Sprites.Shotgun
         weapon.scale.set(0.0015)
         break
       default:
         break
     }
+    weapon.anchor.set(0.5, 0.5)
     return weapon
   }
 }
-Weapons._weapons = [ Gun /**, Bow, Minigun, Shotgun */ ]
+Weapons._weapons = [ Gun, Bow, Minigun, Shotgun ]
 
 export { Weapons, Bow, Gun, Minigun, Shotgun }
