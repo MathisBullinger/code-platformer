@@ -22,7 +22,7 @@ class Weapon {
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
-    this.graphic = Weapon._CreateGraphic(this, pos)
+    this.paintWeapon()
     this._last_mouse_pos = this._GetMousePos()
   }
 
@@ -64,10 +64,9 @@ class Weapon {
   /**
     * Create weapon graphic
     */
-  static _CreateGraphic(inst, pos) {
-    let rect = Weapons.GetSprite(inst)
-    rect.position.set(pos.x, pos.y)
-    return rect
+  paintWeapon(variant = 0) {
+    this.graphic = Weapons.GetSprite(this, variant)
+    this.graphic.position.set(this.pos.x, this.pos.y)
   }
 
   /**
