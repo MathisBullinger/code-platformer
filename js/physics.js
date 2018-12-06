@@ -140,7 +140,7 @@ class Physics {
     let collisions = []
     for (let line of vertex_lines) {
       // coordinates of line
-      const x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
+      let x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
         x2 = Math.floor(line.x2), y2 = Math.floor(line.y2)
       // continue if out of level
       if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) ||
@@ -148,10 +148,21 @@ class Physics {
         (y1 >= grid_comp[0].length && y2 >= grid_comp[0].length)) {
         continue
       }
+      const match_bounds = (num, max) => {
+        if (num < 0) return 0
+        if (num > max) return max
+        return num
+      }
+      x1 = match_bounds(x1, grid_comp.length - 1)
+      x2 = match_bounds(x2, grid_comp.length - 1)
+      y1 = match_bounds(y1, grid_comp[0].length - 1)
+      y2 = match_bounds(y2, grid_comp[0].length - 1)
+
       // check blocks in movement range for collisions
       for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
         for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
 
+          // console.log(x, y)
           if (grid_comp[x][y]) {
             collisions.push(grid_comp[x][y])
           }
