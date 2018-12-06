@@ -22,6 +22,7 @@ class Graphics {
         : 'canvas')
 
     PIXI.settings.RESOLUTION = game_config.resolution
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
 
     // create & config pixi app
     let container = wrap
