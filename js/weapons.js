@@ -10,24 +10,24 @@ class Weapons {
     return new wpn()
   }
 
-  static GetSprite(wpn) {
+  static GetSprite(wpn, variant) {
     let weapon = undefined
     switch (wpn.constructor) {
       case Gun:
-        weapon = Sprites.Gun
-        weapon.scale.set(0.0015)
+        weapon = Sprites.Gun(variant)
+        weapon.scale.set(3 / 1724)
         break
       case Bow:
-          weapon = Sprites.Bow
-          weapon.scale.set(2 / 512)
-          break
+        weapon = Sprites.Bow(variant)
+        weapon.scale.set(2 / 1724)
+        break
       case Minigun:
-        weapon = Sprites.Minigun
-        weapon.scale.set(0.0015)
+        weapon = Sprites.Minigun(variant)
+        weapon.scale.set(3 / 1724)
         break
       case Shotgun:
-        weapon = Sprites.Shotgun
-        weapon.scale.set(0.0015)
+        weapon = Sprites.Shotgun(variant)
+        weapon.scale.set(3 / 1724)
         break
       default:
         break

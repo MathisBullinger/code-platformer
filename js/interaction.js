@@ -221,8 +221,8 @@ class XboxController {
       // sticks
       stick_left_x: pad.axes[0],
       stick_left_y: pad.axes[1] * -1,
-      stick_right_x: pad.axes[2],
-      stick_right_y: pad.axes[3] * -1
+      stick_right_x: pad.axes[3],
+      stick_right_y: pad.axes[4] * -1
     }
   }
 }
