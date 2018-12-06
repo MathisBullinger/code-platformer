@@ -11,9 +11,10 @@ class Player extends Movable {
   /*
    * Constructor
    */
-  constructor(pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
+  constructor(number, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     console.log('spawn player at ', pos)
     super(pos, scale)
+    this._player_number = number
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
@@ -31,13 +32,14 @@ class Player extends Movable {
 
     // Create weapon
     this._weapon = Weapons.GetRandomWeapon()
+    this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If weapon is a bow, add the remaing arrows indicator
     if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
 
     // player health
     this._hp_total = conf.player_hp
-    this._hp_current = this._health_total
+    this._hp_current = this._hp_total
     this._alive = true
 
     this._dashing = false
@@ -104,6 +106,7 @@ class Player extends Movable {
     if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
+    this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If new weapon is a bow, also add the arrow indicator
     if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
@@ -136,6 +139,10 @@ class Player extends Movable {
     if (!this._move_dir) return
     this._dash_start = new Date().getTime()
     this._dashing = true
+  }
+
+  get player_number() {
+    return this._player_number
   }
 
   /**
@@ -188,6 +195,10 @@ class Player extends Movable {
 
   get mass() {
     return this._mass
+  }
+
+  get health() {
+    return this._hp_current
   }
 
   /*

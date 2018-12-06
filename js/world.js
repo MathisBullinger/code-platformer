@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { renderer } from './graphics'
 import { Level } from './level'
 import { game_config } from './game_config'
+import { UI } from './ui/user_interface'
 
 class World {
   /**
@@ -20,6 +21,9 @@ class World {
     this.level = new Level(this.scene)
     this.level.Load(lvl_data, this.scene)
 
+    this.ui = new UI()
+    this.scene.addChild(this.ui.graphic)
+
     // rescale scene to fit into screen
     this._ResizeScene()
     window.addEventListener('resize', () => this._ResizeScene())
@@ -30,6 +34,7 @@ class World {
     */
   Update(dt) {
     this.level.Update(dt)
+    this.ui.Update()
   }
 
   /**
@@ -67,7 +72,7 @@ class World {
       const pos_y = (window.innerHeight - (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2) / renderer.resolution
       this.scene.y = pos_y
     } else {
-      this.scene.height = window.innerHeight / 2 * -1
+      this.scene.height = window.innerHeight / window.devicePixelRatio * -1
       this.scene.width = 1 / scene_ratio * this.scene.height * -1
       const pos_x = ((window.innerWidth - Math.abs(this.scene.width * renderer.resolution)) / 2) / renderer.resolution
       this.scene.x = pos_x
