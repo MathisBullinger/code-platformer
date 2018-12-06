@@ -76,6 +76,19 @@ class Line {
     this.p2 = p2
   }
 
+  get x1() {
+    return this.p1.x
+  }
+  get y1() {
+    return this.p1.y
+  }
+  get x2() {
+    return this.p2.x
+  }
+  get y2() {
+    return this.p2.y
+  }
+
   /*
    * Line Intersection
    * https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line
