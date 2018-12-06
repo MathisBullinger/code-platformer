@@ -1,4 +1,4 @@
-import { Vec2D } from './math'
+import { Vec2D, Line } from './math'
 
 class Physics {
 
@@ -6,34 +6,41 @@ class Physics {
    * Update
    */
   static Update(dt, lvl) {
-    // apply gravity to player
-    Physics._Accelerate(lvl._player.vel, lvl._gravity, dt)
-    // update player position
-    lvl._player.Update(dt)
+    lvl._players.forEach(player => {
+      // apply gravity to player
+      Physics._Accelerate(player.vel, lvl._gravity, dt)
+      // update player position
+      player.Update(dt)
+    })
 
     // update projectiles
     for (let prj of lvl._projectiles) {
-      prj.Update(dt) // Update projectile
       // If any collision => remove projectiles
       if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
         lvl.RemoveProjectiles(prj)
+        continue // no need to update a projectile that just got removed
       }
+      // apply gravity to bullet
+      Physics._Accelerate(prj.vel, lvl._gravity, dt)
+      prj.Update(dt) // Update projectile
     }
 
-    // check for collisions
-    const collisions = Physics._GetColliding(lvl._player, lvl._block_grid)
-    if (collisions.length > 0) {
-      // solve collisions
-      for (let col of collisions) {
-        Physics._SolveCollision(lvl._player, col)
+    lvl._players.forEach(player => {
+      // check for collisions
+      const collisions = Physics._GetColliding(player, lvl._block_grid)
+      if (collisions.length > 0) {
+        // solve collisions
+        for (let col of collisions) {
+          Physics._SolveCollision(player, col)
+        }
+      } else {
+        // no collision => in air
+        if (player.has_ground_contact) {
+          player.jump_counter++
+          player.has_ground_contact = false
+        }
       }
-    } else {
-      // no collision => in air
-      if (lvl._player.has_ground_contact) {
-        lvl._player.jump_counter++
-        lvl._player.has_ground_contact = false
-      }
-    }
+    })
 
   }
 
@@ -56,7 +63,7 @@ class Physics {
       return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
     }
 
-    const offset = 0
+    const offset = 0.000001
     switch(GetCollisionFace()) {
       case 'top':
         rect1.has_ground_contact = true
@@ -81,11 +88,29 @@ class Physics {
 
   }
 
+  /**
+   * bool DoBoxesIntersect(Box a, Box b) {
+   * return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+   *      (abs(a.y - b.y) * 2 < (a.height + b.height));
+   * }
+   */
+  static DoBoxesIntersect(a, b) {
+    return (a.pos.x < b.pos.x + b.scale.x &&
+            a.pos.x + a.scale.x > b.pos.x &&
+            a.pos.y < b.pos.y + b.scale.y &&
+            a.pos.y + a.scale.y > b.pos.y)
+  }
+
   //
   // Get Colliding
   // returns array of blocks that rect collides with
   //
   static _GetColliding(rect, grid_comp) {
+    const collision_func = rect.is_fast ? this._GetCollidingVec : this._GetCollidingStep
+    return collision_func(rect, grid_comp)
+  }
+
+  static _GetCollidingStep(rect, grid_comp) {
     // rasterize player
     let collision_points = []
     for (let x = Math.floor(rect.x); x <= Math.floor(rect.x + rect.width); x++) {
@@ -106,11 +131,37 @@ class Physics {
     return collisions
   }
 
-  //
-  // check collision of point & rect
-  //
-  static _CollidePointRect(point, rect) {
-    return (point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height)
+  static _GetCollidingVec(rect, grid_comp) {
+    if (!rect._last_vert) return
+    let vertex_lines = []
+    const vertices = rect.GetVertices()
+    for (let i in vertices) {
+      vertex_lines.push(new Line(rect._last_vert[i], vertices[i]))
+    }
+
+    let collisions = []
+    for (let line of vertex_lines) {
+      // coordinates of line
+      const x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
+        x2 = Math.floor(line.x2), y2 = Math.floor(line.y2)
+      // continue if out of level
+      if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) ||
+        (x1 >= grid_comp.length && x2 >= grid_comp.length) ||
+        (y1 >= grid_comp[0].length && y2 >= grid_comp[0].length)) {
+        continue
+      }
+      // check blocks in movement range for collisions
+      for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+        for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+
+          if (grid_comp[x][y]) {
+            collisions.push(grid_comp[x][y])
+          }
+
+        }
+      }
+    }
+    return collisions
   }
 
   //

@@ -5,12 +5,9 @@ var renderer, app
 
 class Graphics {
 
-  constructor() {
-  }
-
-  //
-  // Init Graphics
-  //
+  /*
+   * Init Graphics
+   */
   Init(wrap) {
     if (!wrap) {
       console.error('game wrap is undefined!')
@@ -29,7 +26,8 @@ class Graphics {
     // create & config pixi app
     let container = wrap
     app = new PIXI.Application({width: wrap.offsetWidth, height: wrap.offsetHeight,
-      antialias: true, autoResize: false, resolution: window.devicePixelRatio})
+      antialias: true, autoResize: false, resolution: window.devicePixelRatio
+    })
 
     renderer = app.renderer
     renderer.backgroundColor = game_config.clear_color
@@ -41,9 +39,9 @@ class Graphics {
     window.addEventListener('resize', () => this._HandleResize())
   }
 
-  //
-  // Handle window resize
-  //
+  /*
+   * Handle window resize
+   */
   _HandleResize() {
     const canvas = this._game_wrap.getElementsByTagName('canvas')[0]
     canvas.width = this._game_wrap.offsetWidth * PIXI.settings.RESOLUTION
@@ -51,16 +49,16 @@ class Graphics {
     console.log(`resized renderer to ${renderer.width}px, ${renderer.height}px`)
   }
 
-  //
-  // Add Scene
-  //
+  /*
+   * Add Scene
+   */
   AddScene(scene) {
     app.stage.addChild(scene)
   }
 
-  //
-  // Create Polygon Methods
-  //
+  /*
+   * Create Polygon Methods
+   */
   static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF) {
     const rect = new PIXI.Graphics()
     rect.lineStyle(0.005, 0x000000, 1)
@@ -69,6 +67,14 @@ class Graphics {
     rect.endFill()
     rect.position.set(x, y)
     return rect
+  }
+
+  static CreateLine(x1, y1, x2, y2, width, color = 0xFFFFFF) {
+    let line = new PIXI.Graphics()
+    line.lineStyle(width, color, 1)
+    line.moveTo(x1, y1)
+    line.lineTo(x2, y2)
+    return line
   }
 }
 

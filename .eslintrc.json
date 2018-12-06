@@ -10,11 +10,11 @@
         "sourceType": "module"
     },
     "rules": {
-        "no-console":0,
+        "no-console": 0,
         "indent": [
-          "error",
-          2,
-          { "SwitchCase": 1 }
+            "error",
+            2,
+            { "SwitchCase": 1 }
         ],
         "linebreak-style": [
             "error",
@@ -27,6 +27,12 @@
         "semi": [
             "error",
             "never"
+        ],
+        "no-empty": [
+            "warn"
+        ],
+        "no-unused-vars": [
+            "warn"
         ]
     }
 }

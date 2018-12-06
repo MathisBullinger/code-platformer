@@ -58,6 +58,10 @@ class Vec2D {
     return new Vec2D(vec.x / num, vec.y / num)
   }
 
+  static Normalize(vec) {
+    return Vec2D.Div(vec, vec.Magnitude)
+  }
+
   ToPixiPoint() {
     return new PIXI.Point(this.x, this.y)
   }
@@ -70,6 +74,19 @@ class Line {
   constructor(p1, p2) {
     this.p1 = p1
     this.p2 = p2
+  }
+
+  get x1() {
+    return this.p1.x
+  }
+  get y1() {
+    return this.p1.y
+  }
+  get x2() {
+    return this.p2.x
+  }
+  get y2() {
+    return this.p2.y
   }
 
   /*
