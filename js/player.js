@@ -47,23 +47,6 @@ class Player extends Movable {
     this._dash_vel = conf.player_dash_vel
     this._move_dir = null
 
-    // bind keys
-    // key.BindKey('a', dt => this.MoveLeft(dt))
-    // key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
-    // key.BindKey('d', dt => this.MoveRight(dt))
-    // key.BindKey('ArrowRight', dt => this.MoveRight(dt))
-    // key.BindKey('w', dt => this.Jump(dt), true)
-    // key.BindKey('ArrowUp', dt => this.Jump(dt), true)
-    // key.BindKey('Shift', () => this.Dash(), true)
-    //
-    // // bind gamepad actions
-    // Gamepad.BindInput('stick_left_x', (dt, value) => {
-    //   if (value > 0) this.MoveRight(dt)
-    //   else this.MoveLeft(dt)
-    // })
-    // Gamepad.BindInput('A', dt => this.Jump(dt), true)
-    // Gamepad.BindInput('LB', dt => this.Jump(dt), true)
-    // Gamepad.BindInput('RB', () => this.Attack())
     if (input) {
       this._input = input
       this._input.Init(this)

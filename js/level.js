@@ -6,7 +6,7 @@ import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
 import { GetUrlParam } from './util'
 import { Sprites } from './sprites'
-import { InputKeyboard } from './input_profile'
+import { InputKeyboard, InputGamepad } from './input_profile'
 
 class Level {
 
@@ -141,7 +141,7 @@ class Level {
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    const player2 = new Player(1, null, this._spawns.GetRandomPlayerSpawn())
+    const player2 = new Player(1, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
     scene.addChild(player2.graphic)
     this._players.push(player2)
 

@@ -42,4 +42,33 @@ class InputKeyboard {
   }
 }
 
-export { InputKeyboard }
+class InputGamepad {
+  Init(player) {
+    this._player = player
+
+    // move
+    Gamepad.BindInput('stick_left_x', (dt, value) => {
+      if (value > 0) this._player.MoveRight(dt)
+      else this._player.MoveLeft(dt)
+    })
+    // jump
+    Gamepad.BindInput('A', dt => this._player.Jump(dt), true)
+    Gamepad.BindInput('LB', dt => this._player.Jump(dt), true)
+    // attack
+    Gamepad.BindInput('RT', () => this._player.Attack())
+  }
+
+  Update() {
+
+  }
+
+  GetViewDir() {
+    const stick_dir = Gamepad.GetStick('right')
+    if (stick_dir.x || stick_dir.y)
+      return new Vec2D(stick_dir.x, stick_dir.y * -1)
+    else
+      return null
+  }
+}
+
+export { InputKeyboard, InputGamepad }
