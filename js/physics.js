@@ -57,7 +57,7 @@ class Physics {
       if (rect2._collision_sides.left) faces.push({name: 'left', value: rect1.x + rect1.width - rect2.x})
       if (rect2._collision_sides.top) faces.push({name: 'top', value: rect2.y + rect2.height - rect1.y})
       for (let face of faces) {
-        if (face.value > rect1.width / 2)
+        if (face.value > rect1.width * 2)
           faces.splice(faces.indexOf(face), 1)
       }
       return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
@@ -83,7 +83,45 @@ class Physics {
         rect1.pos.x = rect2.pos.x - rect1.width - offset
         break
     }
+    if (rect1._dashing && !rect1.has_ground_contact) {
+      rect1._dashing = false
+      rect1.vel.Set(0, 0)
+    }
 
+  }
+
+  static _SolveCollisionVec(rect1, rect2) {
+    if (!rect1._last_vert) return
+    let vertex_lines = []
+    const vertices = rect1.GetVertices()
+    for (let i in vertices) {
+      vertex_lines.push(new Line(rect1._last_vert[i], vertices[i]))
+    }
+
+    let solve_vectors = []
+    const col_segments = rect2.GetActiveCollisionSegments()
+    for (let line of vertex_lines) {
+      for (let seg of col_segments) {
+        const t = Line.Intersect(line, seg)
+        if (t >= 0 && t <= 1) {
+          const intersect_point = Line.IntersectPoint(line, t)
+          const resolve = Vec2D.Sub(line.p1, intersect_point)
+          solve_vectors.push(resolve)
+          // console.log({solve: resolve, intersect: intersect_point, p1: line.p1})
+        }
+      }
+    }
+
+    // const solve = Math.max(solve_vectors.map(vec => vec.Magnitude))
+    // console.log(solve_vectors, solve)
+    const mags = solve_vectors.map(vec => vec.Magnitude)
+    if (mags.length == 0) return
+    const solve = Math.max(...mags)
+    console.log(solve)
+
+    rect1.pos.y += solve * 10
+
+    rect1.vel.y = 0
   }
 
   /**
@@ -140,7 +178,7 @@ class Physics {
     let collisions = []
     for (let line of vertex_lines) {
       // coordinates of line
-      const x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
+      let x1 = Math.floor(line.x1), y1 = Math.floor(line.y1),
         x2 = Math.floor(line.x2), y2 = Math.floor(line.y2)
       // continue if out of level
       if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) ||
@@ -148,10 +186,21 @@ class Physics {
         (y1 >= grid_comp[0].length && y2 >= grid_comp[0].length)) {
         continue
       }
+      const match_bounds = (num, max) => {
+        if (num < 0) return 0
+        if (num > max) return max
+        return num
+      }
+      x1 = match_bounds(x1, grid_comp.length - 1)
+      x2 = match_bounds(x2, grid_comp.length - 1)
+      y1 = match_bounds(y1, grid_comp[0].length - 1)
+      y2 = match_bounds(y2, grid_comp[0].length - 1)
+
       // check blocks in movement range for collisions
       for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
         for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
 
+          // console.log(x, y)
           if (grid_comp[x][y]) {
             collisions.push(grid_comp[x][y])
           }

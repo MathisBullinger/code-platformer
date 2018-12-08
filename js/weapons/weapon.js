@@ -2,6 +2,7 @@ import { Graphics, renderer } from './../graphics'
 import { Vec2D } from './../math'
 import { Level } from './../level'
 import { Gamepad } from './../interaction'
+import { Weapons } from './../weapons'
 
 /**
   * General weapon class
@@ -21,28 +22,23 @@ class Weapon {
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
-    this.graphic = Weapon._GetGraphic(pos, scale)
-
-    this._last_mouse_pos = this._GetMousePos()
+    this.paintWeapon()
+    this._last_dir = null
   }
 
   /**
     * Update weapon and projectiles
     */
-  Update() {
-    // look at mouse if moved or gamepad
-    const mouse_moved = !Vec2D.Equal(this._GetMousePos(), this._last_mouse_pos)
-    if (mouse_moved) {
-      this._last_mouse_pos = this._GetMousePos()
-      // Look at mouse
-      const dir = this._GetMouseDirection()
-      this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
-    } else {
-      // if gamepad right stick moved, adjust rotation
-      const stick_dir = Gamepad.GetStick('right')
-      if (stick_dir.x || stick_dir.y)
-        this.graphic.parent.rotation = -Math.atan2(stick_dir.x, stick_dir.y * -1)
-    }
+  Update(input) {
+    if (!input) return
+    if (!this._last_dir) this._last_dir = new Vec2D(0, 1)
+    let dir = input.GetViewDir(this)
+    if (!dir)
+      dir = this._last_dir
+    else
+      this._last_dir = dir
+    this.graphic.scale.x = Math.abs(this.graphic.scale.x) * (dir.x >= 0 ? -1 : 1)
+    this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
   }
 
   /**
@@ -63,11 +59,9 @@ class Weapon {
   /**
     * Create weapon graphic
     */
-  static _GetGraphic(pos, scale) {
-    const rect = Graphics.CreateRectangle(0, 0, scale.x, scale.y, 0x000000)
-    rect.pivot.set(scale.x / 2, scale.y / 2)
-    rect.position.set(pos.x, pos.y)
-    return rect
+  paintWeapon(variant = 0) {
+    this.graphic = Weapons.GetSprite(this, variant)
+    this.graphic.position.set(this.pos.x, this.pos.y)
   }
 
   /**
