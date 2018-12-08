@@ -77,20 +77,18 @@ class Physics {
       case 'right':
         if (rect1.vel.x < 0) rect1.vel.x = 0
         rect1.pos.x = rect2.pos.x + rect2.width + offset
-        if (rect1._dashing) {
-          rect1._dashing = false
-        }
         break
       case 'left':
         if (rect1.vel.x > 0) rect1.vel.x = 0
         rect1.pos.x = rect2.pos.x - rect1.width - offset
-        if (rect1._dashing) {
-          rect1._dashing = false
-        }
         break
       default:
         console.error('collision not handled')
         break
+    }
+    if (rect1._dashing && !rect1.has_ground_contact) {
+      rect1._dashing = false
+      rect1.vel.Set(0, 0)
     }
 
   }
