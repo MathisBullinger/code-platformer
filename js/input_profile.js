@@ -54,6 +54,8 @@ class InputGamepad {
     // jump
     Gamepad.BindInput('A', dt => this._player.Jump(dt), true)
     Gamepad.BindInput('LB', dt => this._player.Jump(dt), true)
+    // dash
+    Gamepad.BindInput('RB', () => this._player.Dash(), true)
     // attack
     Gamepad.BindInput('RT', () => this._player.Attack())
   }
