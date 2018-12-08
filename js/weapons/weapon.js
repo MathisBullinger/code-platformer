@@ -29,21 +29,31 @@ class Weapon {
   /**
     * Update weapon and projectiles
     */
-  Update() {
+  Update(input) {
+    if (!input) return
     // look at mouse if moved or gamepad
-    const mouse_moved = !Vec2D.Equal(this._GetMousePos(), this._last_mouse_pos)
-    if (mouse_moved) {
-      this._last_mouse_pos = this._GetMousePos()
-      // Look at mouse
-      const dir = this._GetMouseDirection()
-      this.graphic.scale.x = Math.abs(this.graphic.scale.x) * (dir.x >= 0 ? -1 : 1)
-      this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
-    } else {
-      // if gamepad right stick moved, adjust rotation
-      const stick_dir = Gamepad.GetStick('right')
-      if (stick_dir.x || stick_dir.y)
-        this.graphic.parent.rotation = -Math.atan2(stick_dir.x, stick_dir.y * -1)
-    }
+    // const mouse_moved = !Vec2D.Equal(this._GetMousePos(), this._last_mouse_pos)
+    // if (mouse_moved) {
+    //   this._last_mouse_pos = this._GetMousePos()
+    //   // Look at mouse
+    //   const dir = this._GetMouseDirection()
+    //   this.graphic.scale.x = Math.abs(this.graphic.scale.x) * (dir.x >= 0 ? -1 : 1)
+    //   this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
+    // } else {
+    //   // if gamepad right stick moved, adjust rotation
+    //   const stick_dir = Gamepad.GetStick('right')
+    //   if (stick_dir.x || stick_dir.y)
+    //     this.graphic.parent.rotation = -Math.atan2(stick_dir.x, stick_dir.y * -1)
+    // }
+
+    // this.graphic.parent.rotation = this._GetMouseDirection()
+    // console.log(input.GetViewDir(this))
+    // console.log(this._GetMouseDirection())
+
+    // const dir = this._GetMouseDirection()
+    const dir = input.GetViewDir(this)
+    this.graphic.scale.x = Math.abs(this.graphic.scale.x) * (dir.x >= 0 ? -1 : 1)
+    this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
   }
 
   /**

@@ -96,7 +96,7 @@ class Player extends Movable {
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
-    this._weapon.Update(dt, this)
+    this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
   }
