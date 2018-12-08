@@ -11,7 +11,7 @@ class Player extends Movable {
   /*
    * Constructor
    */
-  constructor(number, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
+  constructor(number, input, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     console.log('spawn player at ', pos)
     super(pos, scale)
     this._player_number = number
@@ -48,22 +48,26 @@ class Player extends Movable {
     this._move_dir = null
 
     // bind keys
-    key.BindKey('a', dt => this.MoveLeft(dt))
-    key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
-    key.BindKey('d', dt => this.MoveRight(dt))
-    key.BindKey('ArrowRight', dt => this.MoveRight(dt))
-    key.BindKey('w', dt => this.Jump(dt), true)
-    key.BindKey('ArrowUp', dt => this.Jump(dt), true)
-    key.BindKey('Shift', () => this.Dash(), true)
-
-    // bind gamepad actions
-    Gamepad.BindInput('stick_left_x', (dt, value) => {
-      if (value > 0) this.MoveRight(dt)
-      else this.MoveLeft(dt)
-    })
-    Gamepad.BindInput('A', dt => this.Jump(dt), true)
-    Gamepad.BindInput('LB', dt => this.Jump(dt), true)
-    Gamepad.BindInput('RB', () => this.Attack())
+    // key.BindKey('a', dt => this.MoveLeft(dt))
+    // key.BindKey('ArrowLeft', dt => this.MoveLeft(dt))
+    // key.BindKey('d', dt => this.MoveRight(dt))
+    // key.BindKey('ArrowRight', dt => this.MoveRight(dt))
+    // key.BindKey('w', dt => this.Jump(dt), true)
+    // key.BindKey('ArrowUp', dt => this.Jump(dt), true)
+    // key.BindKey('Shift', () => this.Dash(), true)
+    //
+    // // bind gamepad actions
+    // Gamepad.BindInput('stick_left_x', (dt, value) => {
+    //   if (value > 0) this.MoveRight(dt)
+    //   else this.MoveLeft(dt)
+    // })
+    // Gamepad.BindInput('A', dt => this.Jump(dt), true)
+    // Gamepad.BindInput('LB', dt => this.Jump(dt), true)
+    // Gamepad.BindInput('RB', () => this.Attack())
+    if (input) {
+      this._input = input
+      this._input.Init(this)
+    }
   }
 
   /**
@@ -90,7 +94,7 @@ class Player extends Movable {
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
     // Shoot when mouse down
-    if (Mouse.IsDown()) this.Attack()
+    if (this._input) this._input.Update()
     // Update Weapon
     this._weapon.Update(dt, this)
     super.Update(dt)

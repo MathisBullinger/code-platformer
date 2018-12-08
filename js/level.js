@@ -6,6 +6,7 @@ import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
 import { GetUrlParam } from './util'
 import { Sprites } from './sprites'
+import { InputKeyboard } from './input_profile'
 
 class Level {
 
@@ -135,12 +136,12 @@ class Level {
     this._GenLvlGrid()
     this._GenCollisionFaces()
     // Create the player at a random position
-    const player = new Player(0, this._spawns.GetRandomPlayerSpawn())
+    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
     // player.is_fast = true
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    const player2 = new Player(1, this._spawns.GetRandomPlayerSpawn())
+    const player2 = new Player(1, null, this._spawns.GetRandomPlayerSpawn())
     scene.addChild(player2.graphic)
     this._players.push(player2)
 
