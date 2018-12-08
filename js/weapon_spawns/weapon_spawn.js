@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Vec2D } from './../math'
+import { Sprites } from './../sprites'
 
 class WeaponSpawn {
   constructor(pos, cooldown, active_color, inactive_color) {
@@ -50,12 +51,14 @@ class WeaponSpawn {
   }
 
   _PaintSpawn(color) {
-    if (!this.graphic) this.graphic = new PIXI.Graphics()
-    this.graphic.clear()
-    this.graphic.beginFill(color)
-    this.graphic.drawRect(0, 0, 1, 1)
-    this.graphic.endFill()
-    this.graphic.position.set(this.pos.x, this.pos.y)
+    if (!this.graphic) {
+      this.graphic = Sprites.MysteryBox
+      this.graphic.scale.set(1/296)
+      this.graphic.pivot.set(296)
+      this.graphic.rotation = Math.PI
+      this.graphic.position.set(this.pos.x, this.pos.y)
+    }
+
   }
 }
 

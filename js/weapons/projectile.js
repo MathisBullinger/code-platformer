@@ -1,27 +1,27 @@
 import { Vec2D } from './../math'
 import { Graphics } from './../graphics'
+import { Movable } from './../game_object'
 
 /**
   * General projectile entity. This class is not meant to be instantiated
   * directly
   */
-class Projectile {
+class Projectile extends Movable {
   /**
     * Initializes a new projectile
     */
-  constructor(weapon, scale, shooting_velocity, mass) {
+  constructor(weapon, scale, shooting_velocity, mass, radians_offset = 0) {
+    super(Projectile._GetNozzlePosition(weapon, scale), scale)
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Projectile) {
       throw new TypeError('Cannot construct abstract Projectile instances directly')
     }
     // Set attributes
     this.weapon = weapon
-    this.scale = scale
     this.mass = mass
     // Get projectile orientation and scale direction vector by velocity
-    this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon), shooting_velocity), new Vec2D(0, 0))
+    this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
-    this.pos = Projectile._GetNozzlePosition(weapon, scale)
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, scale.y / 2)
@@ -32,11 +32,8 @@ class Projectile {
     * Update projectile position based on velocity
     */
   Update(dt) {
-    // Apply velocity
-    this.pos = Vec2D.Add(this.pos, Vec2D.Mult(this.vel, dt / 1000))
-    this.graphic.position = this.pos.ToPixiPoint()
+    super.Update(dt)
     this.graphic.rotation = Math.atan2(this.vel.y, this.vel.x) + (Math.PI / 2)
-    this.vel.y -= 9.81 * (dt / 1000)
   }
 
   /**
@@ -75,8 +72,8 @@ class Projectile {
     * Takes a weapon and converts the rotation of the weapon holster
     * from radians to a direction vector.
     */
-  static _RadiansToVector(weapon) {
-    const radians = weapon.graphic.parent.rotation
+  static _RadiansToVector(weapon, radians_offset = 0) {
+    const radians = weapon.graphic.parent.rotation + radians_offset
     const [ cs, sn ] = [ Math.cos(radians), Math.sin(radians) ]
     return new Vec2D(
       weapon.pos.x * cs - weapon.pos.y * sn,

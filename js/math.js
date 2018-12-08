@@ -36,7 +36,7 @@ class Vec2D {
    * get Magnitude
    */
   get Magnitude() {
-    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
+    return (this.x == 0 && this.y == 0) ? 0 : Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
   }
 
   /*
@@ -74,6 +74,19 @@ class Line {
   constructor(p1, p2) {
     this.p1 = p1
     this.p2 = p2
+  }
+
+  get x1() {
+    return this.p1.x
+  }
+  get y1() {
+    return this.p1.y
+  }
+  get x2() {
+    return this.p2.x
+  }
+  get y2() {
+    return this.p2.y
   }
 
   /*

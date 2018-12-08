@@ -4,6 +4,9 @@ import { Vec2D } from './math'
 import { Physics } from './physics'
 import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
+import { GetUrlParam } from './util'
+import { Sprites } from './sprites'
+import { InputKeyboard, InputGamepad } from './input_profile'
 
 class Level {
 
@@ -21,21 +24,28 @@ class Level {
     this._parent_scene = parent_scene
     Level._active_level = this
     this._lower_death_cap = -5 // kill below
+    // list of players
+    this._players = []
   }
 
   Update(dt) {
     // Apply physics to this level
     Physics.Update(dt, this)
-    // Update Spawns
-    this._spawns.Update(dt, this._player)
 
-    // kill player if below death cap
-    if (!this._player.dead && this._player.y < this._lower_death_cap)
-      this._player.Kill()
+    this._players.forEach(player => {
 
-    // respawn player if dead at a random position
-    if (this._player.dead)
-      this._player.Respawn(this._spawns.GetRandomPlayerSpawn())
+      // Update Spawns
+      this._spawns.Update(dt, player)
+
+      // kill player if below death cap
+      if (!player.dead && player.y < this._lower_death_cap)
+        player.Kill()
+
+      // respawn player if dead at a random position
+      if (player.dead)
+        player.Respawn(this._spawns.GetRandomPlayerSpawn())
+
+    })
 
     // remove projectiles below death cap
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
@@ -53,6 +63,9 @@ class Level {
   }
 
   RemoveProjectiles(...prj) {
+    prj.forEach(p => {
+      p.RemoveMoveVec()
+    })
     this._parent_scene.removeChild(...([...prj].map(pr => pr.graphic)))
     this._projectiles = this._projectiles.filter(pr => !([...prj]).includes(pr))
   }
@@ -91,7 +104,11 @@ class Level {
     for (let i = 0; i < blocks.length; i++) {
       const material = blocks[i]
       if (material != 1) continue
-      let block = new GameObject(new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1))
+      const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+      let block = new GameObject(pos)
+      block.graphic = Sprites.Wall
+      block.graphic.scale.set(1 / 256)
+      block.graphic.position.set(pos.x, pos.y)
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
@@ -119,8 +136,18 @@ class Level {
     this._GenLvlGrid()
     this._GenCollisionFaces()
     // Create the player at a random position
-    this._player = new Player(this._spawns.GetRandomPlayerSpawn())
-    scene.addChild(this._player.graphic)
+    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
+    // player.is_fast = true
+    scene.addChild(player.graphic)
+    this._players.push(player)
+
+    const player2 = new Player(1, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player2.graphic)
+    this._players.push(player2)
+
+    // render collision faces
+    if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
+      this._RenderCollisionFaces(scene)
   }
 
   /**
@@ -167,39 +194,46 @@ class Level {
     const blocks = this._block_grid
 
     const diag_top_left = (x, y) => {
-      if (x == 0 || y == blocks[x].length - 1) return true
+      if (x == 0 || y == blocks[x].length - 1) return false
       return blocks[x-1][y+1]
     }
     const diag_top_right = (x, y) => {
-      if (x == blocks.length - 1 || y == blocks[x].length - 1) return true
+      if (x == blocks.length - 1 || y == blocks[x].length - 1) return false
       return blocks[x+1][y+1]
     }
 
     const collides_left = (x, y) => {
-      if (x == 0) return false
-      if (blocks[x-1][y]) return false
-      return true
+      if (x == 0) return true
+      return !blocks[x-1][y]
     }
     const collides_right = (x, y) => {
       if (x == blocks.length - 1) return true
-      if (blocks[x+1][y]) return false
-      return true
+      return !blocks[x+1][y]
     }
     const collides_top = (x, y) => {
-      if (y == blocks[x].length - 1) return true
+      const args = [x, y]
+      // topmost block => false
+      if (y == blocks[x].length - 1) {
+        return true
+      }
+      // block on top...
       if (blocks[x][y+1]) {
-        if (!collides_left(x, y) && !collides_right)
+        // ...no block left & right => false
+        if (collides_left(...args) && collides_right(...args)) {
           return false
-        else {
-          return !diag_top_left(x, y) && !diag_top_right(x, y)
+        // ...block at top...
+        } else {
+          // ...block left and no block top right or
+          // block right and no block top left ? true : false
+          return  (!diag_top_left(...args) && collides_right(...args) ||
+                  (!diag_top_right(...args) && collides_left(...args)))
         }
       }
       return true
     }
     const collides_bottom = (x, y) => {
       if (y == 0) return true
-      if (blocks[x][y-1]) return false
-      return true
+      return !blocks[x][y-1]
     }
 
     for (let y = blocks[0].length - 1; y >= 0 ; y--) {
@@ -220,6 +254,7 @@ class Level {
    * print block grid to console
    */
   _LogGrid() {
+    console.groupCollapsed('= BLOCK GRID =')
     let str = '\u250C' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2510\n'
     if (this._block_grid.length > 0) {
       for (let y = this._block_grid[0].length - 1; y >= 0 ; y--) {
@@ -231,13 +266,15 @@ class Level {
       }
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length + 2) + '\u2518'
-    console.log(' =Block Grid=\n\n' + str)
+    console.log('\n' + str)
+    console.groupEnd()
   }
 
   /*
    * print collision grid to console
    */
   _LogCollisionGrid() {
+    console.groupCollapsed('= COLLISION GRID =')
     const c_top = '\u2564', c_left = '\u255F', c_right = '\u2562', c_bottom = '\u2567'
     let str = '\u250C' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2510\n'
     if (this._block_grid.length > 0) {
@@ -264,7 +301,17 @@ class Level {
       }
     }
     str += '\u2514' + '\u2500'.repeat(this._block_grid.length * 5 + 2) + '\u2518'
-    console.log('%c =Collision Grid=\n\n' + str, 'font-size: 7px; line-height: 12px')
+    console.log('%c\n' + str, 'font-size: 7px; line-height: 12px')
+    console.groupEnd()
+  }
+
+  /*
+   * Render Collision Faces
+   */
+  _RenderCollisionFaces(scene) {
+    for (let block of this._blocks) {
+      block.RenderCollisionFaces(scene)
+    }
   }
 
 }

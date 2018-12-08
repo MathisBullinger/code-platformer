@@ -7,3 +7,4 @@ data/
 tmp/
 
 *_dpr.*
+.DS_Store
