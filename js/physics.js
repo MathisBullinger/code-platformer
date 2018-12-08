@@ -57,7 +57,7 @@ class Physics {
       if (rect2._collision_sides.left) faces.push({name: 'left', value: rect1.x + rect1.width - rect2.x})
       if (rect2._collision_sides.top) faces.push({name: 'top', value: rect2.y + rect2.height - rect1.y})
       for (let face of faces) {
-        if (face.value > rect1.width / 2)
+        if (face.value > rect1.width * 2)
           faces.splice(faces.indexOf(face), 1)
       }
       return faces.length ? faces.find(face => face.value == Math.min(...faces.map(face => face.value))).name : null
@@ -82,8 +82,45 @@ class Physics {
         if (rect1.vel.x > 0) rect1.vel.x = 0
         rect1.pos.x = rect2.pos.x - rect1.width - offset
         break
+      default:
+        console.error('collision not handled')
+        break
     }
 
+  }
+
+  static _SolveCollisionVec(rect1, rect2) {
+    if (!rect1._last_vert) return
+    let vertex_lines = []
+    const vertices = rect1.GetVertices()
+    for (let i in vertices) {
+      vertex_lines.push(new Line(rect1._last_vert[i], vertices[i]))
+    }
+
+    let solve_vectors = []
+    const col_segments = rect2.GetActiveCollisionSegments()
+    for (let line of vertex_lines) {
+      for (let seg of col_segments) {
+        const t = Line.Intersect(line, seg)
+        if (t >= 0 && t <= 1) {
+          const intersect_point = Line.IntersectPoint(line, t)
+          const resolve = Vec2D.Sub(line.p1, intersect_point)
+          solve_vectors.push(resolve)
+          // console.log({solve: resolve, intersect: intersect_point, p1: line.p1})
+        }
+      }
+    }
+
+    // const solve = Math.max(solve_vectors.map(vec => vec.Magnitude))
+    // console.log(solve_vectors, solve)
+    const mags = solve_vectors.map(vec => vec.Magnitude)
+    if (mags.length == 0) return
+    const solve = Math.max(...mags)
+    console.log(solve)
+
+    rect1.pos.y += solve * 10
+
+    rect1.vel.y = 0
   }
 
   /**
