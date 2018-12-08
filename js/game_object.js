@@ -33,11 +33,26 @@ class GameObject {
   GetSegments() {
     let segments = []
     let vert = this.GetVertices()
-    segments.push(new Line(new Vec2D(vert[0].x, vert[0].y), new Vec2D(vert[1].x, vert[1].y)))
-    segments.push(new Line(new Vec2D(vert[1].x, vert[1].y), new Vec2D(vert[2].x, vert[2].y)))
-    segments.push(new Line(new Vec2D(vert[2].x, vert[2].y), new Vec2D(vert[3].x, vert[3].y)))
-    segments.push(new Line(new Vec2D(vert[3].x, vert[3].y), new Vec2D(vert[0].x, vert[0].y)))
+    segments.push(new Line(new Vec2D(vert[0].x, vert[0].y), new Vec2D(vert[1].x, vert[1].y))) // bottom
+    segments.push(new Line(new Vec2D(vert[1].x, vert[1].y), new Vec2D(vert[2].x, vert[2].y))) // right
+    segments.push(new Line(new Vec2D(vert[2].x, vert[2].y), new Vec2D(vert[3].x, vert[3].y))) // top
+    segments.push(new Line(new Vec2D(vert[3].x, vert[3].y), new Vec2D(vert[0].x, vert[0].y))) // left
     return segments
+  }
+
+  GetActiveCollisionSegments() {
+    const seg_all = this.GetSegments()
+    if (!this._collision_sides) return seg_all
+    let seg_active = []
+    if (this._collision_sides.bottom)
+      seg_active.push(seg_all[0])
+    if (this._collision_sides.right)
+      seg_active.push(seg_all[1])
+    if (this._collision_sides.top)
+      seg_active.push(seg_all[2])
+    if (this._collision_sides.left)
+      seg_active.push(seg_all[3])
+    return seg_active
   }
 
   RenderCollisionFaces(scene) {

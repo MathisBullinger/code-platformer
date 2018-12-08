@@ -36,7 +36,7 @@ class Vec2D {
    * get Magnitude
    */
   get Magnitude() {
-    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
+    return (this.x == 0 && this.y == 0) ? 0 : Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
   }
 
   /*
