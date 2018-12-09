@@ -22,6 +22,7 @@ class Player extends Movable {
     this.has_ground_contact = false
     this.jump_counter = 0
     this._mass = 30
+    this._score = 0
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
@@ -130,6 +131,10 @@ class Player extends Movable {
 
   get player_number() {
     return this._player_number
+  }
+
+  get score() {
+    return this._score
   }
 
   /**
