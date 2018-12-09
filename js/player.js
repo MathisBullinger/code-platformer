@@ -173,6 +173,7 @@ class Player extends Movable {
     this._alive = false
     console.log('player died')
   }
+  Die() { this.Kill() }
 
   get dead() {
     return !this._alive

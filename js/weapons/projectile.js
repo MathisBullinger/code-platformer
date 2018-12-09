@@ -26,6 +26,8 @@ class Projectile extends Movable {
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, scale.y / 2)
     this.graphic.rotation = weapon.graphic.parent.rotation
+    // set base damage
+    this.damage = 1
   }
 
   /**

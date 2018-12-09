@@ -1,4 +1,5 @@
 import { Vec2D, Line } from './math'
+import { game_config } from './game_config'
 
 class Physics {
 
@@ -22,7 +23,9 @@ class Physics {
       }
       for (let player of lvl._players) {
         if (Physics.DoBoxesIntersect(prj, player)) {
-          player.Damage(10)
+          // damage = base damage * projectile damage * weapon damage
+          const damage = game_config.base_damage * prj.damage
+          player.Damage(damage)
           lvl.RemoveProjectiles(prj)
         }
       }
