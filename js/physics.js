@@ -17,7 +17,7 @@ class Physics {
     // update projectiles
     for (let prj of lvl._projectiles) {
       // If any collision => remove projectiles
-      if (prj.lifespanExpired || Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
+      if (prj.lifespanExpired || (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0)) {
         lvl.RemoveProjectiles(prj)
         continue // no need to update a projectile that just got removed
       }
@@ -25,7 +25,6 @@ class Physics {
         if (Physics.DoBoxesIntersect(prj, player)) {
           // damage = base damage * projectile damage * weapon damage
           const damage = game_config.damage.base * prj.damage
-          // console.log(damage + ' HP by ' + prj.constructor.name)
           player.Damage(damage)
           lvl.RemoveProjectiles(prj)
         }

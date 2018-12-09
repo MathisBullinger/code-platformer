@@ -1,7 +1,9 @@
+import * as PIXI from 'pixi.js'
 import { Vec2D } from '../math'
 import { Graphics } from '../graphics'
 import { Movable } from '../game_object'
 import { game_config } from '../game_config'
+import { Weapons } from './../weapons'
 
 /**
   * General projectile entity. This class is not meant to be instantiated
@@ -23,16 +25,13 @@ class Projectile extends Movable {
     // Get projectile orientation and scale direction vector by velocity
     this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
-    this.graphic = Graphics.CreateRectangle(
-      this.pos.x, this.pos.y, scale.x, scale.y, 0x000000
-    )
+    this.graphic = Weapons.GetProjectileSprite(weapon)
+    this.graphic.position.set(this.pos.x, this.pos.y)
     const a = weapon.graphic.parent.rotation
-    const offset = 1
+    const offset = 0.25
     const off_vec = new Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)) // don't shoot yourself
     this.pos = Vec2D.Add(this.pos, off_vec)
-    // Center pivot and apply holster rotation
-    this.graphic.pivot.set(scale.x / 2, scale.y / 2)
-    this.graphic.rotation = weapon.graphic.parent.rotation
+    this.graphic.rotation = a
     // set damage
     this.damage = weapon.damage
     const damage = game_config.damage.projectile[this.constructor.name.toLowerCase()]
