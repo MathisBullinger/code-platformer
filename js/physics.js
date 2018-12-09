@@ -20,6 +20,12 @@ class Physics {
         lvl.RemoveProjectiles(prj)
         continue // no need to update a projectile that just got removed
       }
+      for (let player of lvl._players) {
+        if (Physics.DoBoxesIntersect(prj, player)) {
+          player.Damage(10)
+          lvl.RemoveProjectiles(prj)
+        }
+      }
       // apply gravity to bullet
       Physics._Accelerate(prj.vel, lvl._gravity, dt)
       prj.Update(dt) // Update projectile

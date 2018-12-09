@@ -137,7 +137,6 @@ class Level {
     this._GenCollisionFaces()
     // Create the player at a random position
     const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
-    // player.is_fast = true
     scene.addChild(player.graphic)
     this._players.push(player)
 
