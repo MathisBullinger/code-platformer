@@ -23,5 +23,11 @@
       "shotgun": 5
     }
   },
+  "lifespan": {
+    "__comment__": "defines the lifespan of projectiles for each weapon in ms. values of 0 or smaller are being ignored",
+    "weapon": {
+      "shotgun": 150
+    }
+  },
   "display_mov_vector": false
 }

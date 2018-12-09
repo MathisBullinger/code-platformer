@@ -29,6 +29,11 @@ class Weapon {
     const damage = game_config.damage.weapon[this.constructor.name.toLowerCase()]
     if (damage)
       this.damage = damage
+    // Projectile lifespan
+    this.projectile_lifespan = -1
+    const lifespan = game_config.lifespan.weapon[this.constructor.name.toLowerCase()]
+    if (lifespan)
+      this.projectile_lifespan = lifespan
   }
 
   /**

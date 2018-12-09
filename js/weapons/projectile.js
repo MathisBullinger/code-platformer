@@ -38,6 +38,8 @@ class Projectile extends Movable {
     const damage = game_config.damage.projectile[this.constructor.name.toLowerCase()]
     if (damage)
       this.damage *= damage
+    // Set instantiation time
+    this._spawn_time = Date.now()
   }
 
   /**
@@ -46,6 +48,10 @@ class Projectile extends Movable {
   Update(dt) {
     super.Update(dt)
     this.graphic.rotation = Math.atan2(this.vel.y, this.vel.x) + (Math.PI / 2)
+  }
+
+  get lifespanExpired() {
+    return this.weapon.projectile_lifespan > 0 && (Date.now() - this._spawn_time) >= this.weapon.projectile_lifespan
   }
 
   /**
