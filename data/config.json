@@ -6,6 +6,7 @@
   "player_move_vel": 8,
   "player_dash_vel": 50,
   "player_dash_time": 42,
+  "player_dash_cooldown": 1000,
   "player_jump_height": 2.2,
   "player_hp": 100,
   "base_damage": 10,
@@ -26,7 +27,7 @@
   "lifespan": {
     "__comment__": "defines the lifespan of projectiles for each weapon in ms. values of 0 or smaller are being ignored",
     "weapon": {
-      "shotgun": 150
+      "shotgun": -1
     }
   },
   "display_mov_vector": false

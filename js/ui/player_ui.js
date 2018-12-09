@@ -43,14 +43,14 @@ class PlayerHealth {
     this._mugs = []
     // Static head sprite
     this._head_graphic = Sprites.PlayerHead(player._player_number)
-    this._head_graphic.anchor.set(0, 0.5)
-    this._head_graphic.scale.set(2 / 1975)
+    this._head_graphic.anchor.set(0, 0.4)
+    this._head_graphic.scale.set(2 / 1975, -2 / 1975)
     this.graphic.addChild(this._head_graphic)
     // Static money sprite
     this._money_graphic = Sprites.Money
     this._money_graphic.anchor.set(0, 0.5)
     this._money_graphic.position.set(1.6, 0.25)
-    this._money_graphic.scale.set(1 / 1531)
+    this._money_graphic.scale.set(1 / 1531, -1 / 1531)
     this.graphic.addChild(this._money_graphic)
   }
 
@@ -103,12 +103,12 @@ class PlayerHealth {
     // Draw mugs
     for (let i = 0; i < cur_mugs; i += 2) {
       const mug = Sprites.CoffeeCup
-      mug.anchor.set(1, 0)
-      mug.scale.set(0.5 / 256)
+      mug.anchor.set(0, 0)
+      mug.scale.set(-0.5 / 256, 0.5/256)
       mug.rotation = Math.PI
       mug.position.set(0.25 * i + 1.75, -0.15)
       // If half money => crop width
-      if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(128, 0, 128, 256))
+      if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256))
       this._mugs.push(mug)
     }
     this.graphic.addChild(...this._mugs)

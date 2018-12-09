@@ -63,6 +63,7 @@ class Player extends Movable {
       const dir = this._move_dir == 'right' ? 1 : -1
       if (new Date().getTime() - this._dash_start >= this._dash_time) {
         this._dashing = false
+        this._last_dash = Date.now()
         this.vel.x = this._move_vel * dir
       }
       this.vel.x = this._dash_vel * dir
@@ -117,7 +118,7 @@ class Player extends Movable {
   }
 
   Dash() {
-    if (!this._move_dir) return
+    if (!this._move_dir || (Date.now() - this._last_dash) <= conf.player_dash_cooldown) return
     this._dash_start = new Date().getTime()
     this._dashing = true
   }

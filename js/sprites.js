@@ -35,6 +35,13 @@ const player_head_texture = [
   PIXI.Texture.fromImage(require('../data/images/player_head/player_head_3.png'))
 ]
 
+const arrow_texture = [
+  PIXI.Texture.fromImage(require('../data/images/arrow/arrow_0.png')),
+  PIXI.Texture.fromImage(require('../data/images/arrow/arrow_1.png')),
+  PIXI.Texture.fromImage(require('../data/images/arrow/arrow_2.png')),
+  PIXI.Texture.fromImage(require('../data/images/arrow/arrow_3.png'))
+]
+
 const money_texture = PIXI.Texture.fromImage(require('../data/images/money.png'))
 
 const mystery_box_texture = PIXI.Texture.fromImage(require('../data/images/mystery_box.png'))
@@ -70,6 +77,10 @@ class Sprites {
 
   static Bow(variant = 0) {
     return new PIXI.Sprite(bow_texture[variant])
+  }
+
+  static Arrow(variant = 0) {
+    return new PIXI.Sprite(arrow_texture[variant])
   }
 
   static Minigun(variant = 0) {

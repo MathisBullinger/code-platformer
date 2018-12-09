@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { Firearm } from './firearm'
 import { Vec2D } from './../math'
 import { Arrow } from './arrow'
+import { Weapons } from './../weapons'
 
 /**
   * Weapon specialization.
@@ -72,13 +73,16 @@ class ArrowIndicator {
    */
   _updateGraphic() {
     // Clear old stuff and set line thickness
-    this.graphic.clear()
+    this.graphic.removeChild(...this.graphic.children)
     this.graphic.lineStyle(0.1, 0x000000, 1, 0.5)
     // Draw arrow lines based on the remaining arrows
     for (let i = 0; i < this._arrows_remaining; ++i) {
-      const x_pos = (1 / this._total_arrows) * i - (1 / this._total_arrows)
-      this.graphic.moveTo(x_pos, 0)
-      this.graphic.lineTo(x_pos, 0.5)
+      const y_pos = (0.5 / this._total_arrows) * i - (0.5 / this._total_arrows)
+      const arr = Weapons.GetProjectileSprite(this._bow)
+      arr.scale.set(0.7 / 747)
+      arr.rotation = Math.PI / -2
+      arr.position.set(0.35, y_pos + 0.1)
+      this.graphic.addChild(arr)
     }
     // Center
     this.graphic.position.set(0.35, 1.5)
