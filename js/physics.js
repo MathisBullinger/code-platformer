@@ -24,7 +24,8 @@ class Physics {
       for (let player of lvl._players) {
         if (Physics.DoBoxesIntersect(prj, player)) {
           // damage = base damage * projectile damage * weapon damage
-          const damage = game_config.base_damage * prj.damage
+          const damage = game_config.damage.base * prj.damage
+          console.log(damage + ' HP by ' + prj.constructor.name)
           player.Damage(damage)
           lvl.RemoveProjectiles(prj)
         }

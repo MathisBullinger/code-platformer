@@ -10,7 +10,6 @@ class Arrow extends Projectile {
     */
   constructor(bow) {
     super(bow, new Vec2D(0.1, 0.6), 15, 0)
-    this.damage = 3
   }
 
   /**

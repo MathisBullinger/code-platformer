@@ -1,6 +1,7 @@
-import { Vec2D } from './../math'
-import { Graphics } from './../graphics'
-import { Movable } from './../game_object'
+import { Vec2D } from '../math'
+import { Graphics } from '../graphics'
+import { Movable } from '../game_object'
+import { game_config } from '../game_config'
 
 /**
   * General projectile entity. This class is not meant to be instantiated
@@ -32,8 +33,11 @@ class Projectile extends Movable {
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, scale.y / 2)
     this.graphic.rotation = weapon.graphic.parent.rotation
-    // set base damage
-    this.damage = 1
+    // set damage
+    this.damage = weapon.damage
+    const damage = game_config.damage.projectile[this.constructor.name.toLowerCase()]
+    if (damage)
+      this.damage *= damage
   }
 
   /**
