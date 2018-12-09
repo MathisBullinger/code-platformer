@@ -28,6 +28,13 @@ const minigun_texture = [
   PIXI.Texture.fromImage(require('../data/images/minigun/minigun_3.png'))
 ]
 
+const player_head_texture = [
+  PIXI.Texture.fromImage(require('../data/images/player_head/player_head_0.png')),
+  PIXI.Texture.fromImage(require('../data/images/player_head/player_head_1.png')),
+  PIXI.Texture.fromImage(require('../data/images/player_head/player_head_2.png')),
+  PIXI.Texture.fromImage(require('../data/images/player_head/player_head_3.png'))
+]
+
 const money_texture = PIXI.Texture.fromImage(require('../data/images/money.png'))
 
 const mystery_box_texture = PIXI.Texture.fromImage(require('../data/images/mystery_box.png'))
@@ -39,6 +46,10 @@ const coffee_cup_texture = PIXI.Texture.fromImage(require('../data/images/coffee
 class Sprites {
   static Gun(variant = 0) {
     return new PIXI.Sprite(gun_texture[variant])
+  }
+
+  static PlayerHead(variant = 0) {
+    return new PIXI.Sprite(player_head_texture[variant])
   }
 
   static get Money() {

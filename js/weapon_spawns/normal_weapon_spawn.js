@@ -12,7 +12,7 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   constructor(pos) {
     // Position, cooldown, active color, inactive color
-    super(pos, 5000, 0xFF0000, 0x000000)
+    super(pos, 5000)
     // Next weapon
     this._SetNextWeapon()
   }

@@ -144,6 +144,14 @@ class Level {
     scene.addChild(player2.graphic)
     this._players.push(player2)
 
+    const player3 = new Player(2, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player3.graphic)
+    this._players.push(player3)
+
+    const player4 = new Player(3, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player4.graphic)
+    this._players.push(player4)
+
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
       this._RenderCollisionFaces(scene)
