@@ -61,6 +61,7 @@ class Keyboard {
    * Update (call functions bound to keys)
    */
   static Update(dt) {
+    if (!this._keybindings) return
     for (let binding of this._keybindings) {
       if (Keyboard.IsActive(binding.key)) {
         for (let callback of binding.actions)

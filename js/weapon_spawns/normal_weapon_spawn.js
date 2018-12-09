@@ -48,6 +48,7 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   _SetNextWeapon() {
     this._next_weapon = Weapons.GetRandomWeapon()
+    if (!this._next_weapon.graphic.clone) return
     const wp_graphic = this._next_weapon.graphic.clone()
     wp_graphic.position.set(0.5, 0.5 )
     wp_graphic.pivot.set(wp_graphic.width / 2, wp_graphic.height / 2)

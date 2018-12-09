@@ -29,13 +29,6 @@ class Player extends Movable {
     this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
     this.graphic.addChild(this._weapon_holster)
 
-    // Create weapon
-    // this._weapon = Weapons.GetRandomWeapon()
-    // this._weapon.paintWeapon(this._player_number)
-    // this._weapon_holster.addChild(this._weapon.graphic)
-    // // If weapon is a bow, add the remaing arrows indicator
-    // if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
-
     // player health
     this._hp_total = conf.player_hp
     this._hp_current = this._hp_total
@@ -195,6 +188,7 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
+    if (!spawn_pos) return
     console.log('respawn player', spawn_pos)
     this._alive = true
     this._hp_current = this._hp_total
