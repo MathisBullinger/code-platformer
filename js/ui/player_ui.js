@@ -14,10 +14,11 @@ class PlayerUI {
     this.graphic.children = []
     PlayerHealth.total_player_count = players.length
     for (let i = 0; i < players.length; ++i) {
-      const pl_bar = new PlayerHealth(players[i], i + 1)
+      const pl_bar = new PlayerHealth(players[i], i)
       this._players.push(pl_bar)
       this.graphic.addChild(pl_bar.graphic)
     }
+    this.graphic.position.set(0, Level.ActiveLevel.height - 1)
   }
 
   Update() {
@@ -32,6 +33,9 @@ class PlayerHealth {
     this._player = player
     this._player_index = index
     this.graphic = new PIXI.Graphics()
+    this._head_graphic = Sprites.PlayerHead(player._player_number)
+    this._head_graphic.anchor.set(0, 0.5)
+    this._head_graphic.scale.set(2 / 1975)
   }
 
   Update() {
@@ -44,25 +48,28 @@ class PlayerHealth {
   _Paint() {
     // Clear the screen
     this.graphic.children = []
-    // Draw coffee mugs
-    const half_mugs = PlayerHealth._GetHalfHearts(this._player.health)
-    for (let i = 0; i < half_mugs; i += 2) {
-      const money = Sprites.CoffeeCup
-      money.anchor.set(0.5)
-      money.scale.set(1 / 256)
-      money.rotation = Math.PI
-      money.position.set(0.75 * i, 0)
+    this.graphic.addChild(this._head_graphic)
+    // Get the maximum amount of mugs and the current amount
+    const cur_mugs = PlayerHealth._GetHalfHearts(this._player.health)
+    // Draw mugs
+    for (let i = 0; i < cur_mugs; i += 2) {
+      const mug = Sprites.CoffeeCup
+      mug.anchor.set(1, 0.5)
+      mug.scale.set(1 / 256)
+      mug.rotation = Math.PI
+      mug.position.set(0.5 * i + 2, 0)
       // If half money => crop width
-      if (i + 1 >= half_mugs) money.texture = new PIXI.Texture(money.texture, new PIXI.Rectangle(0, 0, 126, 161))
-      this.graphic.addChild(money)
+      if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(128, 0, 128, 256))
+      this.graphic.addChild(mug)
     }
-    const step = Level.ActiveLevel.width / (PlayerHealth.total_player_count + 1)
-    this.graphic.position.set(step * this._player_index, Level.ActiveLevel.height - 2)
-    this.graphic.pivot.set(this.graphic.width / 2, this.graphic.height / 2)
+    const step = Level.ActiveLevel.width / (PlayerHealth.total_player_count)
+    const margin = (step - 7.5) / 2
+    this.graphic.position.set(step * this._player_index + margin, 0)
+    this.graphic.pivot.set(0, this.graphic.height / 2)
   }
 
   static _GetHalfHearts(health) {
-    return Math.round(10 / conf.player_hp * health)
+    return Math.ceil(10 / conf.player_hp * health)
   }
 }
 

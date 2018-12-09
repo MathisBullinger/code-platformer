@@ -14,7 +14,7 @@ class RandomWeaponSpawn extends WeaponSpawn {
    */
   constructor(pos) {
     // Position, cooldown, active color, inactive color
-    super(pos, 5000, 0xFF0000, 0x000000)
+    super(pos, 5000)
     // Create question mark text
     this._text = RandomWeaponSpawn._CreateQuestionMark()
     this.graphic.addChild(this._text)
@@ -41,8 +41,8 @@ class RandomWeaponSpawn extends WeaponSpawn {
     this.graphic.addChild(this._text)
   }
 
-  _PaintSpawn(color) {
-    super._PaintSpawn(color)
+  _PaintSpawn() {
+    super._PaintSpawn()
   }
 
   static _CreateQuestionMark() {
