@@ -1,8 +1,8 @@
-import { Graphics, renderer } from './../graphics'
-import { Vec2D } from './../math'
-import { Level } from './../level'
-import { Gamepad } from './../interaction'
-import { Weapons } from './../weapons'
+import { renderer } from '../graphics'
+import { Vec2D } from '../math'
+import { Level } from '../level'
+import { Weapons } from '../weapons'
+import { game_config } from '../game_config'
 
 /**
   * General weapon class
@@ -24,6 +24,11 @@ class Weapon {
     // Get graphics
     this.paintWeapon()
     this._last_dir = null
+    // set damage
+    this.damage = 1
+    const damage = game_config.damage.weapon[this.constructor.name.toLowerCase()]
+    if (damage)
+      this.damage = damage
   }
 
   /**

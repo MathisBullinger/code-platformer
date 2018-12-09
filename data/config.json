@@ -8,5 +8,20 @@
   "player_dash_time": 42,
   "player_jump_height": 2.2,
   "player_hp": 100,
+  "base_damage": 10,
+  "damage": {
+    "__comment__": "damage is calculated as base * projectile * weapon",
+    "base": 1,
+    "projectile": {
+      "arrow": 10,
+      "bullet": 1
+    },
+    "weapon": {
+      "bow": 10,
+      "gun": 10,
+      "minigun": 1,
+      "shotgun": 5
+    }
+  },
   "display_mov_vector": false
 }

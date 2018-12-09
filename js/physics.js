@@ -1,4 +1,5 @@
 import { Vec2D, Line } from './math'
+import { game_config } from './game_config'
 
 class Physics {
 
@@ -19,6 +20,15 @@ class Physics {
       if (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0) {
         lvl.RemoveProjectiles(prj)
         continue // no need to update a projectile that just got removed
+      }
+      for (let player of lvl._players) {
+        if (Physics.DoBoxesIntersect(prj, player)) {
+          // damage = base damage * projectile damage * weapon damage
+          const damage = game_config.damage.base * prj.damage
+          console.log(damage + ' HP by ' + prj.constructor.name)
+          player.Damage(damage)
+          lvl.RemoveProjectiles(prj)
+        }
       }
       // apply gravity to bullet
       Physics._Accelerate(prj.vel, lvl._gravity, dt)

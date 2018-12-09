@@ -3,7 +3,6 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Keyboard as key, Gamepad, Mouse } from './interaction'
 import { Weapons, Bow } from './weapons'
 
 class Player extends Movable {
@@ -31,11 +30,11 @@ class Player extends Movable {
     this.graphic.addChild(this._weapon_holster)
 
     // Create weapon
-    this._weapon = Weapons.GetRandomWeapon()
-    this._weapon.paintWeapon(this._player_number)
-    this._weapon_holster.addChild(this._weapon.graphic)
-    // If weapon is a bow, add the remaing arrows indicator
-    if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
+    // this._weapon = Weapons.GetRandomWeapon()
+    // this._weapon.paintWeapon(this._player_number)
+    // this._weapon_holster.addChild(this._weapon.graphic)
+    // // If weapon is a bow, add the remaing arrows indicator
+    // if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
 
     // player health
     this._hp_total = conf.player_hp
@@ -79,7 +78,7 @@ class Player extends Movable {
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
-    this._weapon.Update(this._input)
+    if (this._weapon) this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
   }
@@ -88,10 +87,13 @@ class Player extends Movable {
    * Set the players weapon
    */
   SetWeapon(weapon) {
+    console.log('picked up ' + weapon.constructor.name)
     // Remove the weapon
-    this._weapon_holster.removeChild(this._weapon.graphic)
-    // If weapon was a bow, also remove the arrow indicator
-    if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
+    if (this._weapon) {
+      this._weapon_holster.removeChild(this._weapon.graphic)
+      // If weapon was a bow, also remove the arrow indicator
+      if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
+    }
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
     this._weapon.paintWeapon(this._player_number)
@@ -149,6 +151,7 @@ class Player extends Movable {
    * Attack
    */
   Attack() {
+    if (!this._weapon) return
     const recoil = Vec2D.Div(this._weapon.Shoot(), this._mass)
     this.vel = Vec2D.Add(this.vel, recoil)
   }
@@ -174,6 +177,7 @@ class Player extends Movable {
     this._alive = false
     console.log('player died')
   }
+  Die() { this.Kill() }
 
   get dead() {
     return !this._alive
