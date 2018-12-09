@@ -29,7 +29,6 @@ class Projectile extends Movable {
     const offset = 1
     const off_vec = new Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)) // don't shoot yourself
     this.pos = Vec2D.Add(this.pos, off_vec)
-    console.log(off_vec)
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, scale.y / 2)
     this.graphic.rotation = weapon.graphic.parent.rotation
