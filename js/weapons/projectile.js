@@ -22,7 +22,14 @@ class Projectile extends Movable {
     // Get projectile orientation and scale direction vector by velocity
     this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
-    this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0x000000)
+    this.graphic = Graphics.CreateRectangle(
+      this.pos.x, this.pos.y, scale.x, scale.y, 0x000000
+    )
+    const a = weapon.graphic.parent.rotation
+    const offset = 1
+    const off_vec = new Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)) // don't shoot yourself
+    this.pos = Vec2D.Add(this.pos, off_vec)
+    console.log(off_vec)
     // Center pivot and apply holster rotation
     this.graphic.pivot.set(scale.x / 2, scale.y / 2)
     this.graphic.rotation = weapon.graphic.parent.rotation
