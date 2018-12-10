@@ -68,6 +68,13 @@ class Player extends Movable {
       }
       this.vel.x = this._dash_vel * dir
     }
+    // Check if player can heal
+    if (Date.now() - this._last_damage_taken > conf.healing.cooldown) {
+      // Increase health until max health is reached
+      this._hp_current = Math.min(this._hp_current + (conf.healing.amount_per_sec / 1000 * dt), this._hp_total)
+      // If max => unset _last_damage_taken attribute
+      if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
+    }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
     // Shoot when mouse down
@@ -160,6 +167,7 @@ class Player extends Movable {
    */
   Damage(hp) {
     this._hp_current -= hp
+    this._last_damage_taken = Date.now()
     if (this._hp_current <= 0)
       this.Die()
   }
@@ -174,8 +182,10 @@ class Player extends Movable {
   Kill() {
     this._hp_current = 0
     this._alive = false
+    this._last_damage_taken = undefined
     console.log('player died')
   }
+
   Die() { this.Kill() }
 
   get dead() {

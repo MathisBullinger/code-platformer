@@ -9,6 +9,10 @@
   "player_dash_cooldown": 1000,
   "player_jump_height": 2.2,
   "player_hp": 100,
+  "healing": {
+    "amount_per_sec": 5,
+    "cooldown": 1000
+  },
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",
