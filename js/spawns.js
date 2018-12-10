@@ -57,6 +57,10 @@ class Spawns {
     this._player_spawns.push(pos)
   }
 
+  get playerSpawnpointCount() {
+    return this._player_spawns.length
+  }
+
   /**
    * Gets a random spawn point from the collection
    */

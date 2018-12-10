@@ -3,7 +3,7 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Weapons, Bow } from './weapons'
+import { Bow } from './weapons'
 
 class Player extends Movable {
 
