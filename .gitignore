@@ -3,7 +3,6 @@ dist/
 min/
 node_modules/
 .DS_STORE
-data/
 tmp/
 
 *_dpr.*
