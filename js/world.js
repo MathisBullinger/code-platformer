@@ -4,6 +4,34 @@ import { Level } from './level'
 import { game_config } from './game_config'
 import { UI } from './ui/user_interface'
 
+const level_data = [
+  {
+    id: 0,
+    name: 'Basement',
+    data: require('../data/level/Basement.json'),
+  },
+  {
+    id: 1,
+    name: 'Level 1',
+    data: require('../data/level/Level1.json'),
+  },
+  {
+    id: 2,
+    name: 'Level 2',
+    data: require('../data/level/Level2.json'),
+  },
+  {
+    id: 3,
+    name: 'New Big Boy Lvl',
+    data: require('../data/level/New Big Boy Lvl.json'),
+  },
+  {
+    id: 4,
+    name: 'The fall',
+    data: require('../data/level/the_fall.json'),
+  }
+]
+
 class World {
   /**
     * Constructor
@@ -16,10 +44,9 @@ class World {
     * Create new world
     */
   Create() {
-    const lvl_data = require('../data/level/Basement.json')
     this._CreateScene()
     this.level = new Level(this.scene)
-    this.level.Load(lvl_data, this.scene)
+    this.level.Load(level_data[0].data, this.scene)
 
     this.ui = new UI()
     this.scene.addChild(this.ui.graphic)

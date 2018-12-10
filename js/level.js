@@ -114,7 +114,7 @@ class Level {
     }
     // We need at least one spawn point
     if (!player_sp) {
-      console.error('No player spawn points were found for this level.')
+      console.error('No player_sp layer was found.')
       return
     }
     // Iterate the "player_sp" data and add _spawnpoints
@@ -122,6 +122,10 @@ class Level {
       if (player_sp[i] !== 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       this._spawns.AddPlayerSpawn(pos)
+    }
+    if (this._spawns.playerSpawnpointCount === 0) {
+      console.error('No player spawnpoints were found.')
+      return
     }
     // Check if any weapon spawn data was found
     if (weapon_sp) {

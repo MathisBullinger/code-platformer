@@ -1,9 +1,8 @@
-import * as PIXI from 'pixi.js'
 import { Vec2D } from '../math'
-import { Graphics } from '../graphics'
 import { Movable } from '../game_object'
 import { game_config } from '../game_config'
 import { Weapons } from './../weapons'
+import { Arrow } from './arrow'
 
 /**
   * General projectile entity. This class is not meant to be instantiated
@@ -28,7 +27,7 @@ class Projectile extends Movable {
     this.graphic = Weapons.GetProjectileSprite(weapon)
     this.graphic.position.set(this.pos.x, this.pos.y)
     const a = weapon.graphic.parent.rotation
-    const offset = 0.25
+    const offset = this.constructor === Arrow ? 1/3 : 1
     const off_vec = new Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)) // don't shoot yourself
     this.pos = Vec2D.Add(this.pos, off_vec)
     this.graphic.rotation = a

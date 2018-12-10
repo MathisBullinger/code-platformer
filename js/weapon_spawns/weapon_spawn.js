@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import { Vec2D } from './../math'
 import { Sprites } from './../sprites'
 

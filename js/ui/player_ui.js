@@ -74,13 +74,13 @@ class PlayerHealth {
   _PaintWeapon() {
     this.graphic.removeChild(this._weapon_graphic)
     this._weapon_graphic = this._player._weapon ?
-                              Weapons.GetSprite(this._player._weapon, this._player.number) :
-                              new PIXI.Container()
+      Weapons.GetSprite(this._player._weapon, this._player.number) :
+      new PIXI.Container()
     this._weapon_graphic.position.set(3.75, 0.25)
     this._weapon_graphic.scale.set(1.5 / 1531)
     this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === Bow ?
-                                        0 :
-                                        Math.PI / 2
+      0 :
+      Math.PI / 2
     this.graphic.addChild(this._weapon_graphic)
   }
 

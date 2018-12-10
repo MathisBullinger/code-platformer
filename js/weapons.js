@@ -18,7 +18,7 @@ class Weapons {
         projectile = Sprites.Arrow(variant)
         projectile.scale.set(1 / 747, -1 / 747)
         projectile.anchor.set(0.5, 1)
-        break;
+        break
       default:
         projectile = new PIXI.Graphics()
         projectile.beginFill(0x000000)
