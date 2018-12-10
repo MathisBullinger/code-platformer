@@ -41,12 +41,7 @@ class PlayerHealth {
     this.graphic.pivot.set(0, this.graphic.height / 2)
     // Save mugs
     this._mugs = []
-    // Static head sprite
-    // this._head_graphic = Sprites.PlayerHead(player._player_number)
-    // this._head_graphic.anchor.set(0, 0.4)
-    // this._head_graphic.scale.set(1.24 / 1114, -1.24 / 1114)
-    // this.graphic.addChild(this._head_graphic)
-
+    
     // Static money sprite
     this._money_graphic = Graphics.textures.GetSprite('money')
     this._money_graphic.anchor.set(0, 0.5)
@@ -55,11 +50,11 @@ class PlayerHealth {
     this.graphic.addChild(this._money_graphic)
 
     // Static head sprite
-    // this._head_graphic = Graphics.textures[`player_head_${index}`]
-    // this._head_graphic.position.set(1, 0)
-    // this._head_graphic.width = 2
-    // this._head_graphic.height = 2
-    // this.graphic.addChild(this._head_graphic)
+    this._head_graphic = Graphics.textures.GetSprite(`player_head_${index}`)
+    this._head_graphic.position.set(0, -0.5)
+    this._head_graphic.width = 1
+    this._head_graphic.height = 1
+    this.graphic.addChild(this._head_graphic)
   }
 
   Update() {
