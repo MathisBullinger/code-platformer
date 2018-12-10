@@ -1,5 +1,5 @@
-import { Vec2D } from './../math'
-import { Sprites } from './../sprites'
+import { Vec2D } from '../math'
+import { Graphics } from '../graphics'
 
 class WeaponSpawn {
   constructor(pos, cooldown) {
@@ -49,7 +49,7 @@ class WeaponSpawn {
 
   _PaintSpawn() {
     if (!this.graphic) {
-      this.graphic = Sprites.MysteryBox
+      this.graphic = Graphics.textures.GetSprite('mystery_box')
       this.graphic.scale.set(1/296)
       this.graphic.pivot.set(296)
       this.graphic.rotation = Math.PI

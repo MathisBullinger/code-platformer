@@ -3,7 +3,7 @@ import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 import { Minigun } from './weapons/minigun'
 import { Shotgun } from './weapons/shotgun'
-import { Sprites } from './sprites'
+import { Graphics } from './graphics'
 
 class Weapons {
   static GetRandomWeapon() {
@@ -11,11 +11,11 @@ class Weapons {
     return new wpn()
   }
 
-  static GetProjectileSprite(wpn, variant) {
+  static GetProjectileSprite(wpn, variant = 0) {
     let projectile = undefined
     switch (wpn.constructor) {
       case Bow:
-        projectile = Sprites.Arrow(variant)
+        projectile = Graphics.textures.GetSprite('arrow_' + variant)
         projectile.scale.set(1 / 747, -1 / 747)
         projectile.anchor.set(0.5, 1)
         break
@@ -32,26 +32,8 @@ class Weapons {
 
   static GetSprite(wpn, variant) {
     let weapon = undefined
-    switch (wpn.constructor) {
-      case Gun:
-        weapon = Sprites.Gun(variant)
-        weapon.scale.set(3 / 1724)
-        break
-      case Bow:
-        weapon = Sprites.Bow(variant)
-        weapon.scale.set(2 / 1724)
-        break
-      case Minigun:
-        weapon = Sprites.Minigun(variant)
-        weapon.scale.set(3 / 1724)
-        break
-      case Shotgun:
-        weapon = Sprites.Shotgun(variant)
-        weapon.scale.set(3 / 1724)
-        break
-      default:
-        break
-    }
+    weapon = Graphics.textures.GetSprite(`${wpn.constructor.name.toLowerCase()}_${variant}`)
+    weapon.scale.set(3 / 1724)
     weapon.anchor.set(0.5, 0.5)
     return weapon
   }

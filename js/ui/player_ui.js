@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Level } from './../level'
 import { game_config as conf } from './../game_config'
-import { Sprites } from './../sprites'
 import { Weapons, Bow } from './../Weapons'
 import { Graphics } from '../graphics'
 
@@ -49,7 +48,7 @@ class PlayerHealth {
     // this.graphic.addChild(this._head_graphic)
 
     // Static money sprite
-    this._money_graphic = Sprites.Money
+    this._money_graphic = Graphics.textures.GetSprite('money')
     this._money_graphic.anchor.set(0, 0.5)
     this._money_graphic.position.set(1.4, 0.25)
     this._money_graphic.scale.set(0.7 / 1007, -0.7 / 1007)
@@ -111,7 +110,7 @@ class PlayerHealth {
     const cur_mugs = PlayerHealth._GetHalfHearts(this._player.health)
     // Draw mugs
     for (let i = 0; i < cur_mugs; i += 2) {
-      const mug = Sprites.CoffeeCup
+      const mug = Graphics.textures.GetSprite('coffee_cup')
       mug.anchor.set(0, 0)
       mug.scale.set(-0.5 / 256, 0.5/256)
       mug.rotation = Math.PI

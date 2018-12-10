@@ -5,7 +5,6 @@ import { Physics } from './physics'
 import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
 import { GetUrlParam } from './util'
-import { Sprites } from './sprites'
 import { InputKeyboard, InputGamepad } from './input_profile'
 import { Graphics } from './graphics'
 
@@ -107,9 +106,7 @@ class Level {
       if (material != 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       let block = new GameObject(pos)
-      // block.graphic = Sprites.Wall
       block.graphic = Graphics.textures.GetSprite('wall')
-      // block.graphic.scale.set(1 / 256)
       block.graphic.width = block.width
       block.graphic.height = block.height
       block.graphic.position.set(pos.x, pos.y)
@@ -159,10 +156,6 @@ class Level {
     const player4 = new Player(3, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
     scene.addChild(player4.graphic)
     this._players.push(player4)
-
-    // const tex = Graphics.textures['money']
-    // scene.addChild(tex)
-    // console.log(tex)
 
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
