@@ -37,20 +37,20 @@ class PlayerHealth {
     // Create container
     const step = Level.ActiveLevel.width / PlayerHealth.total_player_count
     this.graphic = new PIXI.Graphics()
-    this.graphic.position.set(step * this._player_index + ((step - 4.75) / 2), 0)
+    this.graphic.position.set(step * this._player_index + ((step - 4) / 2), 0)
     this.graphic.pivot.set(0, this.graphic.height / 2)
     // Save mugs
     this._mugs = []
     // Static head sprite
     this._head_graphic = Sprites.PlayerHead(player._player_number)
     this._head_graphic.anchor.set(0, 0.4)
-    this._head_graphic.scale.set(2 / 1975, -2 / 1975)
+    this._head_graphic.scale.set(1.24 / 1114, -1.24 / 1114)
     this.graphic.addChild(this._head_graphic)
     // Static money sprite
     this._money_graphic = Sprites.Money
     this._money_graphic.anchor.set(0, 0.5)
-    this._money_graphic.position.set(1.6, 0.25)
-    this._money_graphic.scale.set(1 / 1531, -1 / 1531)
+    this._money_graphic.position.set(1.4, 0.25)
+    this._money_graphic.scale.set(0.7 / 1007, -0.7 / 1007)
     this.graphic.addChild(this._money_graphic)
   }
 
@@ -76,7 +76,7 @@ class PlayerHealth {
     this._weapon_graphic = this._player._weapon ?
       Weapons.GetSprite(this._player._weapon, this._player.number) :
       new PIXI.Container()
-    this._weapon_graphic.position.set(3.75, 0.25)
+    this._weapon_graphic.position.set(3.45, 0.25)
     this._weapon_graphic.scale.set(1.5 / 1531)
     this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === Bow ?
       0 :
@@ -91,7 +91,7 @@ class PlayerHealth {
     this._score_graphic.height = 0.45
     this._score_graphic.width = this._score_graphic.height * ratio
     this._score_graphic.scale.y *= -1
-    this._score_graphic.position.set(2.5, 0.45)
+    this._score_graphic.position.set(2.2, 0.45)
     this.graphic.addChild(this._score_graphic)
   }
 
@@ -106,7 +106,7 @@ class PlayerHealth {
       mug.anchor.set(0, 0)
       mug.scale.set(-0.5 / 256, 0.5/256)
       mug.rotation = Math.PI
-      mug.position.set(0.25 * i + 1.75, -0.15)
+      mug.position.set(0.25 * i + 1.45, -0.15)
       // If half money => crop width
       if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256))
       this._mugs.push(mug)
