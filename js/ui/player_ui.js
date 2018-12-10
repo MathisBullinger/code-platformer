@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 import { Level } from './../level'
 import { game_config as conf } from './../game_config'
-import { Sprites } from './../sprites'
 import { Weapons, Bow } from './../Weapons'
+import { Graphics } from '../graphics'
 
 class PlayerUI {
   constructor(players) {
@@ -41,17 +41,20 @@ class PlayerHealth {
     this.graphic.pivot.set(0, this.graphic.height / 2)
     // Save mugs
     this._mugs = []
-    // Static head sprite
-    this._head_graphic = Sprites.PlayerHead(player._player_number)
-    this._head_graphic.anchor.set(0, 0.4)
-    this._head_graphic.scale.set(1.24 / 1114, -1.24 / 1114)
-    this.graphic.addChild(this._head_graphic)
+    
     // Static money sprite
-    this._money_graphic = Sprites.Money
+    this._money_graphic = Graphics.textures.GetSprite('money')
     this._money_graphic.anchor.set(0, 0.5)
     this._money_graphic.position.set(1.4, 0.25)
     this._money_graphic.scale.set(0.7 / 1007, -0.7 / 1007)
     this.graphic.addChild(this._money_graphic)
+
+    // Static head sprite
+    this._head_graphic = Graphics.textures.GetSprite(`player_head_${index}`)
+    this._head_graphic.position.set(0, -0.5)
+    this._head_graphic.width = 1
+    this._head_graphic.height = 1
+    this.graphic.addChild(this._head_graphic)
   }
 
   Update() {
@@ -102,7 +105,7 @@ class PlayerHealth {
     const cur_mugs = PlayerHealth._GetHalfHearts(this._player.health)
     // Draw mugs
     for (let i = 0; i < cur_mugs; i += 2) {
-      const mug = Sprites.CoffeeCup
+      const mug = Graphics.textures.GetSprite('coffee_cup')
       mug.anchor.set(0, 0)
       mug.scale.set(-0.5 / 256, 0.5/256)
       mug.rotation = Math.PI

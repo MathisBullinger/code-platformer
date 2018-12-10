@@ -160,7 +160,7 @@ class Gamepad {
    * Update (call actions if bound input is active)
    */
   static Update(dt) {
-    if (!this._controllers || this._controllers.length == 0) return
+    if (!this._controllers || this._controllers.length == 0 || !this._inputbindings) return
     const pad = new XboxController(navigator.getGamepads()[0])
     for (let binding of this._inputbindings) {
       if (pad.inputs[binding.input]) {
