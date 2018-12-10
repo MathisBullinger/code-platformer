@@ -14,7 +14,7 @@ class World {
     * Create new world
     */
   Create() {
-    const lvl_data = require('../data/level/Basement.json')
+    const lvl_data = require('../data/level/bigboy.json')
     this._CreateScene()
     this.level = new Level(this.scene)
     this.level.Load(lvl_data, this.scene)
