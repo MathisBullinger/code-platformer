@@ -42,7 +42,7 @@ class PlayerHealth {
     // Save mugs
     this._mugs = []
     // Static head sprite
-    this._head_graphic = Sprites.PlayerHead(player._player_number)
+    this._head_graphic = Sprites.PlayerHead(player.player_number)
     this._head_graphic.anchor.set(0, 0.5)
     this._head_graphic.scale.set(2 / 1975)
     this.graphic.addChild(this._head_graphic)
