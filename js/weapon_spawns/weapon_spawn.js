@@ -49,9 +49,9 @@ class WeaponSpawn {
 
   _PaintSpawn() {
     if (!this.graphic) {
-      this.graphic = Graphics.textures.GetSprite('mystery_box')
-      this.graphic.scale.set(1/296)
-      this.graphic.pivot.set(296)
+      this.graphic = Graphics.textures.GetSprite(this._TextureName)
+      this.graphic.scale.set(1/512)
+      this.graphic.pivot.set(512)
       this.graphic.rotation = Math.PI
       this.graphic.position.set(this.pos.x, this.pos.y)
     }
