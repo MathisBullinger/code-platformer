@@ -38,7 +38,7 @@ class World {
     */
   constructor() {
     this.Create()
-    World.Current = this
+    World.Current = this // Set static
   }
 
   /**
@@ -78,7 +78,7 @@ class World {
       // Create UI if not already existing
       this.ui = new UI()
       this.scene.addChild(this.ui.graphic)
-      // REsize screen to fit new level
+      // Resize screen to fit new level
       this._ResizeScene()
     }
   }

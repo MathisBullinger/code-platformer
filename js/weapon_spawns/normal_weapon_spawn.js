@@ -52,7 +52,6 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   _SetNextWeapon() {
     this._next_weapon = Weapons.GetRandomWeapon()
-    console.log(this._next_weapon.constructor.name)
     const wp_graphic = Weapons.GetSprite(this._next_weapon, 0)
     wp_graphic.rotation = -Math.PI / 2
     wp_graphic.position.set(256)

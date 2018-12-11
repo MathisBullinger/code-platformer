@@ -7,3 +7,5 @@ tmp/
 
 *_dpr.*
 .DS_Store
+
+* text=auto

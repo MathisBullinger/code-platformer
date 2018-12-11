@@ -41,12 +41,12 @@ class PlayerHealth {
     this.graphic.pivot.set(0, this.graphic.height / 2)
     // Save mugs
     this._mugs = []
-    
+
     // Static money sprite
     this._money_graphic = Graphics.textures.GetSprite('money')
     this._money_graphic.anchor.set(0, 0.5)
     this._money_graphic.position.set(1.4, 0.25)
-    this._money_graphic.scale.set(0.7 / 1007, -0.7 / 1007)
+    this._money_graphic.scale.set(0.7 / 512, -0.7 / 512)
     this.graphic.addChild(this._money_graphic)
 
     // Static head sprite
@@ -89,7 +89,7 @@ class PlayerHealth {
 
   _PaintHighscore() {
     this.graphic.removeChild(this._score_graphic)
-    this._score_graphic = new PIXI.Text(`x${ this._player.score }`, { fill: 0xFFFFFF, fontSize: 64, fontWeight: 'bold'  })
+    this._score_graphic = new PIXI.Text(`x${ Math.floor(this._player.score) }`, { fill: 0xFFFFFF, fontSize: 64, fontWeight: 'bold'  })
     const ratio = this._score_graphic.width / this._score_graphic.height
     this._score_graphic.height = 0.45
     this._score_graphic.width = this._score_graphic.height * ratio

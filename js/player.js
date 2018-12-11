@@ -11,8 +11,8 @@ class Player extends Movable {
    * Constructor
    */
   constructor(number, input, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
-    console.log('spawn player at ', pos)
     super(pos, scale)
+    console.log('spawn player at ', pos)
     this._player_number = number
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
@@ -98,6 +98,7 @@ class Player extends Movable {
     }
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
+    this._weapon.player = this
     this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If new weapon is a bow, also add the arrow indicator
@@ -136,6 +137,10 @@ class Player extends Movable {
 
   get score() {
     return this._score
+  }
+
+  set score(score) {
+    this._score = score
   }
 
   /**
