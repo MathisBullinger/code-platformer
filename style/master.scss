@@ -1,4 +1,5 @@
-html, body {
+body,
+html {
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -9,4 +10,62 @@ html, body {
   height: 100vh;
   display: block;
   margin: 0;
+}
+
+.menu-wrap {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("../data/mainmenu/background.gif");
+  background-position: 70% center;
+  background-size: cover;
+
+  .logo {
+    height: 50vh;
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%) translateY(-20%);
+  }
+
+  .menu {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    width: 20vw;
+    height: 20vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .bt {
+      background-color: black;
+      color: white;
+      height: 20%;
+      font-family: 'Roboto', sans-serif;
+      font-weight: bold;
+      line-height: 100%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      padding-left: 1em;
+      box-sizing: border-box;
+    }
+
+    .start {
+      width: 100%;
+    }
+    .settings {
+      width: 66%;
+    }
+    .exit {
+      width: 33%;
+    }
+  }
 }
