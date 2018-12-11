@@ -33,7 +33,7 @@ class Weapons {
   static GetSprite(wpn, variant) {
     let weapon = undefined
     weapon = Graphics.textures.GetSprite(`${wpn.constructor.name.toLowerCase()}_${variant}`)
-    weapon.scale.set(3 / 1724)
+    weapon.scale.set(3 / weapon.height)
     weapon.anchor.set(0.5, 0.5)
     return weapon
   }

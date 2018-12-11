@@ -113,12 +113,12 @@ class World {
     // rescale scene to fit into screen
     const scene_ratio = Math.abs(this.scene.height / this.scene.width)
     if (this.scene.width / window.innerWidth >= Math.abs(this.scene.height / window.innerHeight)) {
-      this.scene.width = window.innerWidth / window.devicePixelRatio - (window.innerWidth / Level.ActiveLevel.width)
+      this.scene.width = window.innerWidth / window.devicePixelRatio // - (window.innerWidth / Level.ActiveLevel.width)
       this.scene.height = scene_ratio * this.scene.width * -1
       const pos_y = (window.innerHeight - (window.innerHeight - Math.abs(this.scene.height * renderer.resolution)) / 2) / renderer.resolution
       this.scene.y = pos_y
     } else {
-      this.scene.height = window.innerHeight / window.devicePixelRatio * -1 + (window.innerHeight / Level.ActiveLevel.height)
+      this.scene.height = window.innerHeight / window.devicePixelRatio * -1 // + (window.innerHeight / Level.ActiveLevel.height)
       this.scene.width = 1 / scene_ratio * this.scene.height * -1
       const pos_x = ((window.innerWidth - Math.abs(this.scene.width * renderer.resolution)) / 2) / renderer.resolution
       this.scene.x = pos_x

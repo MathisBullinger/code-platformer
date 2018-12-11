@@ -115,7 +115,7 @@ class Graphics {
     console.log('image list:', images)
 
     images.forEach((value, i) => { images[i] = path + value })
-    PIXI.loader.add(images).load(()=>{
+    PIXI.loader.add(images).load(() => {
       for (let img of images) {
         Graphics.textures[img.split('/').pop().split('.')[0]] = PIXI.loader.resources[img].texture
       }
