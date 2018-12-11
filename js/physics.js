@@ -8,10 +8,13 @@ class Physics {
    */
   static Update(dt, lvl) {
     lvl._players.forEach(player => {
+      if (player.dead) return // No physics when dead
       // apply gravity to player
       Physics._Accelerate(player.vel, lvl._gravity, dt)
       // update player position
       player.Update(dt)
+      // Update trophy
+      if (lvl.trophy) lvl.trophy.Update(dt)
     })
 
     // update projectiles
@@ -26,7 +29,9 @@ class Physics {
         if (Physics.DoBoxesIntersect(prj, player)) {
           // damage = base damage * projectile damage * weapon damage
           const damage = game_config.damage.base * prj.damage
+          const old_pos = player.pos
           player.Damage(damage)
+          if (player.dead) lvl.trophy.moveToLevel(lvl, old_pos)
           lvl.RemoveProjectiles(prj)
         }
       }
@@ -36,6 +41,11 @@ class Physics {
     }
 
     lvl._players.forEach(player => {
+      if (player.dead) return  // No physics when dead
+      // Check collision with level trophy
+      if (!lvl.trophy.isPickedUp && Physics.DoBoxesIntersect(lvl.trophy, player)) {
+        lvl.trophy.moveToPlayer(player)
+      }
       // check for collisions
       const collisions = Physics._GetColliding(player, lvl._block_grid)
       if (collisions.length > 0) {

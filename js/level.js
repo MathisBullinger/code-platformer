@@ -1,5 +1,6 @@
 import { GameObject } from './game_object'
 import { Player } from './player'
+import { Trophy } from './trophy'
 import { Vec2D } from './math'
 import { Physics } from './physics'
 import { game_config as conf } from './game_config'
@@ -38,8 +39,10 @@ class Level {
       this._spawns.Update(dt, player)
 
       // kill player if below death cap
-      if (!player.dead && player.y < this._lower_death_cap)
+      if (!player.dead && player.y < this._lower_death_cap) {
+        if (this.trophy.player === player) this.trophy.moveToLevel(this)
         player.Kill()
+      }
 
       // respawn player if dead at a random position
       if (player.dead)
@@ -156,6 +159,10 @@ class Level {
     const player4 = new Player(3, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
     scene.addChild(player4.graphic)
     this._players.push(player4)
+
+    // Create the trophy to pick up
+    this.trophy = new Trophy(this)
+    scene.addChild(this.trophy.graphic)
 
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))

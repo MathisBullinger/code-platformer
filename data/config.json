@@ -13,6 +13,10 @@
     "amount_per_sec": 5,
     "cooldown": 1000
   },
+  "trophy": {
+    "passive_income": 0.1,
+    "pickup_bounty": 2,
+  },
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",

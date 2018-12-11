@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import { WeaponSpawn } from './weapon_spawn'
 import { Weapons } from './../weapons'
 
