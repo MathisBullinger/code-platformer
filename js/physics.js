@@ -17,7 +17,8 @@ class Physics {
     // update projectiles
     for (let prj of lvl._projectiles) {
       // If any collision => remove projectiles
-      if (prj.lifespanExpired || (Physics._GetColliding(prj.graphic, lvl._block_grid).length !== 0)) {
+      const collisions = Physics._GetColliding(prj, lvl._block_grid)
+      if (prj.lifespanExpired || (collisions && collisions.length !== 0)) {
         lvl.RemoveProjectiles(prj)
         continue // no need to update a projectile that just got removed
       }
