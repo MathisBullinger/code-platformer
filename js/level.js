@@ -40,7 +40,7 @@ class Level {
 
       // kill player if below death cap
       if (!player.dead && player.y < this._lower_death_cap) {
-        if (this.trophy.player === player) this.trophy.moveToLevel(this)
+        if (this.trophy.player === player) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn())
         player.Kill()
       }
 
@@ -80,6 +80,7 @@ class Level {
     let blocks = null
     let weapon_sp = null
     let player_sp = null
+    let trophy_sp = null
     // Iterate all layers and assign helpers
     for (let layer of layers) {
       if (layer.name == 'world') {
@@ -88,6 +89,8 @@ class Level {
         weapon_sp = layer.data
       } else if (layer.name === 'player_sp') {
         player_sp = layer.data
+      } else if (layer.name === 'trophy_sp') {
+        trophy_sp = layer.data
       }
     }
     // We need level data
@@ -137,6 +140,13 @@ class Level {
         this._spawns.AddWeaponSpawn(weapon_sp[i], pos, scene)
       }
     }
+    if (trophy_sp) {
+      for (let i = 0; i < trophy_sp.length; ++i) {
+        if (trophy_sp[i] !== 1) continue
+        const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+        this._spawns.AddTrophySpawn(pos)
+      }
+    }
     // gravity
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
@@ -160,6 +170,7 @@ class Level {
 
     // Create the trophy to pick up
     this.trophy = new Trophy(this)
+    if (this._spawns.trophySpawnpointCount > 0) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn())
     scene.addChild(this.trophy.graphic)
 
     // render collision faces

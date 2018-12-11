@@ -119,7 +119,7 @@ class Graphics {
       for (let img of images) {
         Graphics.textures[img.split('/').pop().split('.')[0]] = PIXI.loader.resources[img].texture
       }
-      console.log('loaded textures:', Graphics.textures)
+      // console.log('loaded textures:', Graphics.textures)
       on_done()
     })
   }
