@@ -98,6 +98,7 @@ class Player extends Movable {
     }
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
+    this._weapon.player = this
     this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If new weapon is a bow, also add the arrow indicator

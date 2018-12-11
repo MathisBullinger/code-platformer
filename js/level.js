@@ -66,9 +66,7 @@ class Level {
   }
 
   RemoveProjectiles(...prj) {
-    prj.forEach(p => {
-      p.RemoveMoveVec()
-    })
+    prj.forEach(p => p.RemoveMoveVec())
     this._parent_scene.removeChild(...([...prj].map(pr => pr.graphic)))
     this._projectiles = this._projectiles.filter(pr => !([...prj]).includes(pr))
   }

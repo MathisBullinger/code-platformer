@@ -26,12 +26,20 @@ class Physics {
         continue // no need to update a projectile that just got removed
       }
       for (let player of lvl._players) {
+        if (player.dead) continue // Dont proceed if player already died with one of the last projectiles
         if (Physics.DoBoxesIntersect(prj, player)) {
           // damage = base damage * projectile damage * weapon damage
           const damage = game_config.damage.base * prj.damage
           const old_pos = player.pos
           player.Damage(damage)
-          if (player.dead) lvl.trophy.moveToLevel(lvl, old_pos)
+          if (player.dead && player === lvl.trophy.player) {
+            const hitman = prj.weapon.player // Get the player who fired the shot
+            // Only give steal bounty if the target has the trophy and if it is not suicide
+            if (hitman !== player) {
+              hitman.score += game_config.trophy.steal_bounty
+            }
+            lvl.trophy.moveToLevel(lvl, old_pos)
+          }
           lvl.RemoveProjectiles(prj)
         }
       }

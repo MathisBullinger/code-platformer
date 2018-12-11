@@ -52,6 +52,20 @@ class Weapon {
   }
 
   /**
+   * Gets the player who is holding the weapon
+   */
+  get player() {
+    return this._player
+  }
+
+  /**
+   * Sets the player who is holding the weapon
+   */
+  set player(player) {
+    this._player = player
+  }
+
+  /**
     * Check if weapon is on cooldown
     */
   get _hasCooldown() {

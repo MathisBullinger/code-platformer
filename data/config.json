@@ -16,6 +16,7 @@
   "trophy": {
     "passive_income": 0.1,
     "pickup_bounty": 2,
+    "steal_bounty": 4
   },
   "base_damage": 10,
   "damage": {
