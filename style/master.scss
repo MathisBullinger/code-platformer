@@ -41,12 +41,27 @@ html {
   }
 
   .pl0 {
-    left: 10vw;
+    left: 3vw;
   }
 
   .pl1 {
     right: 10vw;
     height: 35vh;
+  }
+
+  .lamp {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    z-index: 5;
+  }
+
+  .lamp0 {
+    left: 0;
+  }
+
+  .lamp1 {
+    right: 0;
   }
 
   .floor {
