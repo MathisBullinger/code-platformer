@@ -12,7 +12,7 @@ class Player extends Movable {
    */
   constructor(number, input, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
     super(pos, scale)
-    console.log('spawn player at ', pos)
+    if (process.env.NODE_ENV === 'development') console.log('spawn player at ', pos)
     this._player_number = number
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
@@ -89,7 +89,7 @@ class Player extends Movable {
    * Set the players weapon
    */
   SetWeapon(weapon) {
-    console.log('picked up ' + weapon.constructor.name)
+    if (process.env.NODE_ENV === 'development') console.log('picked up ' + weapon.constructor.name)
     // Remove the weapon
     if (this._weapon) {
       this._weapon_holster.removeChild(this._weapon.graphic)

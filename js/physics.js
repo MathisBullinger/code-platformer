@@ -28,7 +28,6 @@ class Physics {
       for (let player of lvl._players) {
         if (player.dead) continue // Dont proceed if player already died with one of the last projectiles
         if (Physics.DoBoxesIntersect(prj, player)) {
-          // damage = base damage * projectile damage * weapon damage
           const damage = game_config.damage.base * prj.damage
           const old_pos = player.pos
           player.Damage(damage)

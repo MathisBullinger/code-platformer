@@ -14,5 +14,6 @@ class Gun extends Firearm {
     this.ammunition = Bullet
   }
 }
+Gun.Name = 'Gun'
 
 export { Gun }

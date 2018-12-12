@@ -50,9 +50,8 @@ class WeaponSpawn {
   _PaintSpawn() {
     if (!this.graphic) {
       this.graphic = Graphics.textures.GetSprite(this._TextureName)
-      this.graphic.scale.set(1/512)
-      this.graphic.pivot.set(512)
-      this.graphic.rotation = Math.PI
+      this.graphic.scale.set(1/512, - 1 / 512)
+      this.graphic.pivot.set(0, 512)
       this.graphic.position.set(this.pos.x, this.pos.y)
     }
     this.graphic.tint = this.hasWeapon ? 0xFFFFFF : 0x8C8C8C

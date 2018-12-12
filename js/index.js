@@ -10,6 +10,8 @@ if (module.hot) {
   })
 }
 
+console.log(`Started game in '${ process.env.NODE_ENV }' mode`)
+
 // directly start game if "state=game"
 if (GetUrlParam('state') == 'game') {
   let game = new Game()

@@ -32,7 +32,8 @@ class Weapons {
 
   static GetSprite(wpn, variant) {
     let weapon = undefined
-    weapon = Graphics.textures.GetSprite(`${wpn.constructor.name.toLowerCase()}_${variant}`)
+    if (process.env.NODE_ENV === 'development') console.log(`Requesting weapon sprite '${ wpn.constructor.Name.toLowerCase() }'`)
+    weapon = Graphics.textures.GetSprite(`${ wpn.constructor.Name.toLowerCase() }_${variant}`)
     weapon.scale.set(3 / weapon.height)
     weapon.anchor.set(0.5, 0.5)
     return weapon
