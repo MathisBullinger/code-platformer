@@ -52,6 +52,8 @@ class PlayerHealth {
     // Static head sprite
     this._head_graphic = Graphics.textures.GetSprite(`player_head_${index}`)
     this._head_graphic.position.set(0, -0.5)
+    this._head_graphic.anchor.set(0, 1)
+    this._head_graphic.scale.y *= - 1
     this._head_graphic.width = 1
     this._head_graphic.height = 1
     this.graphic.addChild(this._head_graphic)
@@ -77,8 +79,9 @@ class PlayerHealth {
   _PaintWeapon() {
     this.graphic.removeChild(this._weapon_graphic)
     this._weapon_graphic = this._player._weapon ?
-      Weapons.GetSprite(this._player._weapon, this._player.number) :
+      new PIXI.Sprite(this._player._weapon.graphic.texture) :
       new PIXI.Container()
+    this._weapon_graphic.anchor.set(0.5)
     this._weapon_graphic.position.set(3.45, 0.25)
     this._weapon_graphic.scale.set(1.5 / 1531)
     this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === Bow ?

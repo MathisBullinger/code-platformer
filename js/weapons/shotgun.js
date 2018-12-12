@@ -28,5 +28,6 @@ class Shotgun extends Weapon {
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(vel_dir), -1), impulse)
   }
 }
+Shotgun.Name = 'Shotgun'
 
 export { Shotgun }
