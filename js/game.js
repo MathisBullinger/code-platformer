@@ -22,7 +22,7 @@ class Game {
 
     // proceed when textures are loaded
     const pics = require('../data/images/**/*.png') // all PNG's in data/images/
-    console.log(pics)
+    if (process.env.NODE_ENV === 'development') console.log(pics)
     Graphics.LoadTextures(pics,
       // create game world
       '', () => {
