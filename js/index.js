@@ -21,8 +21,10 @@ if (GetUrlParam('state') == 'game') {
   menu.OnButton('start', () => {
     const lvl_select = new LvlSelect()
     lvl_select.Show()
-    // start game
-    // let game = new Game()
-    // game.Start()
+    lvl_select.OnLvlSelect(lvl => {
+      // start game
+      let game = new Game()
+      game.Start(lvl)
+    })
   })
 }

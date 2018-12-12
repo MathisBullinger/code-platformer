@@ -36,17 +36,17 @@ class World {
   /**
     * Constructor
     */
-  constructor() {
-    this.Create()
+  constructor(lvl = 0) {
+    this.Create(lvl)
     World.Current = this // Set static
   }
 
   /**
     * Create new world
     */
-  Create() {
+  Create(lvl) {
     this._CreateScene()
-    this.LoadLevel(0)
+    this.LoadLevel(lvl)
 
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())

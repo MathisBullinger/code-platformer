@@ -36,6 +36,17 @@ class LvlSelect extends Menu {
       logo.style.transform = 'translateX(-50%) translateY(-20%) scaleX(0.6) scaleY(0.6)'
     }, 100)
   }
+
+  OnLvlSelect(callback) {
+    const levels = this._wrap.getElementsByClassName('lvl-select-frame')
+    for (let i = 0; i < levels.length; i++) {
+      levels[i].addEventListener('click', () => {
+        this._wrap.style.display = 'none'
+        callback(i)
+      })
+    }
+
+  }
 }
 
 export { Mainmenu, LvlSelect }
