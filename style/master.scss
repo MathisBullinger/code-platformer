@@ -30,13 +30,14 @@ html {
     left: 50%;
     top: 10%;
     transform: translateX(-50%) translateY(-20%);
+    z-index: 30;
   }
 
   .players {
     height: 40vh;
     position: absolute;
-    top: 93vh;
-    transform: translateY(-100%);
+    top: 100vh;
+    transform: translateY(calc(-100% - 2vw));
     z-index: 5;
   }
 
@@ -73,10 +74,12 @@ html {
 
   .menu {
     position: absolute;
+    z-index: 30;
     left: 50%;
     top: 55%;
     transform: translateX(-50%);
     width: 15vw;
+    min-width: 8.5em;
     height: 15vw;
     display: flex;
     flex-direction: column;
@@ -84,6 +87,7 @@ html {
     font-size: 24px;
     word-spacing: .15em;
     letter-spacing: .05em;
+    white-space: nowrap;
 
     .bt {
       background-color: black;
@@ -109,5 +113,62 @@ html {
     .exit {
       width: 33%;
     }
+  }
+}
+
+$lvl-off-y: 5vh;
+.lvl-select-wrap {
+  @extend .menu-wrap;
+
+  .logo {
+    z-index: 2 !important;
+    transition: all .5s ease-out;
+  }
+
+  .foreground {
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    background-position: 70% center;
+    background-size: cover;
+    background-image: url("../data/mainmenu/foreground.png");
+  }
+
+  .lvl-select-frame {
+    position: absolute;
+    top: $lvl-off-y;
+    left: 2vw;
+    z-index: 100;
+    left: 1vw;
+    cursor: pointer;
+
+    img {
+      width: 40vmin;
+    }
+
+    .lvl-title {
+      position: absolute;
+      left: 0;
+      width: 40vmin;
+      transform: translateY(-30%);
+    }
+  }
+
+  .lvl0 {
+
+  }
+  .lvl1 {
+    top: 95vh - $lvl-off-y;
+    transform: translateY(-100%);
+  }
+  .lvl2 {
+    left: 98vw;
+    transform: translateX(-100%);
+  }
+  .lvl3 {
+    left: 98vw;
+    top: 95vh - $lvl-off-y;
+    transform: translateX(-100%) translateY(-100%);
   }
 }

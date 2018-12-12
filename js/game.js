@@ -13,7 +13,7 @@ class Game {
   //
   // Start Game
   //
-  Start() {
+  Start(lvl = 0) {
     // load config
     Clone(require('../data/config.json'), game_config)
 
@@ -26,7 +26,7 @@ class Game {
     Graphics.LoadTextures(pics,
       // create game world
       '', () => {
-        this._world = new World()
+        this._world = new World(lvl)
         this._graphics.AddScene(this._world.scene)
       })
 
