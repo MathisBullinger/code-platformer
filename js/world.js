@@ -8,7 +8,7 @@ const level_data = [
   {
     id: 0,
     name: 'Basement',
-    data: require('../data/level/Basement2.json'),
+    data: require('../data/level/Basement.json'),
   },
   {
     id: 1,
@@ -51,7 +51,6 @@ class World {
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())
   }
-
   /**
     * Update world
     */
