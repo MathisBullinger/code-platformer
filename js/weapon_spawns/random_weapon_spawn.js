@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js'
 import { WeaponSpawn } from './weapon_spawn'
 import { Weapons } from './../weapons'
 
@@ -15,9 +14,6 @@ class RandomWeaponSpawn extends WeaponSpawn {
   constructor(pos) {
     // Position, cooldown, active color, inactive color
     super(pos, 5000)
-    // Create question mark text
-    this._text = RandomWeaponSpawn._CreateQuestionMark()
-    this.graphic.addChild(this._text)
   }
 
   /**
@@ -32,27 +28,19 @@ class RandomWeaponSpawn extends WeaponSpawn {
    */
   TakeWeapon() {
     super.TakeWeapon()
-    this.graphic.removeChild(this._text)
     return Weapons.GetRandomWeapon()
   }
 
   ResetWeapon() {
     super.ResetWeapon()
-    this.graphic.addChild(this._text)
+  }
+
+  get _TextureName() {
+    return 'mystery_box'
   }
 
   _PaintSpawn() {
     super._PaintSpawn()
-  }
-
-  static _CreateQuestionMark() {
-    const text = new PIXI.Text('?', { fill: '#FFFFFF', fontSize: 64, fontWeight: 'bold' })
-    const ratio = text.width / text.height
-    text.height = 0.6
-    text.width = text.height * ratio
-    text.position.set(0.5 - (text.width / 2), 0.5 + (text.height / 2))
-    text.scale.y *= -1
-    return text
   }
 }
 

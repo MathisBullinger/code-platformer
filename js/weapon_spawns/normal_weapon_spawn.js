@@ -31,8 +31,12 @@ class NormalWeaponSpawn extends WeaponSpawn {
     super.TakeWeapon()
     const wpn = this._next_weapon
     this._next_weapon = null
-    this.graphic.children = []
+    this.graphic.removeChild(...this.graphic.children)
     return wpn
+  }
+
+  get _TextureName() {
+    return 'mystery_box_blank'
   }
 
   /**
@@ -48,11 +52,10 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   _SetNextWeapon() {
     this._next_weapon = Weapons.GetRandomWeapon()
-    if (!this._next_weapon.graphic.clone) return
-    const wp_graphic = this._next_weapon.graphic.clone()
-    wp_graphic.position.set(0.5, 0.5 )
-    wp_graphic.pivot.set(wp_graphic.width / 2, wp_graphic.height / 2)
-    wp_graphic.rotation = -Math.PI / 4
+    const wp_graphic = Weapons.GetSprite(this._next_weapon, 0)
+    wp_graphic.rotation = -Math.PI / 2
+    wp_graphic.position.set(256)
+    wp_graphic.scale.set(0.4)
     this.graphic.addChild(wp_graphic)
   }
 }

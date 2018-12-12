@@ -9,6 +9,7 @@ class Spawns {
   constructor() {
     this._weapon_spawns = []
     this._player_spawns = []
+    this._trophy_spawns = []
   }
 
   /**
@@ -50,6 +51,10 @@ class Spawns {
     scene.addChild(spawn.graphic)
   }
 
+  AddTrophySpawn(pos) {
+    this._trophy_spawns.push(pos)
+  }
+
   /**
    * Adds another point to the collection of player spawn points
    */
@@ -57,11 +62,23 @@ class Spawns {
     this._player_spawns.push(pos)
   }
 
+  get playerSpawnpointCount() {
+    return this._player_spawns.length
+  }
+
+  get trophySpawnpointCount() {
+    return this._trophy_spawns.length
+  }
+
   /**
    * Gets a random spawn point from the collection
    */
   GetRandomPlayerSpawn() {
     return this._player_spawns[Math.floor(Math.random() * this._player_spawns.length)]
+  }
+
+  GetRandomTrophySpawn() {
+    return this._trophy_spawns[Math.floor(Math.random() * this._trophy_spawns.length)]
   }
 }
 

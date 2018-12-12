@@ -20,9 +20,15 @@ class Game {
     // init graphics
     this._graphics.Init(document.getElementById('game-wrap'))
 
-    // create game world
-    this._world = new World()
-    this._graphics.AddScene(this._world.scene)
+    // proceed when textures are loaded
+    const pics = require('../data/images/**/*.png') // all PNG's in data/images/
+    console.log(pics)
+    Graphics.LoadTextures(pics,
+      // create game world
+      '', () => {
+        this._world = new World()
+        this._graphics.AddScene(this._world.scene)
+      })
 
     // start event listening
     Keyboard.Listen()

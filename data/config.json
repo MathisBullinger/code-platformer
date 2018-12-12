@@ -6,8 +6,18 @@
   "player_move_vel": 8,
   "player_dash_vel": 50,
   "player_dash_time": 42,
+  "player_dash_cooldown": 1000,
   "player_jump_height": 2.2,
   "player_hp": 100,
+  "healing": {
+    "amount_per_sec": 5,
+    "cooldown": 1000
+  },
+  "trophy": {
+    "passive_income": 0.1,
+    "pickup_bounty": 2,
+    "steal_bounty": 4
+  },
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",

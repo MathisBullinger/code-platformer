@@ -11,8 +11,8 @@ class Player extends Movable {
    * Constructor
    */
   constructor(number, input, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
-    console.log('spawn player at ', pos)
     super(pos, scale)
+    console.log('spawn player at ', pos)
     this._player_number = number
     this._player_number = Player.counter
     Player.counter++
@@ -65,9 +65,17 @@ class Player extends Movable {
       const dir = this._move_dir == 'right' ? 1 : -1
       if (new Date().getTime() - this._dash_start >= this._dash_time) {
         this._dashing = false
+        this._last_dash = Date.now()
         this.vel.x = this._move_vel * dir
       }
       this.vel.x = this._dash_vel * dir
+    }
+    // Check if player can heal
+    if (Date.now() - this._last_damage_taken > conf.healing.cooldown) {
+      // Increase health until max health is reached
+      this._hp_current = Math.min(this._hp_current + (conf.healing.amount_per_sec / 1000 * dt), this._hp_total)
+      // If max => unset _last_damage_taken attribute
+      if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
     }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
@@ -92,6 +100,7 @@ class Player extends Movable {
     }
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
+    this._weapon.player = this
     this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If new weapon is a bow, also add the arrow indicator
@@ -119,7 +128,7 @@ class Player extends Movable {
   }
 
   Dash() {
-    if (!this._move_dir) return
+    if (!this._move_dir || (Date.now() - this._last_dash) <= conf.player_dash_cooldown) return
     this._dash_start = new Date().getTime()
     this._dashing = true
   }
@@ -130,6 +139,10 @@ class Player extends Movable {
 
   get score() {
     return this._score
+  }
+
+  set score(score) {
+    this._score = score
   }
 
   /**
@@ -161,6 +174,7 @@ class Player extends Movable {
    */
   Damage(hp) {
     this._hp_current -= hp
+    this._last_damage_taken = Date.now()
     if (this._hp_current <= 0)
       this.Die()
   }
@@ -175,8 +189,10 @@ class Player extends Movable {
   Kill() {
     this._hp_current = 0
     this._alive = false
+    this._last_damage_taken = undefined
     console.log('player died')
   }
+
   Die() { this.Kill() }
 
   get dead() {
