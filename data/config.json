@@ -29,7 +29,7 @@
     "weapon": {
       "bow": 10,
       "gun": 10,
-      "minigun": 1,
+      "minigun": 5,
       "shotgun": 5
     }
   },
