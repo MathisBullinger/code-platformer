@@ -20,7 +20,7 @@ html {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url("../data/mainmenu/background.gif");
+  background-image: url("../data/mainmenu/background.png");
   background-position: 70% center;
   background-size: cover;
 
@@ -32,16 +32,58 @@ html {
     transform: translateX(-50%) translateY(-20%);
   }
 
+  .players {
+    height: 40vh;
+    position: absolute;
+    top: 93vh;
+    transform: translateY(-100%);
+    z-index: 5;
+  }
+
+  .pl0 {
+    left: 3vw;
+  }
+
+  .pl1 {
+    right: 10vw;
+    height: 35vh;
+  }
+
+  .lamp {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    z-index: 5;
+  }
+
+  .lamp0 {
+    left: 0;
+  }
+
+  .lamp1 {
+    right: 0;
+  }
+
+  .floor {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    left: 0;
+  }
+
   .menu {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 55%;
     transform: translateX(-50%);
-    width: 20vw;
-    height: 20vw;
+    width: 15vw;
+    height: 15vw;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    font-size: 24px;
+    word-spacing: .15em;
+    letter-spacing: .05em;
 
     .bt {
       background-color: black;

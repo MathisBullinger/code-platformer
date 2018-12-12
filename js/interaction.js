@@ -228,4 +228,10 @@ class XboxController {
   }
 }
 
+class PSController extends XboxController {
+  constructor(pad) {
+    super(pad)
+  }
+}
+
 export { Keyboard, Mouse, Gamepad }
