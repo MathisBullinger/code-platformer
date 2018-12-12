@@ -8,7 +8,7 @@ const level_data = [
   {
     id: 0,
     name: 'Basement',
-    data: require('../data/level/Basement.json'),
+    data: require('../data/level/Basement2.json'),
   },
   {
     id: 1,
