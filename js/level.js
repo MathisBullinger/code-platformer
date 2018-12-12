@@ -212,7 +212,7 @@ class Level {
       this._block_grid.push(column)
     }
 
-    this._LogGrid()
+    if (process.env.NODE_ENV === 'development') this._LogGrid()
   }
 
   /*
@@ -275,7 +275,7 @@ class Level {
       }
     }
 
-    this._LogCollisionGrid()
+    if (process.env.NODE_ENV === 'development') this._LogCollisionGrid()
   }
 
   /*

@@ -34,6 +34,7 @@ class Bow extends Firearm {
     return new Vec2D(0, 0)
   }
 }
+Bow.Name = 'Bow'
 
 /**
  * Arrow indicator for the bow weapon type

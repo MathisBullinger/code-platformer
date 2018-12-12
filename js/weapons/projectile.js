@@ -33,7 +33,7 @@ class Projectile extends Movable {
     this.graphic.rotation = a
     // set damage
     this.damage = weapon.damage
-    const damage = game_config.damage.projectile[this.constructor.name.toLowerCase()]
+    const damage = game_config.damage.projectile[this.constructor.Name.toLowerCase()]
     if (damage)
       this.damage *= damage
     // Set instantiation time

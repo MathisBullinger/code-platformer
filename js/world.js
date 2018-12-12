@@ -46,7 +46,7 @@ class World {
     */
   Create() {
     this._CreateScene()
-    this.LoadLevel(0)
+    this.LoadLevel(1)
 
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())

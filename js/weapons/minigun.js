@@ -8,5 +8,6 @@ class Minigun extends Firearm {
     this.ammunition = Bullet
   }
 }
+Minigun.Name = 'Minigun'
 
 export { Minigun }

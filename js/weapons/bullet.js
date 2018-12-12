@@ -16,5 +16,6 @@ class Bullet extends Projectile {
     super.Update(dt)
   }
 }
+Bullet.Name = 'Bullet'
 
 export { Bullet }
