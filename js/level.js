@@ -153,7 +153,7 @@ class Level {
     this._GenLvlGrid()
     this._GenCollisionFaces()
     // Create the player at a random position
-    const player = new Player(3, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
+    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
     scene.addChild(player.graphic)
     this._players.push(player)
 
