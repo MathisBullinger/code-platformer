@@ -74,7 +74,8 @@ class Level {
   /**
    * This loads the scene
    */
-  Load(data, scene) {
+  Load(lvl, scene) {
+    const { data } = lvl
     // Prepare variables
     const layers = data.layers
     let blocks = null
@@ -110,7 +111,7 @@ class Level {
       if (material != 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       let block = new GameObject(pos)
-      block.graphic = Graphics.textures.GetSprite('wall')
+      block.graphic = Graphics.textures.GetSprite(lvl.wall || 'wall')
       block.graphic.width = block.width
       block.graphic.height = block.height
       block.graphic.position.set(pos.x, pos.y)
