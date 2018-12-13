@@ -14,6 +14,9 @@ class Weapons {
 
   static GetProjectileSprite(wpn, variant = 0) {
     let projectile = undefined
+    const cl_proj = 0xFFFFFF
+    const proj_width = 0.3
+    const proj_height = 0.15
     switch (wpn.constructor) {
       case Bow:
         projectile = Graphics.textures.GetSprite('arrow_' + variant)
@@ -21,11 +24,7 @@ class Weapons {
         projectile.anchor.set(0.5, 1)
         break
       default:
-        projectile = new PIXI.Graphics()
-        projectile.beginFill(0xBB79FD)
-        projectile.drawRect(0, 0, 0.1, 0.1)
-        projectile.endFill()
-        projectile.pivot.set(0)
+        projectile = Graphics.CreateRectangle(0, 0, proj_height, proj_width, cl_proj, cl_proj)
         break
     }
     return projectile
