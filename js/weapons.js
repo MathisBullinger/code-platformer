@@ -4,6 +4,7 @@ import { Gun } from './weapons/gun'
 import { Minigun } from './weapons/minigun'
 import { Shotgun } from './weapons/shotgun'
 import { Graphics } from './graphics'
+import { game_config as conf } from './game_config'
 
 class Weapons {
   static GetRandomWeapon() {
@@ -34,7 +35,12 @@ class Weapons {
     let weapon = undefined
     if (process.env.NODE_ENV === 'development') console.log(`Requesting weapon sprite '${ wpn.constructor.Name.toLowerCase() }'`)
     weapon = Graphics.textures.GetSprite(`${ wpn.constructor.Name.toLowerCase() }_${variant}`)
-    weapon.scale.set(wpn.scale.x / weapon.width, wpn.scale.y / weapon.height)
+    // const length = conf.size[weapon.constructor.Name.toLowerCase()] ? conf.size[weapon.Name.toLowerCase()] : 1
+    const length = conf.size[wpn.constructor.Name.toLowerCase()] ?
+      conf.size[wpn.constructor.Name.toLowerCase()] : 1
+    let mod = weapon.width > weapon.height ? length / weapon.width : length / weapon.height
+    weapon.width *= mod
+    weapon.height *= mod
     weapon.anchor.set(0.5, 0.5)
     return weapon
   }

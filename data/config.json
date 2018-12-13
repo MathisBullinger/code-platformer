@@ -40,5 +40,10 @@
       "shotgun": 150
     }
   },
+  "size": {
+    "bow": 1.4,
+    "minigun": 1.2,
+    "gun": 0.5
+  },
   "display_mov_vector": false
 }

@@ -18,10 +18,13 @@ class Player extends Movable {
     Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
-    this.graphic = Graphics.textures.GetSprite('pl1_standing')
-    this.graphic.scale.set(scale.y / this.graphic.height)
-    this.graphic.scale.y *= -1
-    this.graphic.anchor.y = 1
+    this.graphic = new PIXI.Container()
+    const body = Graphics.textures.GetSprite('pl1_standing')
+    console.log('body height:', this.graphic.height)
+    body.scale.set(scale.y / body.height)
+    body.scale.y *= -1
+    body.anchor.y = 1
+    this.graphic.addChild(body)
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false

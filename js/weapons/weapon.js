@@ -11,14 +11,13 @@ class Weapon {
   /**
     * Initializes
     */
-  constructor(pos, scale, cooldown) {
+  constructor(pos, cooldown) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Weapon) {
       throw new TypeError('Cannot construct abstract Weapon instances directly')
     }
     // Set attributes
     this.pos = pos
-    this.scale = scale
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
