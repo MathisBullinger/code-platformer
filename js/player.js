@@ -221,6 +221,7 @@ class Player extends Movable {
     this._hp_current = 0
     this._alive = false
     this._last_damage_taken = undefined
+    this._SetBody('pl1_dead')
     console.log('player died')
   }
 
