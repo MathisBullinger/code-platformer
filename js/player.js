@@ -19,13 +19,7 @@ class Player extends Movable {
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
     this.graphic = new PIXI.Container()
-    const body = Graphics.textures.GetSprite('pl1_standing')
-    console.log('body height:', this.graphic.height)
-    body.scale.set(scale.y / body.height)
-    body.scale.y *= -1
-    body.anchor.y = 1
-    this.graphic.addChild(body)
-    this._body = body
+    this._SetBody('pl1_standing')
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
@@ -66,6 +60,7 @@ class Player extends Movable {
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
+      this._SetBody('pl1_standing')
     }
     // dash
     if (this._dashing) {
@@ -92,6 +87,24 @@ class Player extends Movable {
     if (this._weapon) this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
+  }
+
+  _SetBody(sprite_name) {
+    if (this._body) {
+      if (this._body.sprite == sprite_name) return
+      this.graphic.removeChild(this._body)
+    }
+    const dir = this._body && this._body.scale.x < 0 ? 'left' : 'right'
+    this._body = Graphics.textures.GetSprite(sprite_name)
+    this._body.sprite = sprite_name
+    this._body.scale.set(this.height / this._body.height)
+    this._body.scale.y *= -1
+    this._body.anchor.y = 1
+    if (dir == 'left') {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
+    this.graphic.addChild(this._body)
   }
 
   /**
@@ -122,6 +135,7 @@ class Player extends Movable {
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
+    this._SetBody('pl1_run_3')
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
