@@ -141,25 +141,35 @@ $lvl-off-y: 5vh;
     left: 2vw;
     z-index: 100;
     left: 1vw;
+    width: 40vmin;
     cursor: pointer;
+    // overflow: hidden;
 
-    img {
-      width: 40vmin;
+    img:not(.lvl-preview) {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .lvl-preview {
+      position: absolute;
+      z-index: 5;
+      width: 90%;
+      transform: translateY(2%) translateX(5%);
     }
 
     .lvl-title {
       position: absolute;
       left: 0;
       width: 40vmin;
-      transform: translateY(-30%);
+      transform: translateY(140%);
     }
   }
 
-  .lvl0 {
-
-  }
   .lvl1 {
-    top: 95vh - $lvl-off-y;
+    top: 70vh - $lvl-off-y;
     transform: translateY(-100%);
   }
   .lvl2 {
@@ -168,7 +178,7 @@ $lvl-off-y: 5vh;
   }
   .lvl3 {
     left: 98vw;
-    top: 95vh - $lvl-off-y;
+    top: 70vh - $lvl-off-y;
     transform: translateX(-100%) translateY(-100%);
   }
 }
