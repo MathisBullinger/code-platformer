@@ -77,6 +77,22 @@ class Spawns {
     return this._player_spawns[Math.floor(Math.random() * this._player_spawns.length)]
   }
 
+  GetDifferentPlayerSpawns(number_of_spawns) {
+    if (number_of_spawns > this._player_spawns.length) {
+      throw new Error(`'${ this._player_spawns.length }' player spawnpoints are available. '${ number_of_spawns }' were requested.`)
+    }
+    else if (number_of_spawns === this._player_spawns.length) {
+      return this._player_spawns
+    } else {
+      const spawns = []
+      while(spawns.length !== number_of_spawns) {
+        const sp = this.GetRandomPlayerSpawn()
+        if (!spawns.includes(sp)) spawns.push(sp)
+      }
+      return spawns
+    }
+  }
+
   GetRandomTrophySpawn() {
     return this._trophy_spawns[Math.floor(Math.random() * this._trophy_spawns.length)]
   }

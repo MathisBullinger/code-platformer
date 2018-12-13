@@ -152,12 +152,15 @@ class Level {
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
+
+    // Get player spawn spawnpoints
+    const spawnpoints = this._spawns.GetDifferentPlayerSpawns(2)
     // Create the player at a random position
-    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
+    const player = new Player(0, new InputKeyboard(), spawnpoints[0])
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    const player2 = new Player(1, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    const player2 = new Player(1, new InputGamepad(), spawnpoints[1])
     scene.addChild(player2.graphic)
     this._players.push(player2)
 
