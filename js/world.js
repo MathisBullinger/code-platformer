@@ -7,27 +7,27 @@ import { UI } from './ui/user_interface'
 const level_data = [
   {
     id: 0,
-    name: 'Basement',
-    wall: 'wall_basement',
-    background: 'background_basement',
-    data: require('../data/level/Basement.json'),
+    name: 'New Big Boy Lvl',
+    data: require('../data/level/new_big_boy.json'),
   },
   {
     id: 1,
     name: 'Level 1',
-    data: require('../data/level/Level1.json'),
+    wall: 'wall_ballpit',
+    background: 'background_ballpit',
+    data: require('../data/level/ballpit.json'),
   },
   {
     id: 2,
     name: 'Level 2',
-    wall: 'wall_ballpit',
-    background: 'background_ballpit',
-    data: require('../data/level/Level2.json'),
+    data: require('../data/level/Level1.json'),
   },
   {
     id: 3,
-    name: 'New Big Boy Lvl',
-    data: require('../data/level/New Big Boy Lvl.json'),
+    name: 'Basement',
+    wall: 'wall_basement',
+    background: 'background_basement',
+    data: require('../data/level/basement.json'),
   },
   {
     id: 4,
