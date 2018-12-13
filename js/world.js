@@ -16,6 +16,7 @@ const level_data = [
     name: 'Level 1',
     wall: 'wall_ballpit',
     background: 'background_ballpit',
+    backgroundColor: 0x000001,
     data: require('../data/level/ballpit.json'),
   },
   {
@@ -23,6 +24,7 @@ const level_data = [
     name: 'Level 2',
     wall: 'wall_code',
     background: 'background_code',
+    backgroundColor: 0x212020,
     data: require('../data/level/Level1.json'),
   },
   {
@@ -87,16 +89,20 @@ class World {
       this.level.Load(lvl, this.scene)
       // Load background if available
       if (lvl.background) {
+        // Get background
         this._background = Graphics.textures.GetSprite(lvl.background)
-        this._background.anchor.set(0)
-        if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
-          this._background.scale.set(this._background.height / (-this.scene.height) / window.devicePixelRatio)
-          this._background.position.set(80, 250)
+        // Center background
+        this._background.anchor.set(0.5, 0.5)
+        this._background.position.set(window.innerWidth / 2, window.innerHeight / 2)
+        // Scale to the right size
+        if (Math.abs(this.scene.width) < Math.abs(this.scene.height)) {
+          this._background.scale.set(window.innerWidth / this._background.width)
         } else {
-          this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
+          this._background.scale.set(window.innerHeight / this._background.height)
         }
         this.root.addChildAt(this._background, 0)
       }
+      renderer.backgroundColor = lvl.backgroundColor || game_config.clear_color
       // Create UI if not already existing
       this.ui = new UI()
       this.root.addChild(this.ui.graphic)

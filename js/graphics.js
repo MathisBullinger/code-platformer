@@ -33,7 +33,6 @@ class Graphics {
     })
 
     renderer = app.renderer
-    renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
     container.append(app.view)
