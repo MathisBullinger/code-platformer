@@ -42,6 +42,10 @@ class Weapons {
     weapon.width *= mod
     weapon.height *= mod
     weapon.anchor.set(0.5, 0.5)
+    if (conf.anchor[wpn.constructor.Name.toLowerCase()]) {
+      weapon.anchor.set(conf.anchor[wpn.constructor.Name.toLowerCase()][1],
+        conf.anchor[wpn.constructor.Name.toLowerCase()][0])
+    }
     return weapon
   }
 }
