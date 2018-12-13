@@ -25,6 +25,7 @@ class Player extends Movable {
     body.scale.y *= -1
     body.anchor.y = 1
     this.graphic.addChild(body)
+    this._body = body
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
@@ -124,6 +125,13 @@ class Player extends Movable {
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
+    if (dir == 'right' && this._body.scale.x < 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 0
+    } else if (dir == 'left' && this._body.scale.x > 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
   }
 
   MoveRight(dt) {
