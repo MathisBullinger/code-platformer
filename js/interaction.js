@@ -137,23 +137,26 @@ class Gamepad {
   /*
    * Bind Input
    */
-  static BindInput(input, callback, input_reset = false) {
-    if (!this._inputbindings) this._inputbindings = []
-    if (!this._inputbindings.map(bind => bind.input).includes(input))
-      this._inputbindings.push({input: input.toLowerCase(), actions: [], input_reset: input_reset})
+  static BindInput(index, input, callback, input_reset = false) {
+    if (!this._inputbindings) this._inputbindings = [[], [], [], []]
+    if (!this._inputbindings[index].map(bind => bind.input).includes(input))
+      this._inputbindings[index].push({input: input.toLowerCase(), actions: [], input_reset: input_reset})
     // bind callback to input
-    const binding = this._inputbindings.find(bind => bind.input == input.toLowerCase())
+    const binding = this._inputbindings[index].find(bind => bind.input == input.toLowerCase())
     if (!binding.actions.includes(callback)) binding.actions.push(callback)
+    console.log(this._inputbindings)
   }
 
   /*
    * Get Direction of Stick
    */
-  static GetStick(stick = 'left') {
-    if (!this._controllers || this._controllers.length == 0) return new Vec2D(0, 0)
-    return stick == 'left' ?
-      new Vec2D(navigator.getGamepads()[0].axes[0], navigator.getGamepads()[0].axes[1]) :
-      new Vec2D(navigator.getGamepads()[0].axes[2], navigator.getGamepads()[0].axes[3])
+  static GetStick(stick = 'left', index = 0) {
+    if (!this._controllers || this._controllers.length <= index || !this._controllers[index])
+      return new Vec2D(0, 0)
+    const vec = stick == 'left' ?
+      new Vec2D(navigator.getGamepads()[index].axes[0], navigator.getGamepads()[index].axes[1]) :
+      new Vec2D(navigator.getGamepads()[index].axes[2], navigator.getGamepads()[index].axes[3])
+    return vec.Magnitude > .2 ? vec : new Vec2D(0, 0)
   }
 
   /*
@@ -161,19 +164,22 @@ class Gamepad {
    */
   static Update(dt) {
     if (!this._controllers || this._controllers.length == 0 || !this._inputbindings) return
-    const pad = new XboxController(navigator.getGamepads()[0])
-    for (let binding of this._inputbindings) {
-      if (pad.inputs[binding.input]) {
-        if (!binding.blocked) {
-          for (let callback of binding.actions) {
-            callback(dt, pad.inputs[binding.input])
+    for (let i in this._inputbindings) {
+      if (navigator.getGamepads().length <= i || !navigator.getGamepads()[i]) continue
+      const pad = new XboxController(navigator.getGamepads()[i])
+      for (let binding of this._inputbindings[i]) {
+        if (pad.inputs[binding.input]) {
+          if (!binding.blocked) {
+            for (let callback of binding.actions) {
+              callback(dt, pad.inputs[binding.input])
+            }
           }
+          if (binding.input_reset)
+            binding.blocked = true
+        } else {
+          if (binding.input_reset)
+            binding.blocked = false
         }
-        if (binding.input_reset)
-          binding.blocked = true
-      } else {
-        if (binding.input_reset)
-          binding.blocked = false
       }
     }
   }
@@ -195,6 +201,8 @@ class Gamepad {
  */
 class XboxController {
   constructor(pad) {
+    const stick_cap = .1
+    const cap = num => Math.abs(num) > stick_cap ? num : 0
     this.inputs = {
       // face buttons
       a: pad.buttons[0].value,
@@ -220,10 +228,10 @@ class XboxController {
       // xbox button
       guide: pad.buttons[16].value,
       // sticks
-      stick_left_x: pad.axes[0],
-      stick_left_y: pad.axes[1] * -1,
-      stick_right_x: pad.axes[3],
-      stick_right_y: pad.axes[4] * -1
+      stick_left_x: cap(pad.axes[0]),
+      stick_left_y: cap(pad.axes[1] * -1),
+      stick_right_x: cap(pad.axes[3]),
+      stick_right_y: cap(pad.axes[4] * -1)
     }
   }
 }

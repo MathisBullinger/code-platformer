@@ -14,6 +14,8 @@ class Player extends Movable {
     super(pos, scale)
     if (process.env.NODE_ENV === 'development') console.log('spawn player at ', pos)
     this._player_number = number
+    this._player_number = Player.counter
+    Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
@@ -217,5 +219,6 @@ class Player extends Movable {
     this.vel.Set(0, 0)
   }
 }
+Player.counter = 0
 
 export { Player }
