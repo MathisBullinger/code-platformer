@@ -34,7 +34,7 @@ class PlayerHealth {
     this._player = player
     this._player_index = index
     this._x_offset = index % 2 === 0 ? 64 : (window.innerWidth) - 230
-    this._y_offset = index < 2 ? 64 : (window.innerHeight) - 128
+    this._y_offset = index < 2 ? 64 : (window.innerHeight) - 64
     // Create container
     this.graphic = new PIXI.Graphics()
     this.graphic.position.set(0)
