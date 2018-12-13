@@ -13,7 +13,7 @@ class Game {
   //
   // Start Game
   //
-  Start(lvl = 0) {
+  Start(lvl = 3) {
     // load config
     Clone(require('../data/config.json'), game_config)
 

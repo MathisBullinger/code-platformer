@@ -38,7 +38,7 @@ class PlayerHealth {
     // Create container
     this.graphic = new PIXI.Graphics()
     this.graphic.position.set(0)
-    this.graphic.scale.set(0.5)
+    this.graphic.scale.set(1 / window.devicePixelRatio)
     // Save mugs
     this._mugs = []
     // Static head sprite

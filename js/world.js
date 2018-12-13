@@ -82,9 +82,10 @@ class World {
       if (lvl.background) {
         this._background = Graphics.textures.GetSprite(lvl.background)
         if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
-          this._background.scale.set(window.innerHeight / this._background.height)
+          this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
+          this._background.position.x -= (window.innerWidth - this._background.width) / 2
         } else {
-          this._background.scale.set(window.innerWidth / this._background.width)
+          this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
         }
         this.root.addChildAt(this._background, 0)
       }
