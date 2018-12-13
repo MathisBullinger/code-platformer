@@ -29,15 +29,15 @@
     },
     "weapon": {
       "bow": 10,
-      "gun": 10,
-      "minigun": 5,
-      "shotgun": 5
+      "gun": 30,
+      "minigun": 3,
+      "shotgun": 6
     }
   },
   "lifespan": {
     "__comment__": "defines the lifespan of projectiles for each weapon in ms. values of 0 or smaller are being ignored",
     "weapon": {
-      "shotgun": 150
+      "shotgun": 200
     }
   },
   "size": {

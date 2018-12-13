@@ -56,7 +56,6 @@ class World {
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())
   }
-
   /**
     * Update world
     */
