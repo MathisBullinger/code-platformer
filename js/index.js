@@ -15,7 +15,14 @@ console.log(`Started game in '${ process.env.NODE_ENV }' mode`)
 // directly start game if "state=game"
 if (GetUrlParam('state') == 'game') {
   let game = new Game()
-  game.Start()
+  const lvl_par = GetUrlParam('lvl')
+  let lvl = 3
+  if (lvl_par) {
+    lvl = parseInt(lvl_par)
+    if (isNaN(lvl))
+      lvl = 3
+  }
+  game.Start(lvl)
 } else {
   // shwo main menu
   const menu = new Mainmenu()
