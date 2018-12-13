@@ -18,7 +18,8 @@ class Player extends Movable {
     Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
-    this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
+    this.graphic = new PIXI.Container()
+    this._SetBody('pl1_standing')
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
@@ -59,6 +60,7 @@ class Player extends Movable {
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
+      this._SetBody('pl1_standing')
     }
     // dash
     if (this._dashing) {
@@ -78,13 +80,34 @@ class Player extends Movable {
       if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
     }
     // If ground contact => reset jump counter
-    if (this.has_ground_contact) this.jump_counter = 0
+    if (this.has_ground_contact)
+      this.jump_counter = 0
+    else
+      this._SetBody('pl1_jump')
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
     if (this._weapon) this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
+  }
+
+  _SetBody(sprite_name) {
+    if (this._body) {
+      if (this._body.sprite == sprite_name) return
+      this.graphic.removeChild(this._body)
+    }
+    const dir = this._body && this._body.scale.x < 0 ? 'left' : 'right'
+    this._body = Graphics.textures.GetSprite(sprite_name)
+    this._body.sprite = sprite_name
+    this._body.scale.set(this.height / this._body.height)
+    this._body.scale.y *= -1
+    this._body.anchor.y = 1
+    if (dir == 'left') {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
+    this.graphic.addChild(this._body)
   }
 
   /**
@@ -115,9 +138,17 @@ class Player extends Movable {
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
+    this._SetBody('pl1_run_3')
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
+    if (dir == 'right' && this._body.scale.x < 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 0
+    } else if (dir == 'left' && this._body.scale.x > 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
   }
 
   MoveRight(dt) {
@@ -190,6 +221,7 @@ class Player extends Movable {
     this._hp_current = 0
     this._alive = false
     this._last_damage_taken = undefined
+    this._SetBody('pl1_dead')
     console.log('player died')
   }
 
@@ -211,10 +243,12 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
-    if (!spawn_pos) return
+    if (!spawn_pos || this._respawn_pending) return
+    this._respawn_pending = true
     setTimeout(() => {
       console.log('respawn player', spawn_pos)
       this._alive = true
+      this._respawn_pending = false
       this._hp_current = this._hp_total
       this.pos.Set(spawn_pos.x, spawn_pos.y)
       this.vel.Set(0, 0)

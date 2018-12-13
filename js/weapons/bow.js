@@ -15,7 +15,7 @@ class Bow extends Firearm {
     */
   constructor() {
     // Bow is held 1.1 units in front of player, "bow" shaped, 1000ms cooldown
-    super(new Vec2D(0, 1.1), new Vec2D(1.5, 1.5 * 0.25), 1000)
+    super(new Vec2D(0, 1.1), 1000)
     this.ammunition = Arrow
     this.arrow_indicator = new ArrowIndicator(this, 3)
   }

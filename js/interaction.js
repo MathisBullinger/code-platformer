@@ -144,7 +144,6 @@ class Gamepad {
     // bind callback to input
     const binding = this._inputbindings[index].find(bind => bind.input == input.toLowerCase())
     if (!binding.actions.includes(callback)) binding.actions.push(callback)
-    console.log(this._inputbindings)
   }
 
   /*

@@ -112,7 +112,7 @@ class PlayerHealth {
       if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256))
       this._mugs.push(mug)
     }
-    if (this.mugs && this.mugs.length) {
+    if (this.graphic && this._mugs && this._mugs.length) {
       this.graphic.addChild(...this._mugs)
     }
   }
