@@ -23,7 +23,7 @@ class Graphics {
 
     PIXI.settings.RESOLUTION = game_config.resolution
     // PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
     PIXI.settings.MIPMAP_TEXTURES = true
 
     // create & config pixi app

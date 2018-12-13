@@ -21,7 +21,7 @@ class Weapons {
         break
       default:
         projectile = new PIXI.Graphics()
-        projectile.beginFill(0x000000)
+        projectile.beginFill(0xBB79FD)
         projectile.drawRect(0, 0, 0.1, 0.1)
         projectile.endFill()
         projectile.pivot.set(0)
@@ -34,7 +34,7 @@ class Weapons {
     let weapon = undefined
     if (process.env.NODE_ENV === 'development') console.log(`Requesting weapon sprite '${ wpn.constructor.Name.toLowerCase() }'`)
     weapon = Graphics.textures.GetSprite(`${ wpn.constructor.Name.toLowerCase() }_${variant}`)
-    weapon.scale.set(3 / weapon.height)
+    weapon.scale.set(wpn.scale.x / weapon.width, wpn.scale.y / weapon.height)
     weapon.anchor.set(0.5, 0.5)
     return weapon
   }
