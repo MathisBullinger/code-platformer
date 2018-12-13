@@ -80,7 +80,10 @@ class Player extends Movable {
       if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
     }
     // If ground contact => reset jump counter
-    if (this.has_ground_contact) this.jump_counter = 0
+    if (this.has_ground_contact)
+      this.jump_counter = 0
+    else
+      this._SetBody('pl1_jump')
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
