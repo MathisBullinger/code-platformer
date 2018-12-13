@@ -80,7 +80,7 @@ class ArrowIndicator {
     for (let i = 0; i < this._arrows_remaining; ++i) {
       const y_pos = (0.5 / this._total_arrows) * i - (0.5 / this._total_arrows)
       const arr = Weapons.GetProjectileSprite(this._bow)
-      arr.scale.set(0.7 / 747)
+      arr.scale.set(0.7 / 512)
       arr.rotation = Math.PI / -2
       arr.position.set(0.35, y_pos + 0.1)
       this.graphic.addChild(arr)

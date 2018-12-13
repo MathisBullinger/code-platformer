@@ -24,7 +24,7 @@ class Projectile extends Movable {
     // Get projectile orientation and scale direction vector by velocity
     this.vel = Vec2D.Add(Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new Vec2D(0, 0))
     // Find nozzle and set position to nozzle position
-    this.graphic = Weapons.GetProjectileSprite(weapon)
+    this.graphic = Weapons.GetProjectileSprite(weapon, weapon.player.player_number)
     this.graphic.position.set(this.pos.x, this.pos.y)
     const a = weapon.graphic.parent.rotation
     const offset = this.constructor === Arrow ? 1/3 : 1
