@@ -107,7 +107,10 @@ class Player extends Movable {
       this._body.scale.x *= -1
       this._body.anchor.x = 1
     }
-    this.graphic.addChild(this._body)
+    if (this.dead) {
+      this._body.tint = 0x8C8C8C
+    }
+    this.graphic.addChildAt(this._body, 0)
   }
 
   /**
@@ -222,7 +225,10 @@ class Player extends Movable {
     this._alive = false
     this._last_damage_taken = undefined
     this._SetBody('pl1_dead')
-    console.log('player died')
+    // Remove weapon upon death
+    this._weapon = undefined
+    this._weapon_holster.removeChild(...this._weapon_holster.children)
+    if (process.env.NODE_ENV === 'development') console.log('player died')
   }
 
   Die() { this.Kill() }
