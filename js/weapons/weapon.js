@@ -11,27 +11,25 @@ class Weapon {
   /**
     * Initializes
     */
-  constructor(pos, scale, cooldown) {
+  constructor(pos, cooldown) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === Weapon) {
       throw new TypeError('Cannot construct abstract Weapon instances directly')
     }
     // Set attributes
     this.pos = pos
-    this.scale = scale
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
-    this.paintWeapon()
     this._last_dir = null
     // set damage
     this.damage = 1
-    const damage = game_config.damage.weapon[this.constructor.name.toLowerCase()]
+    const damage = game_config.damage.weapon[this.constructor.Name.toLowerCase()]
     if (damage)
       this.damage = damage
     // Projectile lifespan
     this.projectile_lifespan = -1
-    const lifespan = game_config.lifespan.weapon[this.constructor.name.toLowerCase()]
+    const lifespan = game_config.lifespan.weapon[this.constructor.Name.toLowerCase()]
     if (lifespan)
       this.projectile_lifespan = lifespan
   }
@@ -40,6 +38,7 @@ class Weapon {
     * Update weapon and projectiles
     */
   Update(input) {
+    if (!this.graphic) this.paintWeapon()
     if (!input) return
     if (!this._last_dir) this._last_dir = new Vec2D(0, 1)
     let dir = input.GetViewDir(this)

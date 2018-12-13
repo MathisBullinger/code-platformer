@@ -1,5 +1,6 @@
 import { WeaponSpawn } from './weapon_spawn'
 import { Weapons } from './../weapons'
+import { Graphics } from './../graphics'
 
 /**
  * Implementation for the normal weapon spawn
@@ -52,10 +53,11 @@ class NormalWeaponSpawn extends WeaponSpawn {
    */
   _SetNextWeapon() {
     this._next_weapon = Weapons.GetRandomWeapon()
-    const wp_graphic = Weapons.GetSprite(this._next_weapon, 0)
-    wp_graphic.rotation = -Math.PI / 2
+    const wp_graphic = Graphics.textures.GetSprite(this._next_weapon.constructor.Name.toLowerCase() + '_0')
+    wp_graphic.anchor.set(0.5)
+    wp_graphic.rotation = Math.PI / 2
+    wp_graphic.scale.set(-0.35)
     wp_graphic.position.set(256)
-    wp_graphic.scale.set(0.4)
     this.graphic.addChild(wp_graphic)
   }
 }

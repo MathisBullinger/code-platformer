@@ -19,5 +19,6 @@ class Arrow extends Projectile {
     super.Update(dt)
   }
 }
+Arrow.Name = 'Arrow'
 
 export { Arrow }

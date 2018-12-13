@@ -44,20 +44,22 @@ class InputKeyboard {
 
 class InputGamepad {
   Init(player) {
+    this._pad = InputGamepad.counter
+    InputGamepad.counter++
     this._player = player
-
+    console.log(`bind to player ${player._player_number} to gamepad ${this._pad}`)
     // move
-    Gamepad.BindInput('stick_left_x', (dt, value) => {
+    Gamepad.BindInput(this._pad, 'stick_left_x', (dt, value) => {
       if (value > 0) this._player.MoveRight(dt)
       else this._player.MoveLeft(dt)
     })
     // jump
-    Gamepad.BindInput('A', dt => this._player.Jump(dt), true)
-    Gamepad.BindInput('LB', dt => this._player.Jump(dt), true)
+    Gamepad.BindInput(this._pad, 'A', dt => this._player.Jump(dt), true)
+    Gamepad.BindInput(this._pad, 'LB', dt => this._player.Jump(dt), true)
     // dash
-    Gamepad.BindInput('RB', () => this._player.Dash(), true)
+    Gamepad.BindInput(this._pad, 'RB', () => this._player.Dash(), true)
     // attack
-    Gamepad.BindInput('RT', () => this._player.Attack())
+    Gamepad.BindInput(this._pad, 'RT', () => this._player.Attack())
   }
 
   Update() {
@@ -65,12 +67,13 @@ class InputGamepad {
   }
 
   GetViewDir() {
-    const stick_dir = Gamepad.GetStick('right')
+    const stick_dir = Gamepad.GetStick('right', this._pad)
     if (stick_dir.x || stick_dir.y)
       return new Vec2D(stick_dir.x, stick_dir.y * -1)
     else
       return null
   }
 }
+InputGamepad.counter = 0
 
 export { InputKeyboard, InputGamepad }

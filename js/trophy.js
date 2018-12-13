@@ -9,7 +9,7 @@ class Trophy {
     this.scale = new Vec2D(1)
     // Create graphic
     this.graphic = Graphics.textures.GetSprite('money')
-    this.graphic.anchor.set(0, 0.5)
+    this.graphic.anchor.set(0, 1)
     // this.graphic.rotation = Math.PI
     this.moveToLevel(lvl)
   }
@@ -40,7 +40,7 @@ class Trophy {
     this._player.score += conf.trophy.pickup_bounty
     if (this.graphic.parent) this.graphic.parent.removeChild(this.graphic)
     this._player.graphic.addChildAt(this.graphic, 0)
-    this.graphic.position.set(0.1, 1.25)
+    this.graphic.position.set(0.1, 1.5)
     this.graphic.scale.set(0.5 / 512)
   }
 

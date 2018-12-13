@@ -34,6 +34,7 @@ class Level {
     Physics.Update(dt, this)
 
     this._players.forEach(player => {
+      // if (player.dead) return
 
       // Update Spawns
       this._spawns.Update(dt, player)
@@ -74,7 +75,8 @@ class Level {
   /**
    * This loads the scene
    */
-  Load(data, scene) {
+  Load(lvl, scene) {
+    const { data } = lvl
     // Prepare variables
     const layers = data.layers
     let blocks = null
@@ -110,7 +112,7 @@ class Level {
       if (material != 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       let block = new GameObject(pos)
-      block.graphic = Graphics.textures.GetSprite('wall')
+      block.graphic = Graphics.textures.GetSprite(lvl.wall || 'wall')
       block.graphic.width = block.width
       block.graphic.height = block.height
       block.graphic.position.set(pos.x, pos.y)
@@ -151,12 +153,15 @@ class Level {
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
+
+    // Get player spawn spawnpoints
+    const spawnpoints = this._spawns.GetDifferentPlayerSpawns(2)
     // Create the player at a random position
-    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
+    const player = new Player(0, new InputKeyboard(), spawnpoints[0])
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    const player2 = new Player(1, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    const player2 = new Player(1, new InputGamepad(), spawnpoints[1])
     scene.addChild(player2.graphic)
     this._players.push(player2)
 
@@ -212,7 +217,7 @@ class Level {
       this._block_grid.push(column)
     }
 
-    this._LogGrid()
+    if (process.env.NODE_ENV === 'development') this._LogGrid()
   }
 
   /*
@@ -228,6 +233,14 @@ class Level {
     const diag_top_right = (x, y) => {
       if (x == blocks.length - 1 || y == blocks[x].length - 1) return false
       return blocks[x+1][y+1]
+    }
+    const diag_bottom_left = (x, y) => {
+      if (x == 0 || y == 0) return false
+      return blocks[x-1][y-1]
+    }
+    const diag_bottom_right = (x, y) => {
+      if (x == blocks.length -1 || y == 0) return false
+      return blocks[x+1][y-1]
     }
 
     const collides_left = (x, y) => {
@@ -261,7 +274,22 @@ class Level {
     }
     const collides_bottom = (x, y) => {
       if (y == 0) return true
-      return !blocks[x][y-1]
+
+      if (!blocks[x][y-1])
+        return true
+
+      // no block bottom left || no block bottom right
+      if (!diag_bottom_left(x, y) || !diag_bottom_right(x, y)) {
+        // block on top
+        if (y < blocks[0].length && blocks[x][y+1]) {
+          // collides top => true
+          if (collides_top(x, y))
+            return true
+        }
+      }
+
+      return false
+
     }
 
     for (let y = blocks[0].length - 1; y >= 0 ; y--) {
@@ -275,7 +303,7 @@ class Level {
       }
     }
 
-    this._LogCollisionGrid()
+    if (process.env.NODE_ENV === 'development') this._LogCollisionGrid()
   }
 
   /*

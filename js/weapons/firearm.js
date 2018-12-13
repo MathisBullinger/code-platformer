@@ -6,8 +6,8 @@ import { Vec2D } from './../math'
  * any kind of shootable weapon
  */
 class Firearm extends Weapon {
-  constructor(pos, scale, cooldown) {
-    super(pos, scale, cooldown)
+  constructor(pos, cooldown) {
+    super(pos, cooldown)
   }
 
   /*

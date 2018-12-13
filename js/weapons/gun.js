@@ -10,9 +10,10 @@ class Gun extends Firearm {
     * Initializes
     */
   constructor() {
-    super(new Vec2D(0, 0.4), new Vec2D(0.2, 0.6), 400)
+    super(new Vec2D(0, 0.4), 400)
     this.ammunition = Bullet
   }
 }
+Gun.Name = 'Gun'
 
 export { Gun }
