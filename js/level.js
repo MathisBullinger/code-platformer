@@ -34,6 +34,7 @@ class Level {
     Physics.Update(dt, this)
 
     this._players.forEach(player => {
+      if (player.dead) return
 
       // Update Spawns
       this._spawns.Update(dt, player)

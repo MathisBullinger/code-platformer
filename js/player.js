@@ -29,7 +29,7 @@ class Player extends Movable {
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
     this._weapon_holster = new PIXI.Container()
-    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
+    this._weapon_holster.position.set(scale.x / 2, scale.y * (2 / 3))
     this.graphic.addChild(this._weapon_holster)
 
     // player health
@@ -212,11 +212,13 @@ class Player extends Movable {
    */
   Respawn(spawn_pos) {
     if (!spawn_pos) return
-    console.log('respawn player', spawn_pos)
-    this._alive = true
-    this._hp_current = this._hp_total
-    this.pos.Set(spawn_pos.x, spawn_pos.y)
-    this.vel.Set(0, 0)
+    setTimeout(() => {
+      console.log('respawn player', spawn_pos)
+      this._alive = true
+      this._hp_current = this._hp_total
+      this.pos.Set(spawn_pos.x, spawn_pos.y)
+      this.vel.Set(0, 0)
+    }, conf.respawn_time)
   }
 }
 Player.counter = 0

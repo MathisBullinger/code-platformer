@@ -56,6 +56,10 @@ class PlayerHealth {
   }
 
   Update() {
+    if (this._player.dead) {
+      this._PaintMugs()
+      return
+    }
     // Out of reasons unknown to me, when first rendering the ui, the position.y is always set to 0.
     // To prevent this we need to repaint the whole thing when position.y === 0
     if (this._player.health !== this._player_last_health) {
@@ -108,7 +112,9 @@ class PlayerHealth {
       if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256))
       this._mugs.push(mug)
     }
-    this.graphic.addChild(...this._mugs)
+    if (this.mugs && this.mugs.length) {
+      this.graphic.addChild(...this._mugs)
+    }
   }
 
   static _GetHalfHearts(health) {
