@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
-    "build": "parcel build --public-url . index.html",
+    "build": "parcel build --no-source-maps --public-url . index.html",
     "lint": "eslint js/**"
   },
   "repository": {
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "cssnano": "^4.1.7",
-    "sass": "^1.15.1",
-    "eslint": "^5.9.0"
+    "eslint": "^5.10.0",
+    "sass": "^1.15.2"
   }
 }

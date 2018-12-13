@@ -4,7 +4,7 @@ import { Bullet } from './bullet'
 
 class Shotgun extends Weapon {
   constructor() {
-    super(new Vec2D(0, 0.3), new Vec2D(0.3, 0.9), 750)
+    super(new Vec2D(0, 0.3), new Vec2D(0.75, 1.5), 750)
     this._number_bullets = 6
   }
 
@@ -28,5 +28,6 @@ class Shotgun extends Weapon {
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(vel_dir), -1), impulse)
   }
 }
+Shotgun.Name = 'Shotgun'
 
 export { Shotgun }

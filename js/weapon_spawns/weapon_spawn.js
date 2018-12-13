@@ -1,9 +1,8 @@
-import * as PIXI from 'pixi.js'
-import { Vec2D } from './../math'
-import { Sprites } from './../sprites'
+import { Vec2D } from '../math'
+import { Graphics } from '../graphics'
 
 class WeaponSpawn {
-  constructor(pos, cooldown, active_color, inactive_color) {
+  constructor(pos, cooldown) {
     // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
     if (new.target === WeaponSpawn) {
       throw new TypeError('Cannot construct abstract WeaponSpawn instances directly')
@@ -12,12 +11,10 @@ class WeaponSpawn {
     this.pos = pos
     this.scale = new Vec2D(1, 1)
     this._cooldown = cooldown
-    this._active_color = active_color
-    this._inactive_color = inactive_color
     this._on_cooldown = false
     this._last_use = 0
     // Create base graphic
-    this._PaintSpawn(this._active_color)
+    this._PaintSpawn()
   }
 
   Update() {
@@ -38,7 +35,7 @@ class WeaponSpawn {
    */
   TakeWeapon() {
     this._on_cooldown = true
-    this._PaintSpawn(this._inactive_color)
+    this._PaintSpawn()
     this._last_use = Date.now()
   }
 
@@ -46,19 +43,18 @@ class WeaponSpawn {
    * Return to the state where the player can pick up a new weapon
    */
   ResetWeapon() {
-    this._PaintSpawn(this._active_color)
     this._on_cooldown = false
+    this._PaintSpawn()
   }
 
-  _PaintSpawn(color) {
+  _PaintSpawn() {
     if (!this.graphic) {
-      this.graphic = Sprites.MysteryBox
-      this.graphic.scale.set(1/296)
-      this.graphic.pivot.set(296)
-      this.graphic.rotation = Math.PI
+      this.graphic = Graphics.textures.GetSprite(this._TextureName)
+      this.graphic.scale.set(1/512, - 1 / 512)
+      this.graphic.pivot.set(0, 512)
       this.graphic.position.set(this.pos.x, this.pos.y)
     }
-
+    this.graphic.tint = this.hasWeapon ? 0xFFFFFF : 0x8C8C8C
   }
 }
 

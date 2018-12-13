@@ -13,16 +13,22 @@ class Game {
   //
   // Start Game
   //
-  Start() {
+  Start(lvl = 3) {
     // load config
     Clone(require('../data/config.json'), game_config)
 
     // init graphics
     this._graphics.Init(document.getElementById('game-wrap'))
 
-    // create game world
-    this._world = new World()
-    this._graphics.AddScene(this._world.scene)
+    // proceed when textures are loaded
+    const pics = require('../data/images/**/*.png') // all PNG's in data/images/
+    if (process.env.NODE_ENV === 'development') console.log(pics)
+    Graphics.LoadTextures(pics,
+      // create game world
+      '', () => {
+        this._world = new World(lvl)
+        this._graphics.AddScene(this._world.root)
+      })
 
     // start event listening
     Keyboard.Listen()

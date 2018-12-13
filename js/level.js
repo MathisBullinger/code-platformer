@@ -1,12 +1,13 @@
 import { GameObject } from './game_object'
 import { Player } from './player'
+import { Trophy } from './trophy'
 import { Vec2D } from './math'
 import { Physics } from './physics'
 import { game_config as conf } from './game_config'
 import { Spawns } from './spawns'
 import { GetUrlParam } from './util'
-import { Sprites } from './sprites'
 import { InputKeyboard, InputGamepad } from './input_profile'
+import { Graphics } from './graphics'
 
 class Level {
 
@@ -38,8 +39,10 @@ class Level {
       this._spawns.Update(dt, player)
 
       // kill player if below death cap
-      if (!player.dead && player.y < this._lower_death_cap)
+      if (!player.dead && player.y < this._lower_death_cap) {
+        if (this.trophy.player === player) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn())
         player.Kill()
+      }
 
       // respawn player if dead at a random position
       if (player.dead)
@@ -63,9 +66,7 @@ class Level {
   }
 
   RemoveProjectiles(...prj) {
-    prj.forEach(p => {
-      p.RemoveMoveVec()
-    })
+    prj.forEach(p => p.RemoveMoveVec())
     this._parent_scene.removeChild(...([...prj].map(pr => pr.graphic)))
     this._projectiles = this._projectiles.filter(pr => !([...prj]).includes(pr))
   }
@@ -73,12 +74,14 @@ class Level {
   /**
    * This loads the scene
    */
-  Load(data, scene) {
+  Load(lvl, scene) {
+    const { data } = lvl
     // Prepare variables
     const layers = data.layers
     let blocks = null
     let weapon_sp = null
     let player_sp = null
+    let trophy_sp = null
     // Iterate all layers and assign helpers
     for (let layer of layers) {
       if (layer.name == 'world') {
@@ -87,6 +90,8 @@ class Level {
         weapon_sp = layer.data
       } else if (layer.name === 'player_sp') {
         player_sp = layer.data
+      } else if (layer.name === 'trophy_sp') {
+        trophy_sp = layer.data
       }
     }
     // We need level data
@@ -106,15 +111,16 @@ class Level {
       if (material != 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       let block = new GameObject(pos)
-      block.graphic = Sprites.Wall
-      block.graphic.scale.set(1 / 256)
+      block.graphic = Graphics.textures.GetSprite(lvl.wall || 'wall')
+      block.graphic.width = block.width
+      block.graphic.height = block.height
       block.graphic.position.set(pos.x, pos.y)
       this._blocks.push(block)
       scene.addChild(block.graphic)
     }
     // We need at least one spawn point
     if (!player_sp) {
-      console.error('No player spawn points were found for this level.')
+      console.error('No player_sp layer was found.')
       return
     }
     // Iterate the "player_sp" data and add _spawnpoints
@@ -122,6 +128,10 @@ class Level {
       if (player_sp[i] !== 1) continue
       const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
       this._spawns.AddPlayerSpawn(pos)
+    }
+    if (this._spawns.playerSpawnpointCount === 0) {
+      console.error('No player spawnpoints were found.')
+      return
     }
     // Check if any weapon spawn data was found
     if (weapon_sp) {
@@ -131,19 +141,41 @@ class Level {
         this._spawns.AddWeaponSpawn(weapon_sp[i], pos, scene)
       }
     }
+    if (trophy_sp) {
+      for (let i = 0; i < trophy_sp.length; ++i) {
+        if (trophy_sp[i] !== 1) continue
+        const pos = new Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1)
+        this._spawns.AddTrophySpawn(pos)
+      }
+    }
     // gravity
     this._gravity = new Vec2D(0, conf.gravity * -1)
     this._GenLvlGrid()
     this._GenCollisionFaces()
+
+    // Get player spawn spawnpoints
+    const spawnpoints = this._spawns.GetDifferentPlayerSpawns(2)
     // Create the player at a random position
-    const player = new Player(0, new InputKeyboard(), this._spawns.GetRandomPlayerSpawn())
-    // player.is_fast = true
+    const player = new Player(0, new InputKeyboard(), spawnpoints[0])
     scene.addChild(player.graphic)
     this._players.push(player)
 
-    const player2 = new Player(1, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    const player2 = new Player(1, new InputGamepad(), spawnpoints[1])
     scene.addChild(player2.graphic)
     this._players.push(player2)
+
+    const player3 = new Player(2, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player3.graphic)
+    this._players.push(player3)
+
+    const player4 = new Player(3, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    scene.addChild(player4.graphic)
+    this._players.push(player4)
+
+    // Create the trophy to pick up
+    this.trophy = new Trophy(this)
+    if (this._spawns.trophySpawnpointCount > 0) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn())
+    scene.addChild(this.trophy.graphic)
 
     // render collision faces
     if (GetUrlParam('rcf') || GetUrlParam('render_collision_faces'))
@@ -184,7 +216,7 @@ class Level {
       this._block_grid.push(column)
     }
 
-    this._LogGrid()
+    if (process.env.NODE_ENV === 'development') this._LogGrid()
   }
 
   /*
@@ -200,6 +232,14 @@ class Level {
     const diag_top_right = (x, y) => {
       if (x == blocks.length - 1 || y == blocks[x].length - 1) return false
       return blocks[x+1][y+1]
+    }
+    const diag_bottom_left = (x, y) => {
+      if (x == 0 || y == 0) return false
+      return blocks[x-1][y-1]
+    }
+    const diag_bottom_right = (x, y) => {
+      if (x == blocks.length -1 || y == 0) return false
+      return blocks[x+1][y-1]
     }
 
     const collides_left = (x, y) => {
@@ -233,7 +273,22 @@ class Level {
     }
     const collides_bottom = (x, y) => {
       if (y == 0) return true
-      return !blocks[x][y-1]
+
+      if (!blocks[x][y-1])
+        return true
+
+      // no block bottom left || no block bottom right
+      if (!diag_bottom_left(x, y) || !diag_bottom_right(x, y)) {
+        // block on top
+        if (y < blocks[0].length && blocks[x][y+1]) {
+          // collides top => true
+          if (collides_top(x, y))
+            return true
+        }
+      }
+
+      return false
+
     }
 
     for (let y = blocks[0].length - 1; y >= 0 ; y--) {
@@ -247,7 +302,7 @@ class Level {
       }
     }
 
-    this._LogCollisionGrid()
+    if (process.env.NODE_ENV === 'development') this._LogCollisionGrid()
   }
 
   /*

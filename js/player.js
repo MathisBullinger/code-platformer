@@ -3,8 +3,7 @@ import { Vec2D } from './math'
 import { Graphics } from './graphics'
 import { Movable } from './game_object'
 import { game_config as conf } from './game_config'
-import { Keyboard as key, Gamepad, Mouse } from './interaction'
-import { Weapons, Bow } from './weapons'
+import { Bow } from './weapons'
 
 class Player extends Movable {
 
@@ -12,9 +11,11 @@ class Player extends Movable {
    * Constructor
    */
   constructor(number, input, pos = new Vec2D(0, 0), scale = new Vec2D(0.7, 1.3)) {
-    console.log('spawn player at ', pos)
     super(pos, scale)
+    if (process.env.NODE_ENV === 'development') console.log('spawn player at ', pos)
     this._player_number = number
+    this._player_number = Player.counter
+    Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
     this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
@@ -23,19 +24,13 @@ class Player extends Movable {
     this.has_ground_contact = false
     this.jump_counter = 0
     this._mass = 30
+    this._score = 0
 
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
     this._weapon_holster = new PIXI.Container()
     this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
     this.graphic.addChild(this._weapon_holster)
-
-    // Create weapon
-    this._weapon = Weapons.GetRandomWeapon()
-    this._weapon.paintWeapon(this._player_number)
-    this._weapon_holster.addChild(this._weapon.graphic)
-    // If weapon is a bow, add the remaing arrows indicator
-    if (this._weapon.constructor === Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic)
 
     // player health
     this._hp_total = conf.player_hp
@@ -70,16 +65,24 @@ class Player extends Movable {
       const dir = this._move_dir == 'right' ? 1 : -1
       if (new Date().getTime() - this._dash_start >= this._dash_time) {
         this._dashing = false
+        this._last_dash = Date.now()
         this.vel.x = this._move_vel * dir
       }
       this.vel.x = this._dash_vel * dir
+    }
+    // Check if player can heal
+    if (Date.now() - this._last_damage_taken > conf.healing.cooldown) {
+      // Increase health until max health is reached
+      this._hp_current = Math.min(this._hp_current + (conf.healing.amount_per_sec / 1000 * dt), this._hp_total)
+      // If max => unset _last_damage_taken attribute
+      if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
     }
     // If ground contact => reset jump counter
     if (this.has_ground_contact) this.jump_counter = 0
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
-    this._weapon.Update(this._input)
+    if (this._weapon) this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
   }
@@ -88,12 +91,16 @@ class Player extends Movable {
    * Set the players weapon
    */
   SetWeapon(weapon) {
+    if (process.env.NODE_ENV === 'development') console.log('picked up ' + weapon.constructor.name)
     // Remove the weapon
-    this._weapon_holster.removeChild(this._weapon.graphic)
-    // If weapon was a bow, also remove the arrow indicator
-    if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
+    if (this._weapon) {
+      this._weapon_holster.removeChild(this._weapon.graphic)
+      // If weapon was a bow, also remove the arrow indicator
+      if (this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
+    }
     // Assign new weapon to attribute and the weapon holster
     this._weapon = weapon
+    this._weapon.player = this
     this._weapon.paintWeapon(this._player_number)
     this._weapon_holster.addChild(this._weapon.graphic)
     // If new weapon is a bow, also add the arrow indicator
@@ -121,13 +128,21 @@ class Player extends Movable {
   }
 
   Dash() {
-    if (!this._move_dir) return
+    if (!this._move_dir || (Date.now() - this._last_dash) <= conf.player_dash_cooldown) return
     this._dash_start = new Date().getTime()
     this._dashing = true
   }
 
   get player_number() {
     return this._player_number
+  }
+
+  get score() {
+    return this._score
+  }
+
+  set score(score) {
+    this._score = score
   }
 
   /**
@@ -149,6 +164,7 @@ class Player extends Movable {
    * Attack
    */
   Attack() {
+    if (!this._weapon) return
     const recoil = Vec2D.Div(this._weapon.Shoot(), this._mass)
     this.vel = Vec2D.Add(this.vel, recoil)
   }
@@ -158,6 +174,7 @@ class Player extends Movable {
    */
   Damage(hp) {
     this._hp_current -= hp
+    this._last_damage_taken = Date.now()
     if (this._hp_current <= 0)
       this.Die()
   }
@@ -172,8 +189,11 @@ class Player extends Movable {
   Kill() {
     this._hp_current = 0
     this._alive = false
+    this._last_damage_taken = undefined
     console.log('player died')
   }
+
+  Die() { this.Kill() }
 
   get dead() {
     return !this._alive
@@ -191,6 +211,7 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
+    if (!spawn_pos) return
     console.log('respawn player', spawn_pos)
     this._alive = true
     this._hp_current = this._hp_total
@@ -198,5 +219,6 @@ class Player extends Movable {
     this.vel.Set(0, 0)
   }
 }
+Player.counter = 0
 
 export { Player }

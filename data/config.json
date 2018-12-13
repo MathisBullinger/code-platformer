@@ -6,7 +6,38 @@
   "player_move_vel": 8,
   "player_dash_vel": 50,
   "player_dash_time": 42,
+  "player_dash_cooldown": 1000,
   "player_jump_height": 2.2,
   "player_hp": 100,
+  "healing": {
+    "amount_per_sec": 5,
+    "cooldown": 1000
+  },
+  "trophy": {
+    "passive_income": 0.1,
+    "pickup_bounty": 2,
+    "steal_bounty": 4
+  },
+  "base_damage": 10,
+  "damage": {
+    "__comment__": "damage is calculated as base * projectile * weapon",
+    "base": 1,
+    "projectile": {
+      "arrow": 10,
+      "bullet": 1
+    },
+    "weapon": {
+      "bow": 10,
+      "gun": 10,
+      "minigun": 5,
+      "shotgun": 5
+    }
+  },
+  "lifespan": {
+    "__comment__": "defines the lifespan of projectiles for each weapon in ms. values of 0 or smaller are being ignored",
+    "weapon": {
+      "shotgun": 150
+    }
+  },
   "display_mov_vector": false
 }

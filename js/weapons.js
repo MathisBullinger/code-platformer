@@ -1,8 +1,9 @@
+import * as PIXI from 'pixi.js'
 import { Bow } from './weapons/bow'
 import { Gun } from './weapons/gun'
 import { Minigun } from './weapons/minigun'
 import { Shotgun } from './weapons/shotgun'
-import { Sprites } from './sprites'
+import { Graphics } from './graphics'
 
 class Weapons {
   static GetRandomWeapon() {
@@ -10,28 +11,30 @@ class Weapons {
     return new wpn()
   }
 
-  static GetSprite(wpn, variant) {
-    let weapon = undefined
+  static GetProjectileSprite(wpn, variant = 0) {
+    let projectile = undefined
     switch (wpn.constructor) {
-      case Gun:
-        weapon = Sprites.Gun(variant)
-        weapon.scale.set(3 / 1724)
-        break
       case Bow:
-        weapon = Sprites.Bow(variant)
-        weapon.scale.set(2 / 1724)
-        break
-      case Minigun:
-        weapon = Sprites.Minigun(variant)
-        weapon.scale.set(3 / 1724)
-        break
-      case Shotgun:
-        weapon = Sprites.Shotgun(variant)
-        weapon.scale.set(3 / 1724)
+        projectile = Graphics.textures.GetSprite('arrow_' + variant)
+        projectile.scale.set(1 / 747, -1 / 747)
+        projectile.anchor.set(0.5, 1)
         break
       default:
+        projectile = new PIXI.Graphics()
+        projectile.beginFill(0xBB79FD)
+        projectile.drawRect(0, 0, 0.1, 0.1)
+        projectile.endFill()
+        projectile.pivot.set(0)
         break
     }
+    return projectile
+  }
+
+  static GetSprite(wpn, variant) {
+    let weapon = undefined
+    if (process.env.NODE_ENV === 'development') console.log(`Requesting weapon sprite '${ wpn.constructor.Name.toLowerCase() }'`)
+    weapon = Graphics.textures.GetSprite(`${ wpn.constructor.Name.toLowerCase() }_${variant}`)
+    weapon.scale.set(wpn.scale.x / weapon.width, wpn.scale.y / weapon.height)
     weapon.anchor.set(0.5, 0.5)
     return weapon
   }

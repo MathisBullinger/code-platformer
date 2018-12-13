@@ -1,8 +1,8 @@
-import { Graphics, renderer } from './../graphics'
-import { Vec2D } from './../math'
-import { Level } from './../level'
-import { Gamepad } from './../interaction'
-import { Weapons } from './../weapons'
+import { renderer } from '../graphics'
+import { Vec2D } from '../math'
+import { Level } from '../level'
+import { Weapons } from '../weapons'
+import { game_config } from '../game_config'
 
 /**
   * General weapon class
@@ -22,14 +22,24 @@ class Weapon {
     this._cooldown = cooldown
     this._last_fired = Date.now()
     // Get graphics
-    this.paintWeapon()
     this._last_dir = null
+    // set damage
+    this.damage = 1
+    const damage = game_config.damage.weapon[this.constructor.Name.toLowerCase()]
+    if (damage)
+      this.damage = damage
+    // Projectile lifespan
+    this.projectile_lifespan = -1
+    const lifespan = game_config.lifespan.weapon[this.constructor.Name.toLowerCase()]
+    if (lifespan)
+      this.projectile_lifespan = lifespan
   }
 
   /**
     * Update weapon and projectiles
     */
   Update(input) {
+    if (!this.graphic) this.paintWeapon()
     if (!input) return
     if (!this._last_dir) this._last_dir = new Vec2D(0, 1)
     let dir = input.GetViewDir(this)
@@ -39,6 +49,20 @@ class Weapon {
       this._last_dir = dir
     this.graphic.scale.x = Math.abs(this.graphic.scale.x) * (dir.x >= 0 ? -1 : 1)
     this.graphic.parent.rotation = -Math.atan2(dir.x, dir.y)
+  }
+
+  /**
+   * Gets the player who is holding the weapon
+   */
+  get player() {
+    return this._player
+  }
+
+  /**
+   * Sets the player who is holding the weapon
+   */
+  set player(player) {
+    this._player = player
   }
 
   /**

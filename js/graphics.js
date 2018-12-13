@@ -22,6 +22,9 @@ class Graphics {
         : 'canvas')
 
     PIXI.settings.RESOLUTION = game_config.resolution
+    // PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+    PIXI.settings.MIPMAP_TEXTURES = true
 
     // create & config pixi app
     let container = wrap
@@ -46,7 +49,7 @@ class Graphics {
     const canvas = this._game_wrap.getElementsByTagName('canvas')[0]
     canvas.width = this._game_wrap.offsetWidth * PIXI.settings.RESOLUTION
     canvas.height = this._game_wrap.offsetHeight * PIXI.settings.RESOLUTION
-    console.log(`resized renderer to ${renderer.width}px, ${renderer.height}px`)
+    if (process.env.NODE_ENV === 'development') console.log(`resized renderer to ${renderer.width}px, ${renderer.height}px`)
   }
 
   /*
@@ -75,6 +78,49 @@ class Graphics {
     line.moveTo(x1, y1)
     line.lineTo(x2, y2)
     return line
+  }
+
+  /*
+   * Load Textures
+   */
+  static LoadTextures(img_obj, path, on_done) {
+    Graphics.sprites = {}
+    Graphics.textures = {
+      GetSprite : function(name) {
+        const sprite = new PIXI.Sprite(this[name])
+        sprite.anchor.set(0, 0)
+        return sprite
+      }
+    }
+
+    // convert to array of paths
+    const GetPaths = obj => {
+      if (process.env.NODE_ENV === 'development') console.log('get paths', obj)
+      const resolve = (list, obj) => {
+        if (typeof obj == 'string') {
+          list.push(obj)
+        } else if (typeof obj == 'object') {
+          for (let i in obj) {
+            if (obj.hasOwnProperty(i)) {
+              list = resolve(list, obj[i])
+            }
+          }
+        }
+        return list
+      }
+      return resolve([], img_obj)
+    }
+    const images = GetPaths(img_obj)
+    if (process.env.NODE_ENV === 'development') console.log('image list:', images)
+
+    images.forEach((value, i) => { images[i] = path + value })
+    PIXI.loader.add(images).load(() => {
+      for (let img of images) {
+        Graphics.textures[img.split('/').pop().split('.')[0]] = PIXI.loader.resources[img].texture
+      }
+      if (process.env.NODE_ENV === 'development') console.log('loaded textures:', Graphics.textures)
+      on_done()
+    })
   }
 }
 

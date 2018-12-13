@@ -6,6 +6,7 @@ class GameObject {
   constructor(pos = new Vec2D(0, 0), scale = new Vec2D(1, 1)) {
     this.pos = pos
     this.scale = scale
+    //this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, this.scale.x, this.scale.y)
   }
 
   get x() {
