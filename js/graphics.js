@@ -98,7 +98,6 @@ class Graphics {
       console.log('get paths', obj)
       const resolve = (list, obj) => {
         if (typeof obj == 'string') {
-          console.log('add ' + obj)
           list.push(obj)
         } else if (typeof obj == 'object') {
           for (let i in obj) {
