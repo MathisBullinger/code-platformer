@@ -56,8 +56,14 @@ class PlayerHealth {
   }
 
   Update() {
-    if (this._player.dead) {
+    if (this._player_dead !== this._player.dead) {
+      this._player_dead = this._player.dead
       this._PaintMugs()
+      this._PaintHighscore()
+      this._PaintWeapon()
+      this._head_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
+      this._money_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
+      this._score_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
       return
     }
     // Out of reasons unknown to me, when first rendering the ui, the position.y is always set to 0.

@@ -9,6 +9,9 @@ const level_data = [
   {
     id: 0,
     name: 'Google',
+    wall: 'wall_google',
+    background: 'background_google',
+    backgroundColor: 0x0f0e0e,
     data: require('../data/level/lvl_google.json'),
   },
   {
