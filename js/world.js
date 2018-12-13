@@ -33,6 +33,31 @@ const level_data = [
     id: 4,
     name: 'The fall',
     data: require('../data/level/the_fall.json'),
+  },
+
+  {
+    id: 5,
+    data: require('../data/level/ballpit.json')
+  },
+  {
+    id: 6,
+    data: require('../data/level/Basement.json')
+  },
+  {
+    id: 7,
+    data: require('../data/level/Level1.json')
+  },
+  {
+    id: 8,
+    data: require('../data/level/map_extern.json')
+  },
+  {
+    id: 9,
+    data: require('../data/level/map.json')
+  },
+  {
+    id: 10,
+    data: require('../data/level/new_big_boy.json')
   }
 ]
 
