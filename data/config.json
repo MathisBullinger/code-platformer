@@ -9,6 +9,7 @@
   "player_dash_cooldown": 1000,
   "player_jump_height": 2.2,
   "player_hp": 100,
+  "respawn_time": 5000,
   "healing": {
     "amount_per_sec": 5,
     "cooldown": 1000
@@ -38,6 +39,19 @@
     "weapon": {
       "shotgun": 150
     }
+  },
+  "size": {
+    "bow": 1.3,
+    "minigun": 1.3,
+    "gun": 0.5
+  },
+  "anchor": {
+    "__comment__": "x: greater => closer to body;  y: greater => lower;  default: [0.5, 0.5]",
+    "gun": [0.3, 0.9],
+    "bow": [1.7, 0.5],
+    "minigun": [0.2, 1],
+    "shotgun": [0.5, 0.9]
+
   },
   "display_mov_vector": false
 }

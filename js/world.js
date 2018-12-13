@@ -71,13 +71,14 @@ class World {
   LoadLevel(id_or_name) {
     let lvl = undefined
     if (typeof id_or_name === 'number') {
-      lvl = level_data[id_or_name]
+      lvl = level_data.length > id_or_name ? level_data[id_or_name] : level_data[0]
     } else if (typeof id_or_name === 'string') {
       lvl = level_data.find(el => el.name === id_or_name)
     } else {
       throw TypeError(`${id_or_name} is of invalid type ${ typeof id_or_name }. Expected 'number' or 'string'.`)
     }
     if (lvl) {
+      console.log(`load level "${lvl.name}" [${lvl.id}]`)
       // Unload old level
       this.scene.removeChild(...this.scene.children)
       this.root.removeChild(this._background, this.ui !== undefined ? this.ui.graphic : undefined)

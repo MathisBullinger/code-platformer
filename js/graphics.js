@@ -62,9 +62,9 @@ class Graphics {
   /*
    * Create Polygon Methods
    */
-  static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF) {
+  static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF, cl_line = 0x000000) {
     const rect = new PIXI.Graphics()
-    rect.lineStyle(0.005, 0x000000, 1)
+    rect.lineStyle(0.005, cl_line, 1)
     rect.beginFill(color)
     rect.drawRect(0, 0, w, h)
     rect.endFill()

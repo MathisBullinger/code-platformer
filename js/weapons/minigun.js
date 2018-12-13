@@ -4,7 +4,7 @@ import { Vec2D } from './../math'
 
 class Minigun extends Firearm {
   constructor() {
-    super(new Vec2D(0, 0.25), new Vec2D(0.75, 1.5), 100)
+    super(new Vec2D(0, 0.25), 100)
     this.ammunition = Bullet
   }
 }
