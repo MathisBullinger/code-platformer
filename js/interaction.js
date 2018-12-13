@@ -150,10 +150,11 @@ class Gamepad {
    * Get Direction of Stick
    */
   static GetStick(stick = 'left') {
+    const cap = num => Math.abs(num) > .15 ? num : 0
     if (!this._controllers || this._controllers.length == 0) return new Vec2D(0, 0)
     return stick == 'left' ?
-      new Vec2D(navigator.getGamepads()[0].axes[0], navigator.getGamepads()[0].axes[1]) :
-      new Vec2D(navigator.getGamepads()[0].axes[2], navigator.getGamepads()[0].axes[3])
+      new Vec2D(cap(navigator.getGamepads()[0].axes[0]), cap(navigator.getGamepads()[0].axes[1])) :
+      new Vec2D(cap(navigator.getGamepads()[0].axes[2]), cap(navigator.getGamepads()[0].axes[3]))
   }
 
   /*
@@ -195,6 +196,8 @@ class Gamepad {
  */
 class XboxController {
   constructor(pad) {
+    const stick_cap = .1
+    const cap = num => Math.abs(num) > stick_cap ? num : 0
     this.inputs = {
       // face buttons
       a: pad.buttons[0].value,
@@ -220,10 +223,10 @@ class XboxController {
       // xbox button
       guide: pad.buttons[16].value,
       // sticks
-      stick_left_x: pad.axes[0],
-      stick_left_y: pad.axes[1] * -1,
-      stick_right_x: pad.axes[3],
-      stick_right_y: pad.axes[4] * -1
+      stick_left_x: cap(pad.axes[0]),
+      stick_left_y: cap(pad.axes[1] * -1),
+      stick_right_x: cap(pad.axes[3]),
+      stick_right_y: cap(pad.axes[4] * -1)
     }
   }
 }
