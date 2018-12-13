@@ -225,10 +225,12 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
-    if (!spawn_pos) return
+    if (!spawn_pos || this._respawn_pending) return
+    this._respawn_pending = true
     setTimeout(() => {
       console.log('respawn player', spawn_pos)
       this._alive = true
+      this._respawn_pending = false
       this._hp_current = this._hp_total
       this.pos.Set(spawn_pos.x, spawn_pos.y)
       this.vel.Set(0, 0)
