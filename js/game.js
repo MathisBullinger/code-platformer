@@ -27,7 +27,7 @@ class Game {
       // create game world
       '', () => {
         this._world = new World()
-        this._graphics.AddScene(this._world.scene)
+        this._graphics.AddScene(this._world.root)
       })
 
     // start event listening
