@@ -8,36 +8,31 @@ import { Sounds } from './sounds'
 const level_data = [
   {
     id: 0,
-    name: 'New Big Boy Lvl',
-    data: require('../data/level/new_big_boy.json'),
+    name: 'Google',
+    data: require('../data/level/lvl_google.json'),
   },
   {
     id: 1,
-    name: 'Level 1',
+    name: 'Ball Pit',
     wall: 'wall_ballpit',
     background: 'background_ballpit',
+    data: require('../data/level/lvl_ballpit.json'),
     backgroundColor: 0x000001,
-    data: require('../data/level/ballpit.json'),
   },
   {
     id: 2,
-    name: 'Level 2',
+    name: 'CODE',
+    data: require('../data/level/lvl_code.json'),
     wall: 'wall_code',
     background: 'background_code',
     backgroundColor: 0x212020,
-    data: require('../data/level/Level1.json'),
   },
   {
     id: 3,
     name: 'Basement',
     wall: 'wall_basement',
     background: 'background_basement',
-    data: require('../data/level/basement.json'),
-  },
-  {
-    id: 4,
-    name: 'The fall',
-    data: require('../data/level/the_fall.json'),
+    data: require('../data/level/lvl_basement.json'),
   }
 ]
 
@@ -61,7 +56,6 @@ class World {
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())
   }
-
   /**
     * Update world
     */

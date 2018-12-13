@@ -70,19 +70,20 @@ class PlayerHealth {
       this._player_last_score = this._player.score
       this._PaintHighscore()
     }
-    if (this._player._weapon !== this._player_last_weapon) {
+    if (this._player._weapon !== this._player_last_weapon ||
+        this._player_score_digits !== Math.floor(this._player.score).toString().length) {
       this._player_last_weapon = this._player._weapon
+      this._player_score_digits = Math.floor(this._player.score).toString().length
       this._PaintWeapon()
     }
   }
 
   _PaintWeapon() {
+    if (!this._player._weapon) return
     this.graphic.removeChild(this._weapon_graphic)
-    this._weapon_graphic = this._player._weapon ?
-      new PIXI.Sprite(this._player._weapon.graphic.texture) :
-      new PIXI.Container()
+    this._weapon_graphic = new PIXI.Sprite(this._player._weapon.graphic.texture)
     this._weapon_graphic.anchor.set(0.5)
-    this._weapon_graphic.position.set(this._x_offset + 164, this._y_offset - 16)
+    this._weapon_graphic.position.set(this._x_offset + 140 + Math.floor(this._score_graphic.width), this._y_offset - 16)
     this._weapon_graphic.scale.set(-0.05, 0.05)
     this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === Bow ?
       Math.PI :
