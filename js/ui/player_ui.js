@@ -85,7 +85,11 @@ class PlayerHealth {
   }
 
   _PaintWeapon() {
-    if (!this._player._weapon) return
+    // Remove weapon if player has none
+    if (!this._player._weapon) {
+      this.graphic.removeChild(this._weapon_graphic)
+      return
+    }
     this.graphic.removeChild(this._weapon_graphic)
     this._weapon_graphic = new PIXI.Sprite(this._player._weapon.graphic.texture)
     this._weapon_graphic.anchor.set(0.5)
