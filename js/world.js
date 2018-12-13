@@ -7,27 +7,27 @@ import { UI } from './ui/user_interface'
 const level_data = [
   {
     id: 0,
-    name: 'Basement',
-    wall: 'wall_basement',
-    background: 'background_basement',
-    data: require('../data/level/Basement.json'),
+    name: 'New Big Boy Lvl',
+    data: require('../data/level/new_big_boy.json'),
   },
   {
     id: 1,
     name: 'Level 1',
-    data: require('../data/level/Level1.json'),
+    wall: 'wall_ballpit',
+    background: 'background_ballpit',
+    data: require('../data/level/ballpit.json'),
   },
   {
     id: 2,
     name: 'Level 2',
-    wall: 'wall_ballpit',
-    background: 'background_ballpit',
-    data: require('../data/level/Level2.json'),
+    data: require('../data/level/Level1.json'),
   },
   {
     id: 3,
-    name: 'New Big Boy Lvl',
-    data: require('../data/level/New Big Boy Lvl.json'),
+    name: 'Basement',
+    wall: 'wall_basement',
+    background: 'background_basement',
+    data: require('../data/level/basement.json'),
   },
   {
     id: 4,
@@ -82,9 +82,10 @@ class World {
       if (lvl.background) {
         this._background = Graphics.textures.GetSprite(lvl.background)
         if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
-          this._background.scale.set(window.innerHeight / this._background.height)
+          this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
+          this._background.position.x -= (window.innerWidth - this._background.width) / 2
         } else {
-          this._background.scale.set(window.innerWidth / this._background.width)
+          this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
         }
         this.root.addChildAt(this._background, 0)
       }
