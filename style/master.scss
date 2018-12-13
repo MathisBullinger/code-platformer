@@ -3,6 +3,20 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+     -khtml-user-select: none !important;
+       -moz-user-select: none !important;
+        -ms-user-select: none !important;
+            user-select: none !important;
+}
+
+img {
+  -webkit-user-drag: none !important;
+   -khtml-user-drag: none !important;
+     -moz-user-drag: none !important;
+       -o-user-drag: none !important;
+          user-drag: none !important;
 }
 
 #game-wrap {
