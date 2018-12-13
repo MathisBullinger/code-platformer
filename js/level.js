@@ -233,6 +233,14 @@ class Level {
       if (x == blocks.length - 1 || y == blocks[x].length - 1) return false
       return blocks[x+1][y+1]
     }
+    const diag_bottom_left = (x, y) => {
+      if (x == 0 || y == 0) return false
+      return blocks[x-1][y-1]
+    }
+    const diag_bottom_right = (x, y) => {
+      if (x == blocks.length -1 || y == 0) return false
+      return blocks[x+1][y-1]
+    }
 
     const collides_left = (x, y) => {
       if (x == 0) return true
@@ -265,7 +273,22 @@ class Level {
     }
     const collides_bottom = (x, y) => {
       if (y == 0) return true
-      return !blocks[x][y-1]
+
+      if (!blocks[x][y-1])
+        return true
+
+      // no block bottom left || no block bottom right
+      if (!diag_bottom_left(x, y) || !diag_bottom_right(x, y)) {
+        // block on top
+        if (y < blocks[0].length && blocks[x][y+1]) {
+          // collides top => true
+          if (collides_top(x, y))
+            return true
+        }
+      }
+
+      return false
+
     }
 
     for (let y = blocks[0].length - 1; y >= 0 ; y--) {
