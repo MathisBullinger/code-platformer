@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { renderer } from './graphics'
+import { renderer, Graphics } from './graphics'
 import { Level } from './level'
 import { game_config } from './game_config'
 import { UI } from './ui/user_interface'
@@ -8,6 +8,8 @@ const level_data = [
   {
     id: 0,
     name: 'Basement',
+    wall: 'wall_basement',
+    background: 'background_basement',
     data: require('../data/level/Basement.json'),
   },
   {
@@ -18,6 +20,8 @@ const level_data = [
   {
     id: 2,
     name: 'Level 2',
+    wall: 'wall_ballpit',
+    background: 'background_ballpit',
     data: require('../data/level/Level2.json'),
   },
   {
@@ -36,17 +40,18 @@ class World {
   /**
     * Constructor
     */
-  constructor() {
-    this.Create()
+  constructor(lvl = 0) {
+    this.Create(lvl)
     World.Current = this // Set static
   }
 
   /**
     * Create new world
     */
-  Create() {
+  Create(lvl) {
     this._CreateScene()
-    this.LoadLevel(0)
+    this.LoadLevel(lvl)
+
 
     // rescale scene to fit into screen
     window.addEventListener('resize', () => this._ResizeScene())
@@ -72,12 +77,23 @@ class World {
     if (lvl) {
       // Unload old level
       this.scene.removeChild(...this.scene.children)
+      this.root.removeChild(this._background, this.ui !== undefined ? this.ui.graphic : undefined)
+      // Load background if available
+      if (lvl.background) {
+        this._background = Graphics.textures.GetSprite(lvl.background)
+        if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
+          this._background.scale.set(window.innerHeight / this._background.height)
+        } else {
+          this._background.scale.set(window.innerWidth / this._background.width)
+        }
+        this.root.addChildAt(this._background, 0)
+      }
       // Load new level
       this.level = new Level(this.scene)
-      this.level.Load(lvl.data, this.scene)
+      this.level.Load(lvl, this.scene)
       // Create UI if not already existing
       this.ui = new UI()
-      this.scene.addChild(this.ui.graphic)
+      this.root.addChild(this.ui.graphic)
       // Resize screen to fit new level
       this._ResizeScene()
     }
@@ -104,6 +120,9 @@ class World {
     this.scene.scale.x *= this.pix_per_unit / renderer.resolution
     this.scene.scale.y *= this.pix_per_unit / renderer.resolution
     game_config.scene = this.scene
+    // Add root container above scene
+    this.root = new PIXI.Container()
+    this.root.addChild(this.scene)
   }
 
   /**

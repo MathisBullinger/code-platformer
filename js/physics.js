@@ -28,7 +28,6 @@ class Physics {
       for (let player of lvl._players) {
         if (player.dead) continue // Dont proceed if player already died with one of the last projectiles
         if (Physics.DoBoxesIntersect(prj, player)) {
-          // damage = base damage * projectile damage * weapon damage
           const damage = game_config.damage.base * prj.damage
           const old_pos = player.pos
           player.Damage(damage)
@@ -76,7 +75,6 @@ class Physics {
    * Solve Collision
    */
   static _SolveCollision(rect1, rect2) {
-
     const GetCollisionFace = () => {
       let faces = []
       //rect2.x + rect2.width - rect1.x
@@ -135,13 +133,11 @@ class Physics {
           const intersect_point = Line.IntersectPoint(line, t)
           const resolve = Vec2D.Sub(line.p1, intersect_point)
           solve_vectors.push(resolve)
-          // console.log({solve: resolve, intersect: intersect_point, p1: line.p1})
         }
       }
     }
 
     // const solve = Math.max(solve_vectors.map(vec => vec.Magnitude))
-    // console.log(solve_vectors, solve)
     const mags = solve_vectors.map(vec => vec.Magnitude)
     if (mags.length == 0) return
     const solve = Math.max(...mags)
