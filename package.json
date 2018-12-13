@@ -24,6 +24,7 @@
     "graphics": "^0.1.1-0",
     "math": "0.0.3",
     "pixi": "^0.3.1",
+    "pixi-sound": "^2.0.4",
     "pixi.js": "^4.8.3"
   },
   "devDependencies": {

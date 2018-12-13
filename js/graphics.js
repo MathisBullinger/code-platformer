@@ -33,7 +33,6 @@ class Graphics {
     })
 
     renderer = app.renderer
-    renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
     container.append(app.view)
@@ -97,9 +96,9 @@ class Graphics {
     const GetPaths = obj => {
       if (process.env.NODE_ENV === 'development') console.log('get paths', obj)
       const resolve = (list, obj) => {
-        if (typeof obj == 'string') {
+        if (typeof obj === 'string') {
           list.push(obj)
-        } else if (typeof obj == 'object') {
+        } else if (typeof obj === 'object') {
           for (let i in obj) {
             if (obj.hasOwnProperty(i)) {
               list = resolve(list, obj[i])

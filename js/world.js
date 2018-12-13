@@ -3,6 +3,7 @@ import { renderer, Graphics } from './graphics'
 import { Level } from './level'
 import { game_config } from './game_config'
 import { UI } from './ui/user_interface'
+import { Sounds } from './sounds'
 
 const level_data = [
   {
@@ -16,11 +17,15 @@ const level_data = [
     wall: 'wall_ballpit',
     background: 'background_ballpit',
     data: require('../data/level/lvl_ballpit.json'),
+    backgroundColor: 0x000001,
   },
   {
     id: 2,
     name: 'CODE',
     data: require('../data/level/lvl_code.json'),
+    wall: 'wall_code',
+    background: 'background_code',
+    backgroundColor: 0x212020,
   },
   {
     id: 3,
@@ -73,23 +78,29 @@ class World {
       // Unload old level
       this.scene.removeChild(...this.scene.children)
       this.root.removeChild(this._background, this.ui !== undefined ? this.ui.graphic : undefined)
-      // Load background if available
-      if (lvl.background) {
-        this._background = Graphics.textures.GetSprite(lvl.background)
-        if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
-          this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
-          this._background.position.x -= (window.innerWidth - this._background.width) / 2
-        } else {
-          this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
-        }
-        this.root.addChildAt(this._background, 0)
-      }
       // Load new level
       this.level = new Level(this.scene)
       this.level.Load(lvl, this.scene)
+      // Load background if available
+      if (lvl.background) {
+        // Get background
+        this._background = Graphics.textures.GetSprite(lvl.background)
+        // Center background
+        this._background.anchor.set(0.5, 0.5)
+        this._background.position.set(window.innerWidth / 2, window.innerHeight / 2)
+        // Scale to the right size
+        if (Math.abs(this.scene.width) < Math.abs(this.scene.height)) {
+          this._background.scale.set(window.innerWidth / this._background.width)
+        } else {
+          this._background.scale.set(window.innerHeight / this._background.height)
+        }
+        this.root.addChildAt(this._background, 0)
+      }
+      renderer.backgroundColor = lvl.backgroundColor || game_config.clear_color
       // Create UI if not already existing
       this.ui = new UI()
       this.root.addChild(this.ui.graphic)
+      Sounds.Play('theme', { loop: true })
       // Resize screen to fit new level
       this._ResizeScene()
     }
