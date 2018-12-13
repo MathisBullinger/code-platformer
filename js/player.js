@@ -18,7 +18,10 @@ class Player extends Movable {
     Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
-    this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
+    this.graphic = Graphics.textures.GetSprite('pl1_standing')
+    this.graphic.scale.set(scale.y / this.graphic.height)
+    this.graphic.scale.y *= -1
+    this.graphic.anchor.y = 1
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
