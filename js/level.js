@@ -34,6 +34,7 @@ class Level {
     Physics.Update(dt, this)
 
     this._players.forEach(player => {
+      // if (player.dead) return
 
       // Update Spawns
       this._spawns.Update(dt, player)
@@ -154,7 +155,7 @@ class Level {
     this._GenCollisionFaces()
 
     // Get player spawn spawnpoints
-    const spawnpoints = this._spawns.GetDifferentPlayerSpawns(2)
+    const spawnpoints = this._spawns.GetDifferentPlayerSpawns(4)
     // Create the player at a random position
     const player = new Player(0, new InputKeyboard(), spawnpoints[0])
     scene.addChild(player.graphic)
@@ -164,11 +165,11 @@ class Level {
     scene.addChild(player2.graphic)
     this._players.push(player2)
 
-    const player3 = new Player(2, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    const player3 = new Player(2, new InputGamepad(), spawnpoints[2])
     scene.addChild(player3.graphic)
     this._players.push(player3)
 
-    const player4 = new Player(3, new InputGamepad(), this._spawns.GetRandomPlayerSpawn())
+    const player4 = new Player(3, new InputGamepad(), spawnpoints[3])
     scene.addChild(player4.graphic)
     this._players.push(player4)
 

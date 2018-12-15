@@ -2,6 +2,7 @@ import { game_config } from './game_config'
 import { Graphics, app } from './graphics'
 import { Keyboard, Mouse, Gamepad } from './interaction'
 import { World } from './world'
+import { Sounds } from './sounds'
 
 class Game {
 
@@ -22,12 +23,15 @@ class Game {
 
     // proceed when textures are loaded
     const pics = require('../data/images/**/*.png') // all PNG's in data/images/
+    const sounds = require('../data/sounds/**/*.mp3')
     if (process.env.NODE_ENV === 'development') console.log(pics)
     Graphics.LoadTextures(pics,
       // create game world
       '', () => {
-        this._world = new World(lvl)
-        this._graphics.AddScene(this._world.root)
+        Sounds.LoadSounds(sounds, () => {
+          this._world = new World(lvl)
+          this._graphics.AddScene(this._world.root)
+        })
       })
 
     // start event listening

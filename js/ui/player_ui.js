@@ -34,7 +34,7 @@ class PlayerHealth {
     this._player = player
     this._player_index = index
     this._x_offset = index % 2 === 0 ? 64 : (window.innerWidth) - 230
-    this._y_offset = index < 2 ? 64 : (window.innerHeight) - 128
+    this._y_offset = index < 2 ? 64 : (window.innerHeight) - 64
     // Create container
     this.graphic = new PIXI.Graphics()
     this.graphic.position.set(0)
@@ -56,6 +56,16 @@ class PlayerHealth {
   }
 
   Update() {
+    if (this._player_dead !== this._player.dead) {
+      this._player_dead = this._player.dead
+      this._PaintMugs()
+      this._PaintHighscore()
+      this._PaintWeapon()
+      this._head_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
+      this._money_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
+      this._score_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF
+      return
+    }
     // Out of reasons unknown to me, when first rendering the ui, the position.y is always set to 0.
     // To prevent this we need to repaint the whole thing when position.y === 0
     if (this._player.health !== this._player_last_health) {
@@ -66,19 +76,24 @@ class PlayerHealth {
       this._player_last_score = this._player.score
       this._PaintHighscore()
     }
-    if (this._player._weapon !== this._player_last_weapon) {
+    if (this._player._weapon !== this._player_last_weapon ||
+        this._player_score_digits !== Math.floor(this._player.score).toString().length) {
       this._player_last_weapon = this._player._weapon
+      this._player_score_digits = Math.floor(this._player.score).toString().length
       this._PaintWeapon()
     }
   }
 
   _PaintWeapon() {
+    // Remove weapon if player has none
+    if (!this._player._weapon) {
+      this.graphic.removeChild(this._weapon_graphic)
+      return
+    }
     this.graphic.removeChild(this._weapon_graphic)
-    this._weapon_graphic = this._player._weapon ?
-      new PIXI.Sprite(this._player._weapon.graphic.texture) :
-      new PIXI.Container()
+    this._weapon_graphic = new PIXI.Sprite(this._player._weapon.graphic.texture)
     this._weapon_graphic.anchor.set(0.5)
-    this._weapon_graphic.position.set(this._x_offset + 164, this._y_offset - 16)
+    this._weapon_graphic.position.set(this._x_offset + 140 + Math.floor(this._score_graphic.width), this._y_offset - 16)
     this._weapon_graphic.scale.set(-0.05, 0.05)
     this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === Bow ?
       Math.PI :
@@ -108,7 +123,9 @@ class PlayerHealth {
       if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256))
       this._mugs.push(mug)
     }
-    this.graphic.addChild(...this._mugs)
+    if (this.graphic && this._mugs && this._mugs.length) {
+      this.graphic.addChild(...this._mugs)
+    }
   }
 
   static _GetHalfHearts(health) {

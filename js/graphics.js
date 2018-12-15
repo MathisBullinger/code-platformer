@@ -33,7 +33,6 @@ class Graphics {
     })
 
     renderer = app.renderer
-    renderer.backgroundColor = game_config.clear_color
 
     // add pixi canvas to HTML
     container.append(app.view)
@@ -62,9 +61,9 @@ class Graphics {
   /*
    * Create Polygon Methods
    */
-  static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF) {
+  static CreateRectangle(x = 0, y = 0, w = 1, h = 1, color = 0xFFFFFF, cl_line = 0x000000) {
     const rect = new PIXI.Graphics()
-    rect.lineStyle(0.005, 0x000000, 1)
+    rect.lineStyle(0.005, cl_line, 1)
     rect.beginFill(color)
     rect.drawRect(0, 0, w, h)
     rect.endFill()
@@ -97,9 +96,9 @@ class Graphics {
     const GetPaths = obj => {
       if (process.env.NODE_ENV === 'development') console.log('get paths', obj)
       const resolve = (list, obj) => {
-        if (typeof obj == 'string') {
+        if (typeof obj === 'string') {
           list.push(obj)
-        } else if (typeof obj == 'object') {
+        } else if (typeof obj === 'object') {
           for (let i in obj) {
             if (obj.hasOwnProperty(i)) {
               list = resolve(list, obj[i])

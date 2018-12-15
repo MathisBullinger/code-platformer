@@ -18,7 +18,8 @@ class Player extends Movable {
     Player.counter++
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
-    this.graphic = Graphics.CreateRectangle(this.pos.x, this.pos.y, scale.x, scale.y, 0xFFEEEE)
+    this.graphic = new PIXI.Container()
+    this._SetBody('pl1_standing')
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
@@ -29,7 +30,7 @@ class Player extends Movable {
     // Create weapon holster
     // This will later be more useful for rotating the weapon around the player
     this._weapon_holster = new PIXI.Container()
-    this._weapon_holster.position.set(scale.x / 2, scale.y * 0.66667) // 0.6667 because I want the holster to be at 2/3 of the player height
+    this._weapon_holster.position.set(scale.x / 2, scale.y * (2 / 3))
     this.graphic.addChild(this._weapon_holster)
 
     // player health
@@ -59,6 +60,7 @@ class Player extends Movable {
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
+      this._SetBody('pl1_standing')
     }
     // dash
     if (this._dashing) {
@@ -78,13 +80,37 @@ class Player extends Movable {
       if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined
     }
     // If ground contact => reset jump counter
-    if (this.has_ground_contact) this.jump_counter = 0
+    if (this.has_ground_contact)
+      this.jump_counter = 0
+    else
+      this._SetBody('pl1_jump')
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
     if (this._weapon) this._weapon.Update(this._input)
     super.Update(dt)
     this._moved = false
+  }
+
+  _SetBody(sprite_name) {
+    if (this._body) {
+      if (this._body.sprite == sprite_name) return
+      this.graphic.removeChild(this._body)
+    }
+    const dir = this._body && this._body.scale.x < 0 ? 'left' : 'right'
+    this._body = Graphics.textures.GetSprite(sprite_name)
+    this._body.sprite = sprite_name
+    this._body.scale.set(this.height / this._body.height)
+    this._body.scale.y *= -1
+    this._body.anchor.y = 1
+    if (dir == 'left') {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
+    if (this.dead) {
+      this._body.tint = 0x8C8C8C
+    }
+    this.graphic.addChildAt(this._body, 0)
   }
 
   /**
@@ -115,9 +141,17 @@ class Player extends Movable {
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
+    this._SetBody('pl1_run_3')
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
+    if (dir == 'right' && this._body.scale.x < 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 0
+    } else if (dir == 'left' && this._body.scale.x > 0) {
+      this._body.scale.x *= -1
+      this._body.anchor.x = 1
+    }
   }
 
   MoveRight(dt) {
@@ -190,7 +224,11 @@ class Player extends Movable {
     this._hp_current = 0
     this._alive = false
     this._last_damage_taken = undefined
-    console.log('player died')
+    this._SetBody('pl1_dead')
+    // Remove weapon upon death
+    this._weapon = undefined
+    this._weapon_holster.removeChild(...this._weapon_holster.children)
+    if (process.env.NODE_ENV === 'development') console.log('player died')
   }
 
   Die() { this.Kill() }
@@ -211,12 +249,16 @@ class Player extends Movable {
    * Respawn
    */
   Respawn(spawn_pos) {
-    if (!spawn_pos) return
-    console.log('respawn player', spawn_pos)
-    this._alive = true
-    this._hp_current = this._hp_total
-    this.pos.Set(spawn_pos.x, spawn_pos.y)
-    this.vel.Set(0, 0)
+    if (!spawn_pos || this._respawn_pending) return
+    this._respawn_pending = true
+    setTimeout(() => {
+      console.log('respawn player', spawn_pos)
+      this._alive = true
+      this._respawn_pending = false
+      this._hp_current = this._hp_total
+      this.pos.Set(spawn_pos.x, spawn_pos.y)
+      this.vel.Set(0, 0)
+    }, conf.respawn_time)
   }
 }
 Player.counter = 0

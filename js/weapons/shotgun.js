@@ -4,7 +4,7 @@ import { Bullet } from './bullet'
 
 class Shotgun extends Weapon {
   constructor() {
-    super(new Vec2D(0, 0.3), new Vec2D(0.75, 1.5), 750)
+    super(new Vec2D(0, 0.3), 750)
     this._number_bullets = 6
   }
 
