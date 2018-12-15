@@ -84,21 +84,22 @@ class World {
       // Load new level
       this.level = new Level(this.scene)
       this.level.Load(lvl, this.scene)
+
       // Load background if available
       if (lvl.background) {
-        // Get background
+        // get background
         this._background = Graphics.textures.GetSprite(lvl.background)
-        // Center background
-        this._background.anchor.set(0.5, 0.5)
-        this._background.position.set(window.innerWidth / 2, window.innerHeight / 2)
-        // Scale to the right size
-        if (Math.abs(this.scene.width) < Math.abs(this.scene.height)) {
-          this._background.scale.set(window.innerWidth / this._background.width)
+        // scale to right size
+        if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
+          this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
+          // center on x-axis
+          this._background.position.x -= (window.innerWidth - this._background.width) / 2
         } else {
-          this._background.scale.set(window.innerHeight / this._background.height)
+          this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
         }
         this.root.addChildAt(this._background, 0)
       }
+
       renderer.backgroundColor = lvl.backgroundColor || game_config.clear_color
       // Create UI if not already existing
       this.ui = new UI()
