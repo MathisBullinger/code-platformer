@@ -2,6 +2,7 @@ import { Graphics } from './graphics'
 import { Vec2D } from './math'
 import { game_config as conf } from './game_config'
 import { Player } from './player'
+import { Sounds } from './sounds'
 
 class Trophy {
 
@@ -42,6 +43,7 @@ class Trophy {
     this._player.graphic.addChildAt(this.graphic, 0)
     this.graphic.position.set(0.05, 1.5)
     this.graphic.scale.set(0.5 / 512)
+    Sounds.Play('reward')
   }
 
   get player() {
