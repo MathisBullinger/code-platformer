@@ -2,6 +2,7 @@ import { Weapon } from './weapon'
 import { Vec2D } from '../math'
 import { Bullet } from './bullet'
 import { Sounds } from '../sounds'
+import { GetUrlParam } from '../util' 
 
 class Shotgun extends Weapon {
   constructor() {
@@ -25,7 +26,8 @@ class Shotgun extends Weapon {
       vel_dir = Vec2D.Add(vel_dir, bullet.vel)
       impulse += bullet.GetImpulse()
     }
-    Sounds.Play('shotgun')
+    if (!GetUrlParam('no_sound'))
+      Sounds.Play('shotgun')
     // Return summed up impulse and average velocity direction
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(vel_dir), -1), impulse)
   }

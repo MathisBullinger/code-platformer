@@ -111,7 +111,8 @@ class World {
       // Create UI if not already existing
       this.ui = new UI()
       this.root.addChild(this.ui.graphic)
-      Sounds.Play('theme', { loop: true, volume: game_config.sound.music_volume })
+      if (!GetUrlParam('no_music'))
+        Sounds.Play('theme', { loop: true, volume: game_config.sound.music_volume })
       // Resize screen to fit new level
       this._ResizeScene()
     }
