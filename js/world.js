@@ -63,12 +63,9 @@ class World {
     * Update world
     */
   Update(dt) {
-    if (!this.level.Update(dt)) {
-      console.log('false')
-      return false
-    }
+    const r = this.level.Update(dt)
     this.ui.Update()
-    return true
+    return r
   }
 
   LoadLevel(id_or_name) {
