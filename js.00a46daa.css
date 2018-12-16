@@ -78,6 +78,13 @@ img {
   width: 100vw;
   left: 0;
 }
+.menu-wrap .lvl-players, .lvl-select-wrap .lvl-players {
+  position: absolute;
+  width: 35vw;
+  left: 52%;
+  transform: translateX(-50%) translateY(-2vh);
+  bottom: 0;
+}
 .menu-wrap .menu, .lvl-select-wrap .menu {
   position: absolute;
   z-index: 30;
@@ -172,4 +179,17 @@ img {
   left: 98vw;
   top: 65vh;
   transform: translateX(-100%) translateY(-100%);
+}
+
+.win-screen {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-position: 50% center;
+  background-size: cover;
+  z-index: 100;
 }

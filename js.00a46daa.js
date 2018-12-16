@@ -42469,9 +42469,14 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+var RadiansToDegrees = function RadiansToDegrees(rad) {
+  return rad * (180 / Math.PI);
+};
 /*
  * 2-dimensional Vector
  */
+
+
 var Vec2D =
 /*#__PURE__*/
 function () {
@@ -42556,6 +42561,21 @@ function () {
     key: "Normalize",
     value: function Normalize(vec) {
       return Vec2D.Div(vec, vec.Magnitude);
+    }
+  }, {
+    key: "DotProduct",
+    value: function DotProduct(v1, v2) {
+      return v1.x * v2.x + v1.y * v2.y;
+    }
+  }, {
+    key: "Angle",
+    value: function Angle(v1, v2) {
+      return Math.acos(Vec2D.DotProduct(v1, v2) / (v1.Magnitude * v2.Magnitude));
+    }
+  }, {
+    key: "AngleDegrees",
+    value: function AngleDegrees(v1, v2) {
+      return RadiansToDegrees(Vec2D.Angle(v1, v2));
     }
   }]);
 
@@ -43445,3398 +43465,7 @@ function () {
 }();
 
 exports.Weapon = Weapon;
-},{"../graphics":"js/graphics.js","../math":"js/math.js","../level":"js/level.js","../weapons":"js/weapons.js","../game_config":"js/game_config.js"}],"js/weapons/firearm.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Firearm = void 0;
-
-var _weapon = require("./weapon");
-
-var _math = require("./../math");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/*
- * Firearm Class
- * any kind of shootable weapon
- */
-var Firearm =
-/*#__PURE__*/
-function (_Weapon) {
-  _inherits(Firearm, _Weapon);
-
-  function Firearm(pos, cooldown) {
-    _classCallCheck(this, Firearm);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(Firearm).call(this, pos, cooldown));
-  }
-  /*
-   * Shoot projectile given as parameter and return recoil
-   */
-
-
-  _createClass(Firearm, [{
-    key: "Shoot",
-    value: function Shoot() {
-      if (!this.ammunition) throw new Error('undefined ammunition');
-      if (this._hasCooldown) return new _math.Vec2D(0, 0);
-      var projectile = new this.ammunition(this);
-
-      this._SpawnProjectile(projectile);
-
-      return _math.Vec2D.Mult(_math.Vec2D.Mult(_math.Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse());
-    }
-  }]);
-
-  return Firearm;
-}(_weapon.Weapon);
-
-exports.Firearm = Firearm;
-},{"./weapon":"js/weapons/weapon.js","./../math":"js/math.js"}],"js/weapons/projectile.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Projectile = void 0;
-
-var _math = require("../math");
-
-var _game_object = require("../game_object");
-
-var _game_config = require("../game_config");
-
-var _weapons = require("./../weapons");
-
-var _arrow = require("./arrow");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/**
-  * General projectile entity. This class is not meant to be instantiated
-  * directly
-  */
-var Projectile =
-/*#__PURE__*/
-function (_Movable) {
-  _inherits(Projectile, _Movable);
-
-  /**
-    * Initializes a new projectile
-    */
-  function Projectile(weapon, scale, shooting_velocity, mass) {
-    var _this;
-
-    var radians_offset = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-
-    _classCallCheck(this, Projectile);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Projectile).call(this, Projectile._GetNozzlePosition(weapon, scale), scale)); // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
-
-    if ((this instanceof Projectile ? this.constructor : void 0) === Projectile) {
-      throw new TypeError('Cannot construct abstract Projectile instances directly');
-    } // Set attributes
-
-
-    _this.weapon = weapon;
-    _this.mass = mass; // Get projectile orientation and scale direction vector by velocity
-
-    _this.vel = _math.Vec2D.Add(_math.Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new _math.Vec2D(0, 0)); // Find nozzle and set position to nozzle position
-
-    _this.graphic = _weapons.Weapons.GetProjectileSprite(weapon, weapon.player.player_number);
-
-    _this.graphic.position.set(_this.pos.x, _this.pos.y);
-
-    var a = weapon.graphic.parent.rotation;
-    var offset = _this.constructor === _arrow.Arrow ? 1 / 3 : 1;
-    var off_vec = new _math.Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)); // don't shoot yourself
-
-    _this.pos = _math.Vec2D.Add(_this.pos, off_vec);
-    _this.graphic.rotation = a; // set damage
-
-    _this.damage = weapon.damage;
-
-    var damage = _game_config.game_config.damage.projectile[_this.constructor.Name.toLowerCase()];
-
-    if (damage) _this.damage *= damage; // Set instantiation time
-
-    _this._spawn_time = Date.now();
-    return _this;
-  }
-  /**
-    * Update projectile position based on velocity
-    */
-
-
-  _createClass(Projectile, [{
-    key: "Update",
-    value: function Update(dt) {
-      _get(_getPrototypeOf(Projectile.prototype), "Update", this).call(this, dt);
-
-      this.graphic.rotation = Math.atan2(this.vel.y, this.vel.x) + Math.PI / 2;
-    }
-  }, {
-    key: "GetImpulse",
-
-    /**
-     * Gets the projectiles current impulse.
-     * p = m * v
-     */
-    value: function GetImpulse() {
-      return this.mass * Math.sqrt(Math.pow(this.vel.x, 2) + Math.pow(this.vel.y, 2));
-    }
-    /**
-      * Takes a weapon and converts the rotation of the weapon holster
-      * from radians to a direction vector.
-      */
-
-  }, {
-    key: "lifespanExpired",
-    get: function get() {
-      return this.weapon.projectile_lifespan > 0 && Date.now() - this._spawn_time >= this.weapon.projectile_lifespan;
-    }
-    /**
-      * Gets the position of the weapon nozzle on the game grid.
-      * Can't use the weapon.graphic.worldTransform matrix since
-      * it already include the inverse y and scene scaling.
-      * (Most likely there is a way but I don't want to do the math for that)
-      */
-
-  }], [{
-    key: "_GetNozzlePosition",
-    value: function _GetNozzlePosition(weapon, scale) {
-      // Get graphics for all relevant entities. This is an ES6 notation, will fail on different es versions
-      var _ref = [weapon.graphic.parent.rotation, weapon.graphic.parent, weapon.graphic.parent.parent],
-          holster_rot = _ref[0],
-          holster_graphic = _ref[1],
-          player_graphic = _ref[2]; // Holster is at pos = player_graphic pos + holster_graphic_pos
-
-      var holster_pos = _math.Vec2D.Add(new _math.Vec2D(player_graphic.position.x, player_graphic.position.y), new _math.Vec2D(holster_graphic.position.x, holster_graphic.position.y)); // Get cos and sin
-
-
-      var _ref2 = [Math.cos(holster_rot), Math.sin(holster_rot)],
-          cs = _ref2[0],
-          sn = _ref2[1]; // x = x * cs - y * sn;
-      // y = x * sn + y * cs;
-
-      return _math.Vec2D.Add(holster_pos, new _math.Vec2D(weapon.pos.x * cs - (weapon.pos.y + scale.y / 2) * sn, weapon.pos.x * sn + (weapon.pos.y + scale.y / 2) * cs));
-    }
-  }, {
-    key: "_RadiansToVector",
-    value: function _RadiansToVector(weapon) {
-      var radians_offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var radians = weapon.graphic.parent.rotation + radians_offset;
-      var _ref3 = [Math.cos(radians), Math.sin(radians)],
-          cs = _ref3[0],
-          sn = _ref3[1];
-      return new _math.Vec2D(weapon.pos.x * cs - weapon.pos.y * sn, weapon.pos.x * sn + weapon.pos.y * cs);
-    }
-  }]);
-
-  return Projectile;
-}(_game_object.Movable);
-
-exports.Projectile = Projectile;
-},{"../math":"js/math.js","../game_object":"js/game_object.js","../game_config":"js/game_config.js","./../weapons":"js/weapons.js","./arrow":"js/weapons/arrow.js"}],"js/weapons/arrow.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Arrow = void 0;
-
-var _math = require("./../math");
-
-var _projectile = require("./projectile");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/**
-  * A special slow flying projectile
-  */
-var Arrow =
-/*#__PURE__*/
-function (_Projectile) {
-  _inherits(Arrow, _Projectile);
-
-  /**
-    * Initializes
-    */
-  function Arrow(bow) {
-    _classCallCheck(this, Arrow);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(Arrow).call(this, bow, new _math.Vec2D(0.1, 0.6), 35, 0));
-  }
-  /**
-    * Update
-    */
-
-
-  _createClass(Arrow, [{
-    key: "Update",
-    value: function Update(dt) {
-      _get(_getPrototypeOf(Arrow.prototype), "Update", this).call(this, dt);
-    }
-  }]);
-
-  return Arrow;
-}(_projectile.Projectile);
-
-exports.Arrow = Arrow;
-Arrow.Name = 'Arrow';
-},{"./../math":"js/math.js","./projectile":"js/weapons/projectile.js"}],"js/weapons/bow.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ArrowIndicator = exports.Bow = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _firearm = require("./firearm");
-
-var _math = require("./../math");
-
-var _arrow = require("./arrow");
-
-var _weapons = require("./../weapons");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-/**
-  * Weapon specialization.
-  * Shoots slow arrows
-  */
-var Bow =
-/*#__PURE__*/
-function (_Firearm) {
-  _inherits(Bow, _Firearm);
-
-  /**
-    * Initializes
-    */
-  function Bow() {
-    var _this;
-
-    _classCallCheck(this, Bow);
-
-    // Bow is held 1.1 units in front of player, "bow" shaped, 1000ms cooldown
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Bow).call(this, new _math.Vec2D(0, 1.1), 1000));
-    _this.ammunition = _arrow.Arrow;
-    _this.arrow_indicator = new ArrowIndicator(_assertThisInitialized(_assertThisInitialized(_this)), 3);
-    return _this;
-  }
-  /**
-   * The bow has a special shooting mechanic. It is the only
-   * weapon with limited ammunition. If the ammunition is empty, the
-   * player can't shoot with the bow
-   */
-
-
-  _createClass(Bow, [{
-    key: "Shoot",
-    value: function Shoot() {
-      // Only shoot if no cooldown and still arrows left
-      if (!_get(_getPrototypeOf(Bow.prototype), "_hasCooldown", this) && this.arrow_indicator.arrows > 0) {
-        this.arrow_indicator.decrement();
-        return _get(_getPrototypeOf(Bow.prototype), "Shoot", this).call(this);
-      }
-
-      return new _math.Vec2D(0, 0);
-    }
-  }]);
-
-  return Bow;
-}(_firearm.Firearm);
-
-exports.Bow = Bow;
-Bow.Name = 'Bow';
-/**
- * Arrow indicator for the bow weapon type
- */
-
-var ArrowIndicator =
-/*#__PURE__*/
-function () {
-  /**
-   * Initializes the arrow indicator.
-   * Take the bow it belongs to and the number of arrows the bow holds as input
-   */
-  function ArrowIndicator(bow) {
-    var arrows = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
-
-    _classCallCheck(this, ArrowIndicator);
-
-    if (bow.constructor !== Bow) throw new TypeError('The arrow indicator can only be applied to a bow');
-    this._bow = bow;
-    this._total_arrows = arrows;
-    this._arrows_remaining = arrows;
-    this.graphic = new PIXI.Graphics();
-
-    this._updateGraphic();
-  }
-  /**
-   * Return number of arrows
-   */
-
-
-  _createClass(ArrowIndicator, [{
-    key: "decrement",
-
-    /**
-     * Decrement the number of remaining arrows.
-     * Default decrement step: 1
-     */
-    value: function decrement() {
-      var num = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      this._arrows_remaining -= num;
-
-      this._updateGraphic();
-    }
-    /**
-     * Updates the graphics for the indicator
-     */
-
-  }, {
-    key: "_updateGraphic",
-    value: function _updateGraphic() {
-      var _this$graphic;
-
-      // Clear old stuff and set line thickness
-      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
-
-      this.graphic.lineStyle(0.1, 0x000000, 1, 0.5); // Draw arrow lines based on the remaining arrows
-
-      for (var i = 0; i < this._arrows_remaining; ++i) {
-        var y_pos = 0.5 / this._total_arrows * i - 0.5 / this._total_arrows;
-
-        var arr = _weapons.Weapons.GetProjectileSprite(this._bow);
-
-        arr.scale.set(0.7 / 512);
-        arr.rotation = Math.PI / -2;
-        arr.position.set(0.35, y_pos + 0.1);
-        this.graphic.addChild(arr);
-      } // Center
-
-
-      this.graphic.position.set(0.35, 1.5);
-    }
-  }, {
-    key: "arrows",
-    get: function get() {
-      return this._arrows_remaining;
-    }
-  }]);
-
-  return ArrowIndicator;
-}();
-
-exports.ArrowIndicator = ArrowIndicator;
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./firearm":"js/weapons/firearm.js","./../math":"js/math.js","./arrow":"js/weapons/arrow.js","./../weapons":"js/weapons.js"}],"js/weapons/bullet.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Bullet = void 0;
-
-var _math = require("./../math");
-
-var _projectile = require("./projectile");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var Bullet =
-/*#__PURE__*/
-function (_Projectile) {
-  _inherits(Bullet, _Projectile);
-
-  /**
-    * Initializes
-    */
-  function Bullet(weapon) {
-    var radians_offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-    _classCallCheck(this, Bullet);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(Bullet).call(this, weapon, new _math.Vec2D(0.2, 0.2), 150, 0.5, radians_offset));
-  }
-  /**
-    * Update
-    */
-
-
-  _createClass(Bullet, [{
-    key: "Update",
-    value: function Update(dt) {
-      _get(_getPrototypeOf(Bullet.prototype), "Update", this).call(this, dt);
-    }
-  }]);
-
-  return Bullet;
-}(_projectile.Projectile);
-
-exports.Bullet = Bullet;
-Bullet.Name = 'Bullet';
-},{"./../math":"js/math.js","./projectile":"js/weapons/projectile.js"}],"js/weapons/gun.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Gun = void 0;
-
-var _firearm = require("./firearm");
-
-var _math = require("./../math");
-
-var _bullet = require("./bullet");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/**
-  * Weapon specialization. Shoots fast (not yet)
-  */
-var Gun =
-/*#__PURE__*/
-function (_Firearm) {
-  _inherits(Gun, _Firearm);
-
-  /**
-    * Initializes
-    */
-  function Gun() {
-    var _this;
-
-    _classCallCheck(this, Gun);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Gun).call(this, new _math.Vec2D(0, 0.4), 400));
-    _this.ammunition = _bullet.Bullet;
-    return _this;
-  }
-
-  return Gun;
-}(_firearm.Firearm);
-
-exports.Gun = Gun;
-Gun.Name = 'Gun';
-},{"./firearm":"js/weapons/firearm.js","./../math":"js/math.js","./bullet":"js/weapons/bullet.js"}],"js/weapons/minigun.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Minigun = void 0;
-
-var _firearm = require("./firearm");
-
-var _bullet = require("./bullet");
-
-var _math = require("./../math");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var Minigun =
-/*#__PURE__*/
-function (_Firearm) {
-  _inherits(Minigun, _Firearm);
-
-  function Minigun() {
-    var _this;
-
-    _classCallCheck(this, Minigun);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Minigun).call(this, new _math.Vec2D(0, 0.25), 100));
-    _this.ammunition = _bullet.Bullet;
-    return _this;
-  }
-
-  return Minigun;
-}(_firearm.Firearm);
-
-exports.Minigun = Minigun;
-Minigun.Name = 'Minigun';
-},{"./firearm":"js/weapons/firearm.js","./bullet":"js/weapons/bullet.js","./../math":"js/math.js"}],"js/weapons/shotgun.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Shotgun = void 0;
-
-var _weapon = require("./weapon");
-
-var _math = require("./../math");
-
-var _bullet = require("./bullet");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var Shotgun =
-/*#__PURE__*/
-function (_Weapon) {
-  _inherits(Shotgun, _Weapon);
-
-  function Shotgun() {
-    var _this;
-
-    _classCallCheck(this, Shotgun);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Shotgun).call(this, new _math.Vec2D(0, 0.3), 750));
-    _this._number_bullets = 6;
-    return _this;
-  }
-  /*
-   * Shoot projectile given as parameter and return recoil
-   */
-
-
-  _createClass(Shotgun, [{
-    key: "Shoot",
-    value: function Shoot() {
-      if (this._hasCooldown) return new _math.Vec2D(0, 0);
-      var vel_dir = new _math.Vec2D(0, 0); // Sum up velocity direction
-
-      var impulse = 0.0; // Sum up impulse
-
-      for (var i = 0; i < this._number_bullets; ++i) {
-        // Create Bullet with direction offset
-        var radians_offset = 2 * (i - this._number_bullets / 2) * (Math.PI / 180);
-        var bullet = new _bullet.Bullet(this, radians_offset); // Spawn, add to average velocity and to impulse
-
-        this._SpawnProjectile(bullet);
-
-        vel_dir = _math.Vec2D.Add(vel_dir, bullet.vel);
-        impulse += bullet.GetImpulse();
-      } // Return summed up impulse and average velocity direction
-
-
-      return _math.Vec2D.Mult(_math.Vec2D.Mult(_math.Vec2D.Normalize(vel_dir), -1), impulse);
-    }
-  }]);
-
-  return Shotgun;
-}(_weapon.Weapon);
-
-exports.Shotgun = Shotgun;
-Shotgun.Name = 'Shotgun';
-},{"./weapon":"js/weapons/weapon.js","./../math":"js/math.js","./bullet":"js/weapons/bullet.js"}],"js/weapons.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "Bow", {
-  enumerable: true,
-  get: function () {
-    return _bow.Bow;
-  }
-});
-Object.defineProperty(exports, "Gun", {
-  enumerable: true,
-  get: function () {
-    return _gun.Gun;
-  }
-});
-Object.defineProperty(exports, "Minigun", {
-  enumerable: true,
-  get: function () {
-    return _minigun.Minigun;
-  }
-});
-Object.defineProperty(exports, "Shotgun", {
-  enumerable: true,
-  get: function () {
-    return _shotgun.Shotgun;
-  }
-});
-exports.Weapons = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _bow = require("./weapons/bow");
-
-var _gun = require("./weapons/gun");
-
-var _minigun = require("./weapons/minigun");
-
-var _shotgun = require("./weapons/shotgun");
-
-var _graphics = require("./graphics");
-
-var _game_config = require("./game_config");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Weapons =
-/*#__PURE__*/
-function () {
-  function Weapons() {
-    _classCallCheck(this, Weapons);
-  }
-
-  _createClass(Weapons, null, [{
-    key: "GetRandomWeapon",
-    value: function GetRandomWeapon() {
-      var wpn = Weapons._weapons[Math.floor(Math.random() * Weapons._weapons.length)];
-
-      return new wpn();
-    }
-  }, {
-    key: "GetProjectileSprite",
-    value: function GetProjectileSprite(wpn) {
-      var variant = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var projectile = undefined;
-      var cl_proj = 0xFFFFFF;
-      var proj_width = 0.3;
-      var proj_height = 0.15;
-
-      switch (wpn.constructor) {
-        case _bow.Bow:
-          projectile = _graphics.Graphics.textures.GetSprite('arrow_' + variant);
-          projectile.scale.set(1 / 747, -1 / 747);
-          projectile.anchor.set(0.5, 1);
-          break;
-
-        default:
-          projectile = _graphics.Graphics.CreateRectangle(0, 0, proj_height, proj_width, cl_proj, cl_proj);
-          break;
-      }
-
-      return projectile;
-    }
-  }, {
-    key: "GetSprite",
-    value: function GetSprite(wpn, variant) {
-      var weapon = undefined;
-      if ("development" === 'development') console.log("Requesting weapon sprite '".concat(wpn.constructor.Name.toLowerCase(), "'"));
-      weapon = _graphics.Graphics.textures.GetSprite("".concat(wpn.constructor.Name.toLowerCase(), "_").concat(variant)); // const length = conf.size[weapon.constructor.Name.toLowerCase()] ? conf.size[weapon.Name.toLowerCase()] : 1
-
-      var length = _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] ? _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] : 1;
-      var mod = weapon.width > weapon.height ? length / weapon.width : length / weapon.height;
-      weapon.width *= mod;
-      weapon.height *= mod;
-      weapon.anchor.set(0.5, 0.5);
-
-      if (_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()]) {
-        weapon.anchor.set(_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][1], _game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][0]);
-      }
-
-      return weapon;
-    }
-  }]);
-
-  return Weapons;
-}();
-
-exports.Weapons = Weapons;
-Weapons._weapons = [_gun.Gun, _bow.Bow, _minigun.Minigun, _shotgun.Shotgun];
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./weapons/bow":"js/weapons/bow.js","./weapons/gun":"js/weapons/gun.js","./weapons/minigun":"js/weapons/minigun.js","./weapons/shotgun":"js/weapons/shotgun.js","./graphics":"js/graphics.js","./game_config":"js/game_config.js"}],"js/player.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Player = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _math = require("./math");
-
-var _graphics = require("./graphics");
-
-var _game_object = require("./game_object");
-
-var _game_config = require("./game_config");
-
-var _weapons = require("./weapons");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-var Player =
-/*#__PURE__*/
-function (_Movable) {
-  _inherits(Player, _Movable);
-
-  /*
-   * Constructor
-   */
-  function Player(number, input) {
-    var _this;
-
-    var pos = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _math.Vec2D(0, 0);
-    var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : new _math.Vec2D(0.7, 1.3);
-
-    _classCallCheck(this, Player);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Player).call(this, pos, scale));
-    if ("development" === 'development') console.log('spawn player at ', pos);
-    _this._player_number = number;
-    _this._player_number = Player.counter;
-    Player.counter++;
-    _this._move_acc = _game_config.game_config.player_move_acc;
-    _this._move_vel = _game_config.game_config.player_move_vel;
-    _this.graphic = new PIXI.Container();
-
-    _this._SetBody('pl1_standing');
-
-    _this._last_jump = new Date().getTime();
-    _this._jump_vel = _game_config.game_config.gravity ? Math.sqrt(2) * Math.sqrt(_game_config.game_config.gravity) * Math.sqrt(_game_config.game_config.player_jump_height) : 0.5;
-    _this.has_ground_contact = false;
-    _this.jump_counter = 0;
-    _this._mass = 30;
-    _this._score = 0; // Create weapon holster
-    // This will later be more useful for rotating the weapon around the player
-
-    _this._weapon_holster = new PIXI.Container();
-
-    _this._weapon_holster.position.set(scale.x / 2, scale.y * (2 / 3));
-
-    _this.graphic.addChild(_this._weapon_holster); // player health
-
-
-    _this._hp_total = _game_config.game_config.player_hp;
-    _this._hp_current = _this._hp_total;
-    _this._alive = true;
-    _this._dashing = false;
-    _this._dash_time = _game_config.game_config.player_dash_time;
-    _this._dash_vel = _game_config.game_config.player_dash_vel;
-    _this._move_dir = null;
-
-    if (input) {
-      _this._input = input;
-
-      _this._input.Init(_assertThisInitialized(_assertThisInitialized(_this)));
-    }
-
-    return _this;
-  }
-  /**
-   * Update
-   */
-
-
-  _createClass(Player, [{
-    key: "Update",
-    value: function Update(dt) {
-      // slow down if not moving or dashing
-      if (!this._moved && !this._dashing) {
-        this._move_dir = null;
-        if (Math.abs(this.vel.x) > 0.0001) this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000);else this.vel.x = 0;
-
-        this._SetBody('pl1_standing');
-      } // dash
-
-
-      if (this._dashing) {
-        var dir = this._move_dir == 'right' ? 1 : -1;
-
-        if (new Date().getTime() - this._dash_start >= this._dash_time) {
-          this._dashing = false;
-          this._last_dash = Date.now();
-          this.vel.x = this._move_vel * dir;
-        }
-
-        this.vel.x = this._dash_vel * dir;
-      } // Check if player can heal
-
-
-      if (Date.now() - this._last_damage_taken > _game_config.game_config.healing.cooldown) {
-        // Increase health until max health is reached
-        this._hp_current = Math.min(this._hp_current + _game_config.game_config.healing.amount_per_sec / 1000 * dt, this._hp_total); // If max => unset _last_damage_taken attribute
-
-        if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined;
-      } // If ground contact => reset jump counter
-
-
-      if (this.has_ground_contact) this.jump_counter = 0;else this._SetBody('pl1_jump'); // Shoot when mouse down
-
-      if (this._input) this._input.Update(); // Update Weapon
-
-      if (this._weapon) this._weapon.Update(this._input);
-
-      _get(_getPrototypeOf(Player.prototype), "Update", this).call(this, dt);
-
-      this._moved = false;
-    }
-  }, {
-    key: "_SetBody",
-    value: function _SetBody(sprite_name) {
-      if (this._body) {
-        if (this._body.sprite == sprite_name) return;
-        this.graphic.removeChild(this._body);
-      }
-
-      var dir = this._body && this._body.scale.x < 0 ? 'left' : 'right';
-      this._body = _graphics.Graphics.textures.GetSprite(sprite_name);
-      this._body.sprite = sprite_name;
-
-      this._body.scale.set(this.height / this._body.height);
-
-      this._body.scale.y *= -1;
-      this._body.anchor.y = 1;
-
-      if (dir == 'left') {
-        this._body.scale.x *= -1;
-        this._body.anchor.x = 1;
-      }
-
-      if (this.dead) {
-        this._body.tint = 0x8C8C8C;
-      }
-
-      this.graphic.addChildAt(this._body, 0);
-    }
-    /**
-     * Set the players weapon
-     */
-
-  }, {
-    key: "SetWeapon",
-    value: function SetWeapon(weapon) {
-      if ("development" === 'development') console.log('picked up ' + weapon.constructor.name); // Remove the weapon
-
-      if (this._weapon) {
-        this._weapon_holster.removeChild(this._weapon.graphic); // If weapon was a bow, also remove the arrow indicator
-
-
-        if (this._weapon.constructor === _weapons.Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic);
-      } // Assign new weapon to attribute and the weapon holster
-
-
-      this._weapon = weapon;
-      this._weapon.player = this;
-
-      this._weapon.paintWeapon(this._player_number);
-
-      this._weapon_holster.addChild(this._weapon.graphic); // If new weapon is a bow, also add the arrow indicator
-
-
-      if (this._weapon.constructor === _weapons.Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic);
-    }
-    /**
-     * Move
-     */
-
-  }, {
-    key: "Move",
-    value: function Move(dir) {
-      var dt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
-      if (dt == -1) console.error('call move with delta time!');
-      this._moved = true;
-      this._move_dir = dir;
-      if (!this._alive || this._dashing) return;
-
-      this._SetBody('pl1_run_3');
-
-      this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000);
-      if (Math.abs(this.vel.x) > this._move_vel) this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1);
-
-      if (dir == 'right' && this._body.scale.x < 0) {
-        this._body.scale.x *= -1;
-        this._body.anchor.x = 0;
-      } else if (dir == 'left' && this._body.scale.x > 0) {
-        this._body.scale.x *= -1;
-        this._body.anchor.x = 1;
-      }
-    }
-  }, {
-    key: "MoveRight",
-    value: function MoveRight(dt) {
-      this.Move('right', dt);
-    }
-  }, {
-    key: "MoveLeft",
-    value: function MoveLeft(dt) {
-      this.Move('left', dt);
-    }
-  }, {
-    key: "Dash",
-    value: function Dash() {
-      if (!this._move_dir || Date.now() - this._last_dash <= _game_config.game_config.player_dash_cooldown) return;
-      this._dash_start = new Date().getTime();
-      this._dashing = true;
-    }
-  }, {
-    key: "Jump",
-
-    /**
-     * Jump
-     */
-    value: function Jump() {
-      if (!this._alive) return;
-      var now = new Date().getTime(); // jump_counter >= 2 => player has already jumped twice
-
-      if (this.jump_counter >= 2) return;
-      this._last_jump = now;
-      this.vel.y = this._jump_vel; // On jump has never ground contact. Also increase jump counter
-
-      this.has_ground_contact = false;
-      this.jump_counter += 1;
-    }
-    /*
-     * Attack
-     */
-
-  }, {
-    key: "Attack",
-    value: function Attack() {
-      if (!this._weapon) return;
-
-      var recoil = _math.Vec2D.Div(this._weapon.Shoot(), this._mass);
-
-      this.vel = _math.Vec2D.Add(this.vel, recoil);
-    }
-    /**
-     * Damage Player Health
-     */
-
-  }, {
-    key: "Damage",
-    value: function Damage(hp) {
-      this._hp_current -= hp;
-      this._last_damage_taken = Date.now();
-      if (this._hp_current <= 0) this.Die();
-    }
-  }, {
-    key: "DamagePercent",
-    value: function DamagePercent(hp) {
-      this.Damage(hp / 100 * this._hp_total);
-    }
-    /*
-     * Kill (cause and trigger on death)
-     */
-
-  }, {
-    key: "Kill",
-    value: function Kill() {
-      var _this$_weapon_holster;
-
-      this._hp_current = 0;
-      this._alive = false;
-      this._last_damage_taken = undefined;
-
-      this._SetBody('pl1_dead'); // Remove weapon upon death
-
-
-      this._weapon = undefined;
-
-      (_this$_weapon_holster = this._weapon_holster).removeChild.apply(_this$_weapon_holster, _toConsumableArray(this._weapon_holster.children));
-
-      if ("development" === 'development') console.log('player died');
-    }
-  }, {
-    key: "Die",
-    value: function Die() {
-      this.Kill();
-    }
-  }, {
-    key: "Respawn",
-
-    /*
-     * Respawn
-     */
-    value: function Respawn(spawn_pos) {
-      var _this2 = this;
-
-      if (!spawn_pos || this._respawn_pending) return;
-      this._respawn_pending = true;
-      setTimeout(function () {
-        console.log('respawn player', spawn_pos);
-        _this2._alive = true;
-        _this2._respawn_pending = false;
-        _this2._hp_current = _this2._hp_total;
-
-        _this2.pos.Set(spawn_pos.x, spawn_pos.y);
-
-        _this2.vel.Set(0, 0);
-      }, _game_config.game_config.respawn_time);
-    }
-  }, {
-    key: "player_number",
-    get: function get() {
-      return this._player_number;
-    }
-  }, {
-    key: "score",
-    get: function get() {
-      return this._score;
-    },
-    set: function set(score) {
-      this._score = score;
-    }
-  }, {
-    key: "dead",
-    get: function get() {
-      return !this._alive;
-    }
-  }, {
-    key: "mass",
-    get: function get() {
-      return this._mass;
-    }
-  }, {
-    key: "health",
-    get: function get() {
-      return this._hp_current;
-    }
-  }]);
-
-  return Player;
-}(_game_object.Movable);
-
-exports.Player = Player;
-Player.counter = 0;
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./math":"js/math.js","./graphics":"js/graphics.js","./game_object":"js/game_object.js","./game_config":"js/game_config.js","./weapons":"js/weapons.js"}],"js/trophy.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Trophy = void 0;
-
-var _graphics = require("./graphics");
-
-var _math = require("./math");
-
-var _game_config = require("./game_config");
-
-var _player = require("./player");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Trophy =
-/*#__PURE__*/
-function () {
-  function Trophy(lvl) {
-    _classCallCheck(this, Trophy);
-
-    this.scale = new _math.Vec2D(1); // Create graphic
-
-    this.graphic = _graphics.Graphics.textures.GetSprite('money');
-    this.graphic.anchor.set(0, 1); // this.graphic.rotation = Math.PI
-
-    this.moveToLevel(lvl);
-  }
-
-  _createClass(Trophy, [{
-    key: "moveToLevel",
-    value: function moveToLevel(lvl) {
-      var spawn_at_pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-      if (!lvl) return;
-
-      if (spawn_at_pos) {
-        this.pos = new _math.Vec2D(spawn_at_pos.x, spawn_at_pos.y + 1);
-      } else {
-        this.pos = new _math.Vec2D(lvl.width / 2 - 0.5, lvl.height / 2 - 0.5);
-      }
-
-      this.graphic.scale.set(1 / 512, -1 / 512);
-      this.graphic.position.set(this.pos.x, this.pos.y);
-      if (this.graphic.parent) this.graphic.parent.removeChild(this.graphic);
-
-      lvl._parent_scene.addChild(this.graphic);
-
-      this._player = undefined;
-    }
-  }, {
-    key: "Update",
-    value: function Update(dt) {
-      if (this._player) {
-        this._player.score += _game_config.game_config.trophy.passive_income / 1000 * dt;
-      }
-    }
-  }, {
-    key: "moveToPlayer",
-    value: function moveToPlayer(player) {
-      if (!player) return;
-      this._player = player;
-      this._player.score += _game_config.game_config.trophy.pickup_bounty;
-      if (this.graphic.parent) this.graphic.parent.removeChild(this.graphic);
-
-      this._player.graphic.addChildAt(this.graphic, 0);
-
-      this.graphic.position.set(0.05, 1.5);
-      this.graphic.scale.set(0.5 / 512);
-    }
-  }, {
-    key: "player",
-    get: function get() {
-      return this._player;
-    }
-  }, {
-    key: "isPickedUp",
-    get: function get() {
-      return this._player && this._player.constructor === _player.Player;
-    }
-  }]);
-
-  return Trophy;
-}();
-
-exports.Trophy = Trophy;
-},{"./graphics":"js/graphics.js","./math":"js/math.js","./game_config":"js/game_config.js","./player":"js/player.js"}],"js/physics.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Physics = void 0;
-
-var _math = require("./math");
-
-var _game_config = require("./game_config");
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Physics =
-/*#__PURE__*/
-function () {
-  function Physics() {
-    _classCallCheck(this, Physics);
-  }
-
-  _createClass(Physics, null, [{
-    key: "Update",
-
-    /*
-     * Update
-     */
-    value: function Update(dt, lvl) {
-      lvl._players.forEach(function (player) {
-        if (player.dead) return; // No physics when dead
-        // apply gravity to player
-
-        Physics._Accelerate(player.vel, lvl._gravity, dt); // update player position
-
-
-        player.Update(dt); // Update trophy
-
-        if (lvl.trophy) lvl.trophy.Update(dt);
-      }); // update projectiles
-
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = lvl._projectiles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var prj = _step.value;
-
-          // If any collision => remove projectiles
-          var collisions = Physics._GetColliding(prj, lvl._block_grid);
-
-          if (prj.lifespanExpired || collisions && collisions.length !== 0) {
-            lvl.RemoveProjectiles(prj);
-            continue; // no need to update a projectile that just got removed
-          }
-
-          var _iteratorNormalCompletion3 = true;
-          var _didIteratorError3 = false;
-          var _iteratorError3 = undefined;
-
-          try {
-            for (var _iterator3 = lvl._players[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-              var player = _step3.value;
-              if (player.dead) continue; // Dont proceed if player already died with one of the last projectiles
-
-              if (Physics.DoBoxesIntersect(prj, player)) {
-                var damage = _game_config.game_config.damage.base * prj.damage;
-                var old_pos = player.pos;
-                player.Damage(damage);
-
-                if (player.dead && player === lvl.trophy.player) {
-                  var hitman = prj.weapon.player; // Get the player who fired the shot
-                  // Only give steal bounty if the target has the trophy and if it is not suicide
-
-                  if (hitman !== player) {
-                    hitman.score += _game_config.game_config.trophy.steal_bounty;
-                  }
-
-                  lvl.trophy.moveToLevel(lvl, old_pos);
-                }
-
-                lvl.RemoveProjectiles(prj);
-              }
-            } // apply gravity to bullet
-
-          } catch (err) {
-            _didIteratorError3 = true;
-            _iteratorError3 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-                _iterator3.return();
-              }
-            } finally {
-              if (_didIteratorError3) {
-                throw _iteratorError3;
-              }
-            }
-          }
-
-          Physics._Accelerate(prj.vel, lvl._gravity, dt);
-
-          prj.Update(dt); // Update projectile
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      lvl._players.forEach(function (player) {
-        if (player.dead) return; // No physics when dead
-        // Check collision with level trophy
-
-        if (!lvl.trophy.isPickedUp && Physics.DoBoxesIntersect(lvl.trophy, player)) {
-          lvl.trophy.moveToPlayer(player);
-        } // check for collisions
-
-
-        var collisions = Physics._GetColliding(player, lvl._block_grid);
-
-        if (collisions.length > 0) {
-          // solve collisions
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
-
-          try {
-            for (var _iterator2 = collisions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var col = _step2.value;
-
-              Physics._SolveCollision(player, col);
-            }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                _iterator2.return();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
-          }
-        } else {
-          // no collision => in air
-          if (player.has_ground_contact) {
-            player.jump_counter++;
-            player.has_ground_contact = false;
-          }
-        }
-      });
-    }
-    /*
-     * Solve Collision
-     */
-
-  }, {
-    key: "_SolveCollision",
-    value: function _SolveCollision(rect1, rect2) {
-      var GetCollisionFace = function GetCollisionFace() {
-        var faces = []; //rect2.x + rect2.width - rect1.x
-
-        if (rect2._collision_sides.right) faces.push({
-          name: 'right',
-          value: rect2.x + rect2.width - rect1.x
-        });
-        if (rect2._collision_sides.bottom) faces.push({
-          name: 'bottom',
-          value: rect1.y + rect1.height - rect2.y
-        });
-        if (rect2._collision_sides.left) faces.push({
-          name: 'left',
-          value: rect1.x + rect1.width - rect2.x
-        });
-        if (rect2._collision_sides.top) faces.push({
-          name: 'top',
-          value: rect2.y + rect2.height - rect1.y
-        });
-
-        for (var _i = 0; _i < faces.length; _i++) {
-          var face = faces[_i];
-          if (face.value > rect1.width * 2) faces.splice(faces.indexOf(face), 1);
-        }
-
-        return faces.length ? faces.find(function (face) {
-          return face.value == Math.min.apply(Math, _toConsumableArray(faces.map(function (face) {
-            return face.value;
-          })));
-        }).name : null;
-      };
-
-      var offset = 0.000001;
-
-      switch (GetCollisionFace()) {
-        case 'top':
-          rect1.has_ground_contact = true;
-          if (rect1.vel.y < 0) rect1.vel.y = 0;
-          rect1.pos.y = rect2.y + rect2.height + offset;
-          break;
-
-        case 'bottom':
-          if (rect1.vel.y > 0) rect1.vel.y = 0;
-          rect1.pos.y = rect2.y - rect1.height - offset;
-          break;
-
-        case 'right':
-          if (rect1.vel.x < 0) rect1.vel.x = 0;
-          rect1.pos.x = rect2.pos.x + rect2.width + offset;
-          break;
-
-        case 'left':
-          if (rect1.vel.x > 0) rect1.vel.x = 0;
-          rect1.pos.x = rect2.pos.x - rect1.width - offset;
-          break;
-      }
-
-      if (rect1._dashing && !rect1.has_ground_contact) {
-        rect1._dashing = false;
-        rect1.vel.Set(0, 0);
-      }
-    }
-  }, {
-    key: "_SolveCollisionVec",
-    value: function _SolveCollisionVec(rect1, rect2) {
-      if (!rect1._last_vert) return;
-      var vertex_lines = [];
-      var vertices = rect1.GetVertices();
-
-      for (var i in vertices) {
-        vertex_lines.push(new _math.Line(rect1._last_vert[i], vertices[i]));
-      }
-
-      var solve_vectors = [];
-      var col_segments = rect2.GetActiveCollisionSegments();
-
-      for (var _i2 = 0; _i2 < vertex_lines.length; _i2++) {
-        var line = vertex_lines[_i2];
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
-
-        try {
-          for (var _iterator4 = col_segments[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var seg = _step4.value;
-
-            var t = _math.Line.Intersect(line, seg);
-
-            if (t >= 0 && t <= 1) {
-              var intersect_point = _math.Line.IntersectPoint(line, t);
-
-              var resolve = _math.Vec2D.Sub(line.p1, intersect_point);
-
-              solve_vectors.push(resolve);
-            }
-          }
-        } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-              _iterator4.return();
-            }
-          } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
-            }
-          }
-        }
-      } // const solve = Math.max(solve_vectors.map(vec => vec.Magnitude))
-
-
-      var mags = solve_vectors.map(function (vec) {
-        return vec.Magnitude;
-      });
-      if (mags.length == 0) return;
-      var solve = Math.max.apply(Math, _toConsumableArray(mags));
-      console.log(solve);
-      rect1.pos.y += solve * 10;
-      rect1.vel.y = 0;
-    }
-    /**
-     * bool DoBoxesIntersect(Box a, Box b) {
-     * return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-     *      (abs(a.y - b.y) * 2 < (a.height + b.height));
-     * }
-     */
-
-  }, {
-    key: "DoBoxesIntersect",
-    value: function DoBoxesIntersect(a, b) {
-      return a.pos.x < b.pos.x + b.scale.x && a.pos.x + a.scale.x > b.pos.x && a.pos.y < b.pos.y + b.scale.y && a.pos.y + a.scale.y > b.pos.y;
-    } //
-    // Get Colliding
-    // returns array of blocks that rect collides with
-    //
-
-  }, {
-    key: "_GetColliding",
-    value: function _GetColliding(rect, grid_comp) {
-      var collision_func = rect.is_fast ? this._GetCollidingVec : this._GetCollidingStep;
-      return collision_func(rect, grid_comp);
-    }
-  }, {
-    key: "_GetCollidingStep",
-    value: function _GetCollidingStep(rect, grid_comp) {
-      // rasterize player
-      var collision_points = [];
-
-      for (var x = Math.floor(rect.x); x <= Math.floor(rect.x + rect.width); x++) {
-        for (var y = Math.floor(rect.y); y <= Math.floor(rect.y + rect.height); y++) {
-          collision_points.push(new _math.Vec2D(x, y));
-        }
-      } // get collisions
-
-
-      var collisions = [];
-
-      for (var _i3 = 0; _i3 < collision_points.length; _i3++) {
-        var p = collision_points[_i3];
-        if (p.x < 0 || p.y < 0) continue;
-        if (p.x >= grid_comp.length || p.y >= grid_comp[p.x].length) continue;
-        if (grid_comp[p.x][p.y]) collisions.push(grid_comp[p.x][p.y]);
-      }
-
-      return collisions;
-    }
-  }, {
-    key: "_GetCollidingVec",
-    value: function _GetCollidingVec(rect, grid_comp) {
-      if (!rect._last_vert) return;
-      var vertex_lines = [];
-      var vertices = rect.GetVertices();
-
-      for (var i in vertices) {
-        vertex_lines.push(new _math.Line(rect._last_vert[i], vertices[i]));
-      }
-
-      var collisions = [];
-
-      for (var _i4 = 0; _i4 < vertex_lines.length; _i4++) {
-        var line = vertex_lines[_i4];
-        // coordinates of line
-        var x1 = Math.floor(line.x1),
-            y1 = Math.floor(line.y1),
-            x2 = Math.floor(line.x2),
-            y2 = Math.floor(line.y2); // continue if out of level
-
-        if (x1 < 0 && x2 < 0 || y1 < 0 && y2 < 0 || x1 >= grid_comp.length && x2 >= grid_comp.length || y1 >= grid_comp[0].length && y2 >= grid_comp[0].length) {
-          continue;
-        }
-
-        var match_bounds = function match_bounds(num, max) {
-          if (num < 0) return 0;
-          if (num > max) return max;
-          return num;
-        };
-
-        x1 = match_bounds(x1, grid_comp.length - 1);
-        x2 = match_bounds(x2, grid_comp.length - 1);
-        y1 = match_bounds(y1, grid_comp[0].length - 1);
-        y2 = match_bounds(y2, grid_comp[0].length - 1); // check blocks in movement range for collisions
-
-        for (var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-          for (var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-            // console.log(x, y)
-            if (grid_comp[x][y]) {
-              collisions.push(grid_comp[x][y]);
-            }
-          }
-        }
-      }
-
-      return collisions;
-    } //
-    // Apply Acceleration
-    //
-
-  }, {
-    key: "_Accelerate",
-    value: function _Accelerate(tar, acc, dt) {
-      var tar_new = _math.Vec2D.Add(tar, _math.Vec2D.Mult(acc, dt / 1000));
-
-      tar.Set(tar_new.x, tar_new.y);
-    }
-  }]);
-
-  return Physics;
-}();
-
-exports.Physics = Physics;
-},{"./math":"js/math.js","./game_config":"js/game_config.js"}],"js/weapon_spawns/weapon_spawn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.WeaponSpawn = void 0;
-
-var _math = require("../math");
-
-var _graphics = require("../graphics");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var WeaponSpawn =
-/*#__PURE__*/
-function () {
-  function WeaponSpawn(pos, cooldown) {
-    _classCallCheck(this, WeaponSpawn);
-
-    // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
-    if ((this instanceof WeaponSpawn ? this.constructor : void 0) === WeaponSpawn) {
-      throw new TypeError('Cannot construct abstract WeaponSpawn instances directly');
-    } // Set attributes
-
-
-    this.pos = pos;
-    this.scale = new _math.Vec2D(1, 1);
-    this._cooldown = cooldown;
-    this._on_cooldown = false;
-    this._last_use = 0; // Create base graphic
-
-    this._PaintSpawn();
-  }
-
-  _createClass(WeaponSpawn, [{
-    key: "Update",
-    value: function Update() {
-      if (this._on_cooldown && Date.now() - this._last_use >= this._cooldown) {
-        this.ResetWeapon();
-      }
-    }
-    /**
-      * Does this weapon spawn have a weapon to take for player
-      */
-
-  }, {
-    key: "TakeWeapon",
-
-    /**
-     * Initiates the weapon spawn cooldown and redraws it
-     */
-    value: function TakeWeapon() {
-      this._on_cooldown = true;
-
-      this._PaintSpawn();
-
-      this._last_use = Date.now();
-    }
-    /**
-     * Return to the state where the player can pick up a new weapon
-     */
-
-  }, {
-    key: "ResetWeapon",
-    value: function ResetWeapon() {
-      this._on_cooldown = false;
-
-      this._PaintSpawn();
-    }
-  }, {
-    key: "_PaintSpawn",
-    value: function _PaintSpawn() {
-      if (!this.graphic) {
-        this.graphic = _graphics.Graphics.textures.GetSprite(this._TextureName);
-        this.graphic.scale.set(1 / 512, -1 / 512);
-        this.graphic.pivot.set(0, 512);
-        this.graphic.position.set(this.pos.x, this.pos.y);
-      }
-
-      this.graphic.tint = this.hasWeapon ? 0xFFFFFF : 0x8C8C8C;
-    }
-  }, {
-    key: "hasWeapon",
-    get: function get() {
-      return !this._on_cooldown;
-    }
-  }]);
-
-  return WeaponSpawn;
-}();
-
-exports.WeaponSpawn = WeaponSpawn;
-},{"../math":"js/math.js","../graphics":"js/graphics.js"}],"js/weapon_spawns/random_weapon_spawn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.RandomWeaponSpawn = void 0;
-
-var _weapon_spawn = require("./weapon_spawn");
-
-var _weapons = require("./../weapons");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/**
- * Implementation for a randomizing weapon spawn.
- * This spawn has an equal possibility to give the player one of the games weapon.
- * This spawn does not show the weapon beforehand. It is possible to get
- * the same weapon you already carry.
- */
-var RandomWeaponSpawn =
-/*#__PURE__*/
-function (_WeaponSpawn) {
-  _inherits(RandomWeaponSpawn, _WeaponSpawn);
-
-  /**
-   * Initialize
-   */
-  function RandomWeaponSpawn(pos) {
-    _classCallCheck(this, RandomWeaponSpawn);
-
-    // Position, cooldown, active color, inactive color
-    return _possibleConstructorReturn(this, _getPrototypeOf(RandomWeaponSpawn).call(this, pos, 5000));
-  }
-  /**
-   * Update the spawn
-   */
-
-
-  _createClass(RandomWeaponSpawn, [{
-    key: "Update",
-    value: function Update() {
-      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "Update", this).call(this);
-    }
-    /**
-     * Returns the new weapon
-     */
-
-  }, {
-    key: "TakeWeapon",
-    value: function TakeWeapon() {
-      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "TakeWeapon", this).call(this);
-
-      return _weapons.Weapons.GetRandomWeapon();
-    }
-  }, {
-    key: "ResetWeapon",
-    value: function ResetWeapon() {
-      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "ResetWeapon", this).call(this);
-    }
-  }, {
-    key: "_PaintSpawn",
-    value: function _PaintSpawn() {
-      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "_PaintSpawn", this).call(this);
-    }
-  }, {
-    key: "_TextureName",
-    get: function get() {
-      return 'mystery_box';
-    }
-  }]);
-
-  return RandomWeaponSpawn;
-}(_weapon_spawn.WeaponSpawn);
-
-exports.RandomWeaponSpawn = RandomWeaponSpawn;
-},{"./weapon_spawn":"js/weapon_spawns/weapon_spawn.js","./../weapons":"js/weapons.js"}],"js/weapon_spawns/normal_weapon_spawn.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.NormalWeaponSpawn = void 0;
-
-var _weapon_spawn = require("./weapon_spawn");
-
-var _weapons = require("./../weapons");
-
-var _graphics = require("./../graphics");
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-/**
- * Implementation for the normal weapon spawn
- * Holds a single weapon which a player can pick up.
- * The weapon is displayed beforehand and respawns every 5 seconds (random weapon)
- */
-var NormalWeaponSpawn =
-/*#__PURE__*/
-function (_WeaponSpawn) {
-  _inherits(NormalWeaponSpawn, _WeaponSpawn);
-
-  /**
-   * Initialize
-   */
-  function NormalWeaponSpawn(pos) {
-    var _this;
-
-    _classCallCheck(this, NormalWeaponSpawn);
-
-    // Position, cooldown, active color, inactive color
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(NormalWeaponSpawn).call(this, pos, 5000)); // Next weapon
-
-    _this._SetNextWeapon();
-
-    return _this;
-  }
-  /**
-   * Update the spawn
-   */
-
-
-  _createClass(NormalWeaponSpawn, [{
-    key: "Update",
-    value: function Update() {
-      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "Update", this).call(this);
-    }
-    /**
-     * Returns the new weapon and removes the old
-     */
-
-  }, {
-    key: "TakeWeapon",
-    value: function TakeWeapon() {
-      var _this$graphic;
-
-      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "TakeWeapon", this).call(this);
-
-      var wpn = this._next_weapon;
-      this._next_weapon = null;
-
-      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
-
-      return wpn;
-    }
-  }, {
-    key: "ResetWeapon",
-
-    /**
-     * Resets the weapon spawn. Sets the new weapon
-     */
-    value: function ResetWeapon() {
-      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "ResetWeapon", this).call(this);
-
-      this._SetNextWeapon();
-    }
-    /**
-     * Render the next weapon at an 45° angle inside the weapon spawn block
-     */
-
-  }, {
-    key: "_SetNextWeapon",
-    value: function _SetNextWeapon() {
-      this._next_weapon = _weapons.Weapons.GetRandomWeapon();
-
-      var wp_graphic = _graphics.Graphics.textures.GetSprite(this._next_weapon.constructor.Name.toLowerCase() + '_0');
-
-      wp_graphic.anchor.set(0.5);
-      wp_graphic.rotation = Math.PI / 2;
-      wp_graphic.scale.set(-0.35);
-      wp_graphic.position.set(256);
-      this.graphic.addChild(wp_graphic);
-    }
-  }, {
-    key: "_TextureName",
-    get: function get() {
-      return 'mystery_box_blank';
-    }
-  }]);
-
-  return NormalWeaponSpawn;
-}(_weapon_spawn.WeaponSpawn);
-
-exports.NormalWeaponSpawn = NormalWeaponSpawn;
-},{"./weapon_spawn":"js/weapon_spawns/weapon_spawn.js","./../weapons":"js/weapons.js","./../graphics":"js/graphics.js"}],"js/spawns.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Spawns = void 0;
-
-var _random_weapon_spawn = require("./weapon_spawns/random_weapon_spawn");
-
-var _normal_weapon_spawn = require("./weapon_spawns/normal_weapon_spawn");
-
-var _physics = require("./physics");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-/**
- * Holds all the spawn in the world
- */
-var Spawns =
-/*#__PURE__*/
-function () {
-  function Spawns() {
-    _classCallCheck(this, Spawns);
-
-    this._weapon_spawns = [];
-    this._player_spawns = [];
-    this._trophy_spawns = [];
-  }
-  /**
-   * Update the spawn point system.
-   * Updates all spawns in the scene and checks if the player intersects with
-   * one of them. If the player does intersect, the TakeWeapon() function is triggered.
-   */
-
-
-  _createClass(Spawns, [{
-    key: "Update",
-    value: function Update(dt, player) {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = this._weapon_spawns[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var wp_spawn = _step.value;
-          wp_spawn.Update(dt); // Check if player can take weapon
-
-          if (wp_spawn.hasWeapon && _physics.Physics.DoBoxesIntersect(wp_spawn, player)) {
-            player.SetWeapon(wp_spawn.TakeWeapon());
-          }
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-    /**
-     * Adds a new weapon spawn to the scene.
-     * type: Type of weapon spawn. [1: RandomWeaponSpawn]
-     * pos: Position of weapon spawn
-     * scene: PIXI scene which should contain the spawn
-     */
-
-  }, {
-    key: "AddWeaponSpawn",
-    value: function AddWeaponSpawn(type, pos, scene) {
-      var spawn = null; // Create spawn that correlates to type parameter
-
-      switch (type) {
-        case 1:
-          spawn = new _random_weapon_spawn.RandomWeaponSpawn(pos);
-          break;
-
-        case 2:
-          spawn = new _normal_weapon_spawn.NormalWeaponSpawn(pos);
-          break;
-
-        default:
-          return;
-      } // Add weapon spawn to list and scene
-
-
-      this._weapon_spawns.push(spawn);
-
-      scene.addChild(spawn.graphic);
-    }
-  }, {
-    key: "AddTrophySpawn",
-    value: function AddTrophySpawn(pos) {
-      this._trophy_spawns.push(pos);
-    }
-    /**
-     * Adds another point to the collection of player spawn points
-     */
-
-  }, {
-    key: "AddPlayerSpawn",
-    value: function AddPlayerSpawn(pos) {
-      this._player_spawns.push(pos);
-    }
-  }, {
-    key: "GetRandomPlayerSpawn",
-
-    /**
-     * Gets a random spawn point from the collection
-     */
-    value: function GetRandomPlayerSpawn() {
-      return this._player_spawns[Math.floor(Math.random() * this._player_spawns.length)];
-    }
-  }, {
-    key: "GetDifferentPlayerSpawns",
-    value: function GetDifferentPlayerSpawns(number_of_spawns) {
-      if (number_of_spawns > this._player_spawns.length) {
-        throw new Error("'".concat(this._player_spawns.length, "' player spawnpoints are available. '").concat(number_of_spawns, "' were requested."));
-      } else if (number_of_spawns === this._player_spawns.length) {
-        return this._player_spawns;
-      } else {
-        var spawns = [];
-
-        while (spawns.length !== number_of_spawns) {
-          var sp = this.GetRandomPlayerSpawn();
-          if (!spawns.includes(sp)) spawns.push(sp);
-        }
-
-        return spawns;
-      }
-    }
-  }, {
-    key: "GetRandomTrophySpawn",
-    value: function GetRandomTrophySpawn() {
-      return this._trophy_spawns[Math.floor(Math.random() * this._trophy_spawns.length)];
-    }
-  }, {
-    key: "playerSpawnpointCount",
-    get: function get() {
-      return this._player_spawns.length;
-    }
-  }, {
-    key: "trophySpawnpointCount",
-    get: function get() {
-      return this._trophy_spawns.length;
-    }
-  }]);
-
-  return Spawns;
-}();
-
-exports.Spawns = Spawns;
-},{"./weapon_spawns/random_weapon_spawn":"js/weapon_spawns/random_weapon_spawn.js","./weapon_spawns/normal_weapon_spawn":"js/weapon_spawns/normal_weapon_spawn.js","./physics":"js/physics.js"}],"js/util.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.GetUrlParam = GetUrlParam;
-
-/*
- * Get Url Parameter
- */
-function GetUrlParam(param) {
-  param = param.toLowerCase();
-  var param_string = window.location.href.split('?');
-  if (param_string.length == 1) return null;
-  param_string = param_string[1].toLowerCase();
-  var search_params = new URLSearchParams(param_string);
-  return search_params.has(param) ? ['false'].includes(search_params.get(param)) ? false : search_params.get(param) : null;
-}
-},{}],"js/input_profile.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.InputGamepad = exports.InputKeyboard = void 0;
-
-var _interaction = require("./interaction");
-
-var _math = require("./math");
-
-var _graphics = require("./graphics");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var InputKeyboard =
-/*#__PURE__*/
-function () {
-  function InputKeyboard() {
-    _classCallCheck(this, InputKeyboard);
-  }
-
-  _createClass(InputKeyboard, [{
-    key: "Init",
-    value: function Init(player) {
-      this._player = player; // arrow keys
-
-      _interaction.Keyboard.BindKey('ArrowLeft', function (dt) {
-        return player.MoveLeft(dt);
-      });
-
-      _interaction.Keyboard.BindKey('ArrowRight', function (dt) {
-        return player.MoveRight(dt);
-      });
-
-      _interaction.Keyboard.BindKey('ArrowUp', function (dt) {
-        return player.Jump(dt);
-      }, true); // wasd
-
-
-      _interaction.Keyboard.BindKey('A', function (dt) {
-        return player.MoveLeft(dt);
-      });
-
-      _interaction.Keyboard.BindKey('D', function (dt) {
-        return player.MoveRight(dt);
-      });
-
-      _interaction.Keyboard.BindKey('W', function (dt) {
-        return player.Jump(dt);
-      }, true); // dash
-
-
-      _interaction.Keyboard.BindKey('Shift', function () {
-        return player.Dash();
-      }, true);
-    }
-  }, {
-    key: "Update",
-    value: function Update() {
-      if (_interaction.Mouse.IsDown()) this._player.Attack();
-    } // get view direction relative to position
-
-  }, {
-    key: "GetViewDir",
-    value: function GetViewDir(obj) {
-      // Get screen coordinates (bottom-left based) for the mouse
-      var screen_mouse_pos = this._GetMousePos(); // Get screen coordinates (bottom-left based) for the weapon holster
-
-
-      var screen_holster_pos = new _math.Vec2D(obj.graphic.parent.worldTransform.tx, window.innerHeight - obj.graphic.parent.worldTransform.ty); // Get the distance between the two => direction vector
-
-      var distance = _math.Vec2D.Sub(screen_mouse_pos, screen_holster_pos);
-
-      return _math.Vec2D.Div(distance, distance.Magnitude); // normalize
-    }
-  }, {
-    key: "_GetMousePos",
-    value: function _GetMousePos() {
-      return new _math.Vec2D(_graphics.renderer.plugins.interaction.mouse.global.x, window.innerHeight - _graphics.renderer.plugins.interaction.mouse.global.y);
-    }
-  }]);
-
-  return InputKeyboard;
-}();
-
-exports.InputKeyboard = InputKeyboard;
-
-var InputGamepad =
-/*#__PURE__*/
-function () {
-  function InputGamepad() {
-    _classCallCheck(this, InputGamepad);
-  }
-
-  _createClass(InputGamepad, [{
-    key: "Init",
-    value: function Init(player) {
-      var _this = this;
-
-      this._pad = InputGamepad.counter;
-      InputGamepad.counter++;
-      this._player = player;
-      console.log("bind to player ".concat(player._player_number, " to gamepad ").concat(this._pad)); // move
-
-      _interaction.Gamepad.BindInput(this._pad, 'stick_left_x', function (dt, value) {
-        if (value > 0) _this._player.MoveRight(dt);else _this._player.MoveLeft(dt);
-      }); // jump
-
-
-      _interaction.Gamepad.BindInput(this._pad, 'A', function (dt) {
-        return _this._player.Jump(dt);
-      }, true);
-
-      _interaction.Gamepad.BindInput(this._pad, 'LB', function (dt) {
-        return _this._player.Jump(dt);
-      }, true); // dash
-
-
-      _interaction.Gamepad.BindInput(this._pad, 'RB', function () {
-        return _this._player.Dash();
-      }, true); // attack
-
-
-      _interaction.Gamepad.BindInput(this._pad, 'RT', function () {
-        return _this._player.Attack();
-      });
-    }
-  }, {
-    key: "Update",
-    value: function Update() {}
-  }, {
-    key: "GetViewDir",
-    value: function GetViewDir() {
-      var stick_dir = _interaction.Gamepad.GetStick('right', this._pad);
-
-      if (stick_dir.x || stick_dir.y) return new _math.Vec2D(stick_dir.x, stick_dir.y * -1);else return null;
-    }
-  }]);
-
-  return InputGamepad;
-}();
-
-exports.InputGamepad = InputGamepad;
-InputGamepad.counter = 0;
-},{"./interaction":"js/interaction.js","./math":"js/math.js","./graphics":"js/graphics.js"}],"js/level.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Level = void 0;
-
-var _game_object = require("./game_object");
-
-var _player = require("./player");
-
-var _trophy = require("./trophy");
-
-var _math = require("./math");
-
-var _physics = require("./physics");
-
-var _game_config = require("./game_config");
-
-var _spawns = require("./spawns");
-
-var _util = require("./util");
-
-var _input_profile = require("./input_profile");
-
-var _graphics = require("./graphics");
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Level =
-/*#__PURE__*/
-function () {
-  function Level(parent_scene) {
-    _classCallCheck(this, Level);
-
-    // Declare attributes for later
-    this._gravity = null;
-    this._player = null; // List of per level entities
-
-    this._blocks = [];
-    this._block_grid = [];
-    this._projectiles = []; // Spawns system
-
-    this._spawns = new _spawns.Spawns(); // Save parent scene and current level
-
-    this._parent_scene = parent_scene;
-    Level._active_level = this;
-    this._lower_death_cap = -5; // kill below
-    // list of players
-
-    this._players = [];
-  }
-
-  _createClass(Level, [{
-    key: "Update",
-    value: function Update(dt) {
-      var _this = this;
-
-      // Apply physics to this level
-      _physics.Physics.Update(dt, this);
-
-      this._players.forEach(function (player) {
-        // if (player.dead) return
-        // Update Spawns
-        _this._spawns.Update(dt, player); // kill player if below death cap
-
-
-        if (!player.dead && player.y < _this._lower_death_cap) {
-          if (_this.trophy.player === player) _this.trophy.moveToLevel(_this, _this._spawns.GetRandomTrophySpawn());
-          player.Kill();
-        } // respawn player if dead at a random position
-
-
-        if (player.dead) player.Respawn(_this._spawns.GetRandomPlayerSpawn());
-      }); // remove projectiles below death cap
-
-
-      var delete_list = this._projectiles.filter(function (prj) {
-        return prj.pos.y <= _this._lower_death_cap;
-      });
-
-      if (delete_list.length > 0) this.RemoveProjectiles.apply(this, _toConsumableArray(delete_list));
-    }
-  }, {
-    key: "AddProjectiles",
-    value: function AddProjectiles() {
-      var _this$_projectiles, _this$_parent_scene;
-
-      for (var _len = arguments.length, prj = new Array(_len), _key = 0; _key < _len; _key++) {
-        prj[_key] = arguments[_key];
-      }
-
-      (_this$_projectiles = this._projectiles).push.apply(_this$_projectiles, prj);
-
-      (_this$_parent_scene = this._parent_scene).addChild.apply(_this$_parent_scene, _toConsumableArray(prj.map(function (pr) {
-        return pr.graphic;
-      })));
-    }
-  }, {
-    key: "RemoveProjectiles",
-    value: function RemoveProjectiles() {
-      var _this$_parent_scene2;
-
-      for (var _len2 = arguments.length, prj = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        prj[_key2] = arguments[_key2];
-      }
-
-      prj.forEach(function (p) {
-        return p.RemoveMoveVec();
-      });
-
-      (_this$_parent_scene2 = this._parent_scene).removeChild.apply(_this$_parent_scene2, _toConsumableArray(prj.concat().map(function (pr) {
-        return pr.graphic;
-      })));
-
-      this._projectiles = this._projectiles.filter(function (pr) {
-        return !prj.concat().includes(pr);
-      });
-    }
-    /**
-     * This loads the scene
-     */
-
-  }, {
-    key: "Load",
-    value: function Load(lvl, scene) {
-      var data = lvl.data; // Prepare variables
-
-      var layers = data.layers;
-      var blocks = null;
-      var weapon_sp = null;
-      var player_sp = null;
-      var trophy_sp = null; // Iterate all layers and assign helpers
-
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = layers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var layer = _step.value;
-
-          if (layer.name == 'world') {
-            blocks = layer.data;
-          } else if (layer.name === 'weapon_sp') {
-            weapon_sp = layer.data;
-          } else if (layer.name === 'player_sp') {
-            player_sp = layer.data;
-          } else if (layer.name === 'trophy_sp') {
-            trophy_sp = layer.data;
-          }
-        } // We need level data
-
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      if (!blocks) {
-        console.error('no world layer found in level file');
-        return;
-      } // Calculate width and height
-
-
-      this.width = data.canvas.width / 32;
-      this.height = blocks.length / this.width; // Check level intact
-
-      if (blocks.length != this.width * this.height) console.warn('number of blocks doesn\'t match up height & width'); // Iterate the data and add blocks to level
-
-      for (var i = 0; i < blocks.length; i++) {
-        var material = blocks[i];
-        if (material != 1) continue;
-        var pos = new _math.Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1);
-        var block = new _game_object.GameObject(pos);
-        block.graphic = _graphics.Graphics.textures.GetSprite(lvl.wall || 'wall');
-        block.graphic.width = block.width;
-        block.graphic.height = block.height;
-        block.graphic.position.set(pos.x, pos.y);
-
-        this._blocks.push(block);
-
-        scene.addChild(block.graphic);
-      } // We need at least one spawn point
-
-
-      if (!player_sp) {
-        console.error('No player_sp layer was found.');
-        return;
-      } // Iterate the "player_sp" data and add _spawnpoints
-
-
-      for (var _i = 0; _i < player_sp.length; _i++) {
-        if (player_sp[_i] !== 1) continue;
-
-        var _pos = new _math.Vec2D(Math.floor(_i % this.width), this.height - Math.floor(_i / this.width) - 1);
-
-        this._spawns.AddPlayerSpawn(_pos);
-      }
-
-      if (this._spawns.playerSpawnpointCount === 0) {
-        console.error('No player spawnpoints were found.');
-        return;
-      } // Check if any weapon spawn data was found
-
-
-      if (weapon_sp) {
-        // Iterate the "weapon_sp" data and add _spawnpoints
-        for (var _i2 = 0; _i2 < weapon_sp.length; ++_i2) {
-          var _pos2 = new _math.Vec2D(Math.floor(_i2 % this.width), this.height - Math.floor(_i2 / this.width) - 1);
-
-          this._spawns.AddWeaponSpawn(weapon_sp[_i2], _pos2, scene);
-        }
-      }
-
-      if (trophy_sp) {
-        for (var _i3 = 0; _i3 < trophy_sp.length; ++_i3) {
-          if (trophy_sp[_i3] !== 1) continue;
-
-          var _pos3 = new _math.Vec2D(Math.floor(_i3 % this.width), this.height - Math.floor(_i3 / this.width) - 1);
-
-          this._spawns.AddTrophySpawn(_pos3);
-        }
-      } // gravity
-
-
-      this._gravity = new _math.Vec2D(0, _game_config.game_config.gravity * -1);
-
-      this._GenLvlGrid();
-
-      this._GenCollisionFaces(); // Get player spawn spawnpoints
-
-
-      var spawnpoints = this._spawns.GetDifferentPlayerSpawns(4); // Create the player at a random position
-
-
-      var player = new _player.Player(0, new _input_profile.InputKeyboard(), spawnpoints[0]);
-      scene.addChild(player.graphic);
-
-      this._players.push(player);
-
-      var player2 = new _player.Player(1, new _input_profile.InputGamepad(), spawnpoints[1]);
-      scene.addChild(player2.graphic);
-
-      this._players.push(player2);
-
-      var player3 = new _player.Player(2, new _input_profile.InputGamepad(), spawnpoints[2]);
-      scene.addChild(player3.graphic);
-
-      this._players.push(player3);
-
-      var player4 = new _player.Player(3, new _input_profile.InputGamepad(), spawnpoints[3]);
-      scene.addChild(player4.graphic);
-
-      this._players.push(player4); // Create the trophy to pick up
-
-
-      this.trophy = new _trophy.Trophy(this);
-      if (this._spawns.trophySpawnpointCount > 0) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn());
-      scene.addChild(this.trophy.graphic); // render collision faces
-
-      if ((0, _util.GetUrlParam)('rcf') || (0, _util.GetUrlParam)('render_collision_faces')) this._RenderCollisionFaces(scene);
-    }
-    /**
-     * Generate level grid from list of blocks
-     */
-
-  }, {
-    key: "_GenLvlGrid",
-    value: function _GenLvlGrid() {
-      var _this2 = this;
-
-      // get max x & y
-      var blocks = this._blocks;
-      if (blocks.length == 0) return [];
-      if (blocks.length == 1) return [blocks[0]];
-      var max_x = 0;
-      var max_y = 0;
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = blocks[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var block = _step2.value;
-          if (block.x > max_x) max_x = block.x;
-          if (block.y > max_y) max_y = block.y;
-        } // lookup block at position
-
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-
-      var GetBlock = function GetBlock(x, y) {
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
-
-        try {
-          for (var _iterator3 = _this2._blocks[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var block = _step3.value;
-            if (block.x == x && block.y == y) return block;
-          }
-        } catch (err) {
-          _didIteratorError3 = true;
-          _iteratorError3 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-              _iterator3.return();
-            }
-          } finally {
-            if (_didIteratorError3) {
-              throw _iteratorError3;
-            }
-          }
-        }
-
-        return null;
-      }; // generate grid
-
-
-      this._block_grid = [];
-
-      for (var x = 0; x <= max_x; x++) {
-        var column = [];
-
-        for (var y = 0; y <= max_y; y++) {
-          column.push(GetBlock(x, y));
-        }
-
-        this._block_grid.push(column);
-      }
-
-      if ("development" === 'development') this._LogGrid();
-    }
-    /*
-     * Generate Collision Faces
-     */
-
-  }, {
-    key: "_GenCollisionFaces",
-    value: function _GenCollisionFaces() {
-      var blocks = this._block_grid;
-
-      var diag_top_left = function diag_top_left(x, y) {
-        if (x == 0 || y == blocks[x].length - 1) return false;
-        return blocks[x - 1][y + 1];
-      };
-
-      var diag_top_right = function diag_top_right(x, y) {
-        if (x == blocks.length - 1 || y == blocks[x].length - 1) return false;
-        return blocks[x + 1][y + 1];
-      };
-
-      var diag_bottom_left = function diag_bottom_left(x, y) {
-        if (x == 0 || y == 0) return false;
-        return blocks[x - 1][y - 1];
-      };
-
-      var diag_bottom_right = function diag_bottom_right(x, y) {
-        if (x == blocks.length - 1 || y == 0) return false;
-        return blocks[x + 1][y - 1];
-      };
-
-      var collides_left = function collides_left(x, y) {
-        if (x == 0) return true;
-        return !blocks[x - 1][y];
-      };
-
-      var collides_right = function collides_right(x, y) {
-        if (x == blocks.length - 1) return true;
-        return !blocks[x + 1][y];
-      };
-
-      var collides_top = function collides_top(x, y) {
-        var args = [x, y]; // topmost block => false
-
-        if (y == blocks[x].length - 1) {
-          return true;
-        } // block on top...
-
-
-        if (blocks[x][y + 1]) {
-          // ...no block left & right => false
-          if (collides_left.apply(void 0, args) && collides_right.apply(void 0, args)) {
-            return false; // ...block at top...
-          } else {
-            // ...block left and no block top right or
-            // block right and no block top left ? true : false
-            return !diag_top_left.apply(void 0, args) && collides_right.apply(void 0, args) || !diag_top_right.apply(void 0, args) && collides_left.apply(void 0, args);
-          }
-        }
-
-        return true;
-      };
-
-      var collides_bottom = function collides_bottom(x, y) {
-        if (y == 0) return true;
-        if (!blocks[x][y - 1]) return true; // no block bottom left || no block bottom right
-
-        if (!diag_bottom_left(x, y) || !diag_bottom_right(x, y)) {
-          // block on top
-          if (y < blocks[0].length && blocks[x][y + 1]) {
-            // collides top => true
-            if (collides_top(x, y)) return true;
-          }
-        }
-
-        return false;
-      };
-
-      for (var y = blocks[0].length - 1; y >= 0; y--) {
-        for (var x = 0; x < blocks.length; x++) {
-          if (blocks[x][y]) {
-            blocks[x][y]['_collision_sides'] = {
-              left: collides_left(x, y),
-              top: collides_top(x, y),
-              right: collides_right(x, y),
-              bottom: collides_bottom(x, y)
-            };
-          }
-        }
-      }
-
-      if ("development" === 'development') this._LogCollisionGrid();
-    }
-    /*
-     * print block grid to console
-     */
-
-  }, {
-    key: "_LogGrid",
-    value: function _LogGrid() {
-      console.groupCollapsed('= BLOCK GRID =');
-      var str = "\u250C" + "\u2500".repeat(this._block_grid.length + 2) + "\u2510\n";
-
-      if (this._block_grid.length > 0) {
-        for (var y = this._block_grid[0].length - 1; y >= 0; y--) {
-          str += "\u2502 ";
-
-          for (var x = 0; x < this._block_grid.length; x++) {
-            str += this._block_grid[x][y] ? "\u2588" : ' ';
-          }
-
-          str += " \u2502\n";
-        }
-      }
-
-      str += "\u2514" + "\u2500".repeat(this._block_grid.length + 2) + "\u2518";
-      console.log('\n' + str);
-      console.groupEnd();
-    }
-    /*
-     * print collision grid to console
-     */
-
-  }, {
-    key: "_LogCollisionGrid",
-    value: function _LogCollisionGrid() {
-      console.groupCollapsed('= COLLISION GRID =');
-      var c_top = "\u2564",
-          c_left = "\u255F",
-          c_right = "\u2562",
-          c_bottom = "\u2567";
-      var str = "\u250C" + "\u2500".repeat(this._block_grid.length * 5 + 2) + "\u2510\n";
-
-      if (this._block_grid.length > 0) {
-        for (var y = this._block_grid[0].length - 1; y >= 0; y--) {
-          str += "\u2502 "; // top
-
-          for (var x = 0; x < this._block_grid.length; x++) {
-            str += this._block_grid[x][y] && this._block_grid[x][y]._collision_sides.top ? '  ' + c_top + '  ' : '     ';
-          }
-
-          str += " \u2502\n"; // left & right
-
-          str += "\u2502 ";
-
-          for (var _x = 0; _x < this._block_grid.length; _x++) {
-            str += !this._block_grid[_x][y] ? '     ' : (this._block_grid[_x][y]._collision_sides.left ? ' ' + c_left : '  ') + "\u2593" + (this._block_grid[_x][y]._collision_sides.right ? c_right + ' ' : '  ');
-          }
-
-          str += " \u2502\n"; // bottom
-
-          str += "\u2502 ";
-
-          for (var _x2 = 0; _x2 < this._block_grid.length; _x2++) {
-            str += this._block_grid[_x2][y] && this._block_grid[_x2][y]._collision_sides.bottom ? '  ' + c_bottom + '  ' : '     ';
-          }
-
-          str += " \u2502\n";
-        }
-      }
-
-      str += "\u2514" + "\u2500".repeat(this._block_grid.length * 5 + 2) + "\u2518";
-      console.log('%c\n' + str, 'font-size: 7px; line-height: 12px');
-      console.groupEnd();
-    }
-    /*
-     * Render Collision Faces
-     */
-
-  }, {
-    key: "_RenderCollisionFaces",
-    value: function _RenderCollisionFaces(scene) {
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = this._blocks[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var block = _step4.value;
-          block.RenderCollisionFaces(scene);
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-    }
-  }], [{
-    key: "ActiveLevel",
-    get: function get() {
-      return Level._active_level;
-    }
-  }]);
-
-  return Level;
-}();
-
-exports.Level = Level;
-},{"./game_object":"js/game_object.js","./player":"js/player.js","./trophy":"js/trophy.js","./math":"js/math.js","./physics":"js/physics.js","./game_config":"js/game_config.js","./spawns":"js/spawns.js","./util":"js/util.js","./input_profile":"js/input_profile.js","./graphics":"js/graphics.js"}],"js/Weapons.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "Bow", {
-  enumerable: true,
-  get: function () {
-    return _bow.Bow;
-  }
-});
-Object.defineProperty(exports, "Gun", {
-  enumerable: true,
-  get: function () {
-    return _gun.Gun;
-  }
-});
-Object.defineProperty(exports, "Minigun", {
-  enumerable: true,
-  get: function () {
-    return _minigun.Minigun;
-  }
-});
-Object.defineProperty(exports, "Shotgun", {
-  enumerable: true,
-  get: function () {
-    return _shotgun.Shotgun;
-  }
-});
-exports.Weapons = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _bow = require("./weapons/bow");
-
-var _gun = require("./weapons/gun");
-
-var _minigun = require("./weapons/minigun");
-
-var _shotgun = require("./weapons/shotgun");
-
-var _graphics = require("./graphics");
-
-var _game_config = require("./game_config");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Weapons =
-/*#__PURE__*/
-function () {
-  function Weapons() {
-    _classCallCheck(this, Weapons);
-  }
-
-  _createClass(Weapons, null, [{
-    key: "GetRandomWeapon",
-    value: function GetRandomWeapon() {
-      var wpn = Weapons._weapons[Math.floor(Math.random() * Weapons._weapons.length)];
-
-      return new wpn();
-    }
-  }, {
-    key: "GetProjectileSprite",
-    value: function GetProjectileSprite(wpn) {
-      var variant = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var projectile = undefined;
-      var cl_proj = 0xFFFFFF;
-      var proj_width = 0.3;
-      var proj_height = 0.15;
-
-      switch (wpn.constructor) {
-        case _bow.Bow:
-          projectile = _graphics.Graphics.textures.GetSprite('arrow_' + variant);
-          projectile.scale.set(1 / 747, -1 / 747);
-          projectile.anchor.set(0.5, 1);
-          break;
-
-        default:
-          projectile = _graphics.Graphics.CreateRectangle(0, 0, proj_height, proj_width, cl_proj, cl_proj);
-          break;
-      }
-
-      return projectile;
-    }
-  }, {
-    key: "GetSprite",
-    value: function GetSprite(wpn, variant) {
-      var weapon = undefined;
-      if ("development" === 'development') console.log("Requesting weapon sprite '".concat(wpn.constructor.Name.toLowerCase(), "'"));
-      weapon = _graphics.Graphics.textures.GetSprite("".concat(wpn.constructor.Name.toLowerCase(), "_").concat(variant)); // const length = conf.size[weapon.constructor.Name.toLowerCase()] ? conf.size[weapon.Name.toLowerCase()] : 1
-
-      var length = _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] ? _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] : 1;
-      var mod = weapon.width > weapon.height ? length / weapon.width : length / weapon.height;
-      weapon.width *= mod;
-      weapon.height *= mod;
-      weapon.anchor.set(0.5, 0.5);
-
-      if (_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()]) {
-        weapon.anchor.set(_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][1], _game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][0]);
-      }
-
-      return weapon;
-    }
-  }]);
-
-  return Weapons;
-}();
-
-exports.Weapons = Weapons;
-Weapons._weapons = [_gun.Gun, _bow.Bow, _minigun.Minigun, _shotgun.Shotgun];
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./weapons/bow":"js/weapons/bow.js","./weapons/gun":"js/weapons/gun.js","./weapons/minigun":"js/weapons/minigun.js","./weapons/shotgun":"js/weapons/shotgun.js","./graphics":"js/graphics.js","./game_config":"js/game_config.js"}],"js/ui/player_ui.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PlayerUI = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _game_config = require("./../game_config");
-
-var _Weapons = require("./../Weapons");
-
-var _graphics = require("../graphics");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var PlayerUI =
-/*#__PURE__*/
-function () {
-  function PlayerUI(players) {
-    _classCallCheck(this, PlayerUI);
-
-    this._players = [];
-    this.graphic = new PIXI.Container();
-
-    this._setPlayers(players);
-  }
-
-  _createClass(PlayerUI, [{
-    key: "_setPlayers",
-    value: function _setPlayers(players) {
-      var _this$graphic;
-
-      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
-
-      PlayerHealth.total_player_count = players.length;
-
-      for (var i = 0; i < players.length; ++i) {
-        var pl_bar = new PlayerHealth(players[i], i);
-
-        this._players.push(pl_bar);
-
-        this.graphic.addChild(pl_bar.graphic);
-      }
-
-      this.graphic.position.set(0);
-    }
-  }, {
-    key: "Update",
-    value: function Update() {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = this._players[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var player = _step.value;
-          player.Update();
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-    }
-  }]);
-
-  return PlayerUI;
-}();
-
-exports.PlayerUI = PlayerUI;
-
-var PlayerHealth =
-/*#__PURE__*/
-function () {
-  function PlayerHealth(player, index) {
-    _classCallCheck(this, PlayerHealth);
-
-    // Set attributes
-    this._player = player;
-    this._player_index = index;
-    this._x_offset = index % 2 === 0 ? 64 : window.innerWidth - 230;
-    this._y_offset = index < 2 ? 64 : window.innerHeight - 64; // Create container
-
-    this.graphic = new PIXI.Graphics();
-    this.graphic.position.set(0);
-    this.graphic.scale.set(1 / window.devicePixelRatio); // Save mugs
-
-    this._mugs = []; // Static head sprite
-
-    this._head_graphic = _graphics.Graphics.textures.GetSprite("player_head_".concat(index));
-
-    this._head_graphic.position.set(this._x_offset, this._y_offset);
-
-    this._head_graphic.anchor.set(0.5);
-
-    this._head_graphic.scale.set(0.08);
-
-    this.graphic.addChild(this._head_graphic); // Static money sprite
-
-    this._money_graphic = _graphics.Graphics.textures.GetSprite('money');
-
-    this._money_graphic.position.set(this._x_offset + 72, this._y_offset - 18);
-
-    this._money_graphic.anchor.set(0.5);
-
-    this._money_graphic.scale.set(0.07);
-
-    this.graphic.addChild(this._money_graphic);
-  }
-
-  _createClass(PlayerHealth, [{
-    key: "Update",
-    value: function Update() {
-      if (this._player_dead !== this._player.dead) {
-        this._player_dead = this._player.dead;
-
-        this._PaintMugs();
-
-        this._PaintHighscore();
-
-        this._PaintWeapon();
-
-        this._head_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
-        this._money_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
-        this._score_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
-        return;
-      } // Out of reasons unknown to me, when first rendering the ui, the position.y is always set to 0.
-      // To prevent this we need to repaint the whole thing when position.y === 0
-
-
-      if (this._player.health !== this._player_last_health) {
-        this._player_last_health = this._player.health;
-
-        this._PaintMugs();
-      }
-
-      if (this._player.score !== this._player_last_score) {
-        this._player_last_score = this._player.score;
-
-        this._PaintHighscore();
-      }
-
-      if (this._player._weapon !== this._player_last_weapon || this._player_score_digits !== Math.floor(this._player.score).toString().length) {
-        this._player_last_weapon = this._player._weapon;
-        this._player_score_digits = Math.floor(this._player.score).toString().length;
-
-        this._PaintWeapon();
-      }
-    }
-  }, {
-    key: "_PaintWeapon",
-    value: function _PaintWeapon() {
-      // Remove weapon if player has none
-      if (!this._player._weapon) {
-        this.graphic.removeChild(this._weapon_graphic);
-        return;
-      }
-
-      this.graphic.removeChild(this._weapon_graphic);
-      this._weapon_graphic = new PIXI.Sprite(this._player._weapon.graphic.texture);
-
-      this._weapon_graphic.anchor.set(0.5);
-
-      this._weapon_graphic.position.set(this._x_offset + 140 + Math.floor(this._score_graphic.width), this._y_offset - 16);
-
-      this._weapon_graphic.scale.set(-0.05, 0.05);
-
-      this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === _Weapons.Bow ? Math.PI : Math.PI / 2;
-      this.graphic.addChild(this._weapon_graphic);
-    }
-  }, {
-    key: "_PaintHighscore",
-    value: function _PaintHighscore() {
-      this.graphic.removeChild(this._score_graphic);
-      this._score_graphic = new PIXI.Text("x".concat(Math.floor(this._player.score)), {
-        fill: 0xFFFFFF,
-        fontSize: 28,
-        fontWeight: 'bold'
-      });
-
-      this._score_graphic.position.set(this._x_offset + 94, this._y_offset - 36);
-
-      this.graphic.addChild(this._score_graphic);
-    }
-  }, {
-    key: "_PaintMugs",
-    value: function _PaintMugs() {
-      var _this$graphic2;
-
-      (_this$graphic2 = this.graphic).removeChild.apply(_this$graphic2, _toConsumableArray(this._mugs));
-
-      this._mugs = []; // Get the maximum amount of mugs and the current amount
-
-      var cur_mugs = PlayerHealth._GetHalfHearts(this._player.health); // Draw mugs
-
-
-      for (var i = 0; i < cur_mugs; i += 2) {
-        var mug = _graphics.Graphics.textures.GetSprite('coffee_cup');
-
-        mug.anchor.set(0, 0.5);
-        mug.scale.set(0.1);
-        mug.position.set(this._x_offset + 15 * i + 56, this._y_offset + 20); // If half money => crop width
-
-        if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256));
-
-        this._mugs.push(mug);
-      }
-
-      if (this.graphic && this._mugs && this._mugs.length) {
-        var _this$graphic3;
-
-        (_this$graphic3 = this.graphic).addChild.apply(_this$graphic3, _toConsumableArray(this._mugs));
-      }
-    }
-  }], [{
-    key: "_GetHalfHearts",
-    value: function _GetHalfHearts(health) {
-      return Math.ceil(10 / _game_config.game_config.player_hp * health);
-    }
-  }]);
-
-  return PlayerHealth;
-}();
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./../game_config":"js/game_config.js","./../Weapons":"js/Weapons.js","../graphics":"js/graphics.js"}],"js/ui/user_interface.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.UI = void 0;
-
-var PIXI = _interopRequireWildcard(require("pixi.js"));
-
-var _level = require("./../level");
-
-var _player_ui = require("./player_ui");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var UI =
-/*#__PURE__*/
-function () {
-  function UI() {
-    _classCallCheck(this, UI);
-
-    this.graphic = new PIXI.Container();
-
-    this._setLevel(_level.Level.ActiveLevel);
-  }
-
-  _createClass(UI, [{
-    key: "Update",
-    value: function Update() {
-      if (this._current_level !== _level.Level.ActiveLevel) this._setLevel(_level.Level.ActiveLevel);
-
-      this._player_ui.Update();
-    }
-  }, {
-    key: "_setLevel",
-    value: function _setLevel(lvl) {
-      this._current_level = lvl;
-      this._player_ui = new _player_ui.PlayerUI(this._current_level._players);
-      this.graphic.addChild(this._player_ui.graphic);
-    }
-  }]);
-
-  return UI;
-}();
-
-exports.UI = UI;
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./../level":"js/level.js","./player_ui":"js/ui/player_ui.js"}],"node_modules/pixi-sound/dist/pixi-sound.es.js":[function(require,module,exports) {
+},{"../graphics":"js/graphics.js","../math":"js/math.js","../level":"js/level.js","../weapons":"js/weapons.js","../game_config":"js/game_config.js"}],"node_modules/pixi-sound/dist/pixi-sound.es.js":[function(require,module,exports) {
 var global = arguments[3];
 "use strict";
 
@@ -48555,7 +45184,3490 @@ function () {
 
 exports.Sounds = Sounds;
 Sounds.sounds = [];
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","pixi-sound":"node_modules/pixi-sound/dist/pixi-sound.es.js"}],"data/level/lvl_google.json":[function(require,module,exports) {
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","pixi-sound":"node_modules/pixi-sound/dist/pixi-sound.es.js"}],"js/util.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GetUrlParam = GetUrlParam;
+
+/*
+ * Get Url Parameter
+ */
+function GetUrlParam(param) {
+  param = param.toLowerCase();
+  var param_string = window.location.href.split('?');
+  if (param_string.length == 1) return null;
+  param_string = param_string[1].toLowerCase();
+  var search_params = new URLSearchParams(param_string);
+  return search_params.has(param) ? ['false'].includes(search_params.get(param)) ? false : search_params.get(param) : null;
+}
+},{}],"js/weapons/firearm.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Firearm = void 0;
+
+var _weapon = require("./weapon");
+
+var _math = require("../math");
+
+var _sounds = require("../sounds");
+
+var _util = require("../util");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/*
+ * Firearm Class
+ * any kind of shootable weapon
+ */
+var Firearm =
+/*#__PURE__*/
+function (_Weapon) {
+  _inherits(Firearm, _Weapon);
+
+  function Firearm(pos, cooldown) {
+    _classCallCheck(this, Firearm);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Firearm).call(this, pos, cooldown));
+  }
+  /*
+   * Shoot projectile given as parameter and return recoil
+   */
+
+
+  _createClass(Firearm, [{
+    key: "Shoot",
+    value: function Shoot() {
+      if (!this.ammunition) throw new Error('undefined ammunition');
+      if (this._hasCooldown) return new _math.Vec2D(0, 0);
+      var projectile = new this.ammunition(this);
+
+      this._SpawnProjectile(projectile);
+
+      if (!(0, _util.GetUrlParam)('no_sound')) _sounds.Sounds.Play(this.constructor.Name.toLowerCase(), {
+        volume: this.constructor.Name == 'Bow' ? 1.5 : 0.5
+      });
+      return _math.Vec2D.Mult(_math.Vec2D.Mult(_math.Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse());
+    }
+  }]);
+
+  return Firearm;
+}(_weapon.Weapon);
+
+exports.Firearm = Firearm;
+},{"./weapon":"js/weapons/weapon.js","../math":"js/math.js","../sounds":"js/sounds.js","../util":"js/util.js"}],"js/weapons/projectile.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Projectile = void 0;
+
+var _math = require("../math");
+
+var _game_object = require("../game_object");
+
+var _game_config = require("../game_config");
+
+var _weapons = require("./../weapons");
+
+var _arrow = require("./arrow");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/**
+  * General projectile entity. This class is not meant to be instantiated
+  * directly
+  */
+var Projectile =
+/*#__PURE__*/
+function (_Movable) {
+  _inherits(Projectile, _Movable);
+
+  /**
+    * Initializes a new projectile
+    */
+  function Projectile(weapon, scale, shooting_velocity, mass) {
+    var _this;
+
+    var radians_offset = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+    _classCallCheck(this, Projectile);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Projectile).call(this, Projectile._GetNozzlePosition(weapon, scale), scale)); // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
+
+    if ((this instanceof Projectile ? this.constructor : void 0) === Projectile) {
+      throw new TypeError('Cannot construct abstract Projectile instances directly');
+    } // Set attributes
+
+
+    _this.weapon = weapon;
+    _this.mass = mass; // Get projectile orientation and scale direction vector by velocity
+
+    _this.vel = _math.Vec2D.Add(_math.Vec2D.Mult(Projectile._RadiansToVector(weapon, radians_offset), shooting_velocity), new _math.Vec2D(0, 0)); // Find nozzle and set position to nozzle position
+
+    _this.graphic = _weapons.Weapons.GetProjectileSprite(weapon, weapon.player.player_number);
+
+    _this.graphic.position.set(_this.pos.x, _this.pos.y);
+
+    var a = weapon.graphic.parent.rotation;
+    var offset = _this.constructor === _arrow.Arrow ? 1 / 3 : 1;
+    var off_vec = new _math.Vec2D(offset * Math.sin(a) * -1, offset * Math.cos(a)); // don't shoot yourself
+
+    _this.pos = _math.Vec2D.Add(_this.pos, off_vec);
+    _this.graphic.rotation = a; // set damage
+
+    _this.damage = weapon.damage;
+
+    var damage = _game_config.game_config.damage.projectile[_this.constructor.Name.toLowerCase()];
+
+    if (damage) _this.damage *= damage; // Set instantiation time
+
+    _this._spawn_time = Date.now();
+    return _this;
+  }
+  /**
+    * Update projectile position based on velocity
+    */
+
+
+  _createClass(Projectile, [{
+    key: "Update",
+    value: function Update(dt) {
+      _get(_getPrototypeOf(Projectile.prototype), "Update", this).call(this, dt);
+
+      this.graphic.rotation = Math.atan2(this.vel.y, this.vel.x) + Math.PI / 2;
+    }
+  }, {
+    key: "GetImpulse",
+
+    /**
+     * Gets the projectiles current impulse.
+     * p = m * v
+     */
+    value: function GetImpulse() {
+      return this.mass * Math.sqrt(Math.pow(this.vel.x, 2) + Math.pow(this.vel.y, 2));
+    }
+    /**
+      * Takes a weapon and converts the rotation of the weapon holster
+      * from radians to a direction vector.
+      */
+
+  }, {
+    key: "lifespanExpired",
+    get: function get() {
+      return this.weapon.projectile_lifespan > 0 && Date.now() - this._spawn_time >= this.weapon.projectile_lifespan;
+    }
+    /**
+      * Gets the position of the weapon nozzle on the game grid.
+      * Can't use the weapon.graphic.worldTransform matrix since
+      * it already include the inverse y and scene scaling.
+      * (Most likely there is a way but I don't want to do the math for that)
+      */
+
+  }], [{
+    key: "_GetNozzlePosition",
+    value: function _GetNozzlePosition(weapon, scale) {
+      // Get graphics for all relevant entities. This is an ES6 notation, will fail on different es versions
+      var _ref = [weapon.graphic.parent.rotation, weapon.graphic.parent, weapon.graphic.parent.parent],
+          holster_rot = _ref[0],
+          holster_graphic = _ref[1],
+          player_graphic = _ref[2]; // Holster is at pos = player_graphic pos + holster_graphic_pos
+
+      var holster_pos = _math.Vec2D.Add(new _math.Vec2D(player_graphic.position.x, player_graphic.position.y), new _math.Vec2D(holster_graphic.position.x, holster_graphic.position.y)); // Get cos and sin
+
+
+      var _ref2 = [Math.cos(holster_rot), Math.sin(holster_rot)],
+          cs = _ref2[0],
+          sn = _ref2[1]; // x = x * cs - y * sn;
+      // y = x * sn + y * cs;
+
+      return _math.Vec2D.Add(holster_pos, new _math.Vec2D(weapon.pos.x * cs - (weapon.pos.y + scale.y / 2) * sn, weapon.pos.x * sn + (weapon.pos.y + scale.y / 2) * cs));
+    }
+  }, {
+    key: "_RadiansToVector",
+    value: function _RadiansToVector(weapon) {
+      var radians_offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var radians = weapon.graphic.parent.rotation + radians_offset;
+      var _ref3 = [Math.cos(radians), Math.sin(radians)],
+          cs = _ref3[0],
+          sn = _ref3[1];
+      return new _math.Vec2D(weapon.pos.x * cs - weapon.pos.y * sn, weapon.pos.x * sn + weapon.pos.y * cs);
+    }
+  }]);
+
+  return Projectile;
+}(_game_object.Movable);
+
+exports.Projectile = Projectile;
+},{"../math":"js/math.js","../game_object":"js/game_object.js","../game_config":"js/game_config.js","./../weapons":"js/weapons.js","./arrow":"js/weapons/arrow.js"}],"js/weapons/arrow.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Arrow = void 0;
+
+var _math = require("./../math");
+
+var _projectile = require("./projectile");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/**
+  * A special slow flying projectile
+  */
+var Arrow =
+/*#__PURE__*/
+function (_Projectile) {
+  _inherits(Arrow, _Projectile);
+
+  /**
+    * Initializes
+    */
+  function Arrow(bow) {
+    _classCallCheck(this, Arrow);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Arrow).call(this, bow, new _math.Vec2D(0.1, 0.6), 35, 0));
+  }
+  /**
+    * Update
+    */
+
+
+  _createClass(Arrow, [{
+    key: "Update",
+    value: function Update(dt) {
+      _get(_getPrototypeOf(Arrow.prototype), "Update", this).call(this, dt);
+    }
+  }]);
+
+  return Arrow;
+}(_projectile.Projectile);
+
+exports.Arrow = Arrow;
+Arrow.Name = 'Arrow';
+},{"./../math":"js/math.js","./projectile":"js/weapons/projectile.js"}],"js/weapons/bow.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ArrowIndicator = exports.Bow = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _firearm = require("./firearm");
+
+var _math = require("./../math");
+
+var _arrow = require("./arrow");
+
+var _weapons = require("./../weapons");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+/**
+  * Weapon specialization.
+  * Shoots slow arrows
+  */
+var Bow =
+/*#__PURE__*/
+function (_Firearm) {
+  _inherits(Bow, _Firearm);
+
+  /**
+    * Initializes
+    */
+  function Bow() {
+    var _this;
+
+    _classCallCheck(this, Bow);
+
+    // Bow is held 1.1 units in front of player, "bow" shaped, 1000ms cooldown
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Bow).call(this, new _math.Vec2D(0, 1.1), 1000));
+    _this.ammunition = _arrow.Arrow;
+    _this.arrow_indicator = new ArrowIndicator(_assertThisInitialized(_assertThisInitialized(_this)), 3);
+    return _this;
+  }
+  /**
+   * The bow has a special shooting mechanic. It is the only
+   * weapon with limited ammunition. If the ammunition is empty, the
+   * player can't shoot with the bow
+   */
+
+
+  _createClass(Bow, [{
+    key: "Shoot",
+    value: function Shoot() {
+      // Only shoot if no cooldown and still arrows left
+      if (!_get(_getPrototypeOf(Bow.prototype), "_hasCooldown", this) && this.arrow_indicator.arrows > 0) {
+        this.arrow_indicator.decrement();
+        return _get(_getPrototypeOf(Bow.prototype), "Shoot", this).call(this);
+      }
+
+      return new _math.Vec2D(0, 0);
+    }
+  }]);
+
+  return Bow;
+}(_firearm.Firearm);
+
+exports.Bow = Bow;
+Bow.Name = 'Bow';
+/**
+ * Arrow indicator for the bow weapon type
+ */
+
+var ArrowIndicator =
+/*#__PURE__*/
+function () {
+  /**
+   * Initializes the arrow indicator.
+   * Take the bow it belongs to and the number of arrows the bow holds as input
+   */
+  function ArrowIndicator(bow) {
+    var arrows = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+
+    _classCallCheck(this, ArrowIndicator);
+
+    if (bow.constructor !== Bow) throw new TypeError('The arrow indicator can only be applied to a bow');
+    this._bow = bow;
+    this._total_arrows = arrows;
+    this._arrows_remaining = arrows;
+    this.graphic = new PIXI.Graphics();
+
+    this._updateGraphic();
+  }
+  /**
+   * Return number of arrows
+   */
+
+
+  _createClass(ArrowIndicator, [{
+    key: "decrement",
+
+    /**
+     * Decrement the number of remaining arrows.
+     * Default decrement step: 1
+     */
+    value: function decrement() {
+      var num = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      this._arrows_remaining -= num;
+
+      this._updateGraphic();
+    }
+    /**
+     * Updates the graphics for the indicator
+     */
+
+  }, {
+    key: "_updateGraphic",
+    value: function _updateGraphic() {
+      var _this$graphic;
+
+      // Clear old stuff and set line thickness
+      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
+
+      this.graphic.lineStyle(0.1, 0x000000, 1, 0.5); // Draw arrow lines based on the remaining arrows
+
+      for (var i = 0; i < this._arrows_remaining; ++i) {
+        var y_pos = 0.5 / this._total_arrows * i - 0.5 / this._total_arrows;
+
+        var arr = _weapons.Weapons.GetProjectileSprite(this._bow);
+
+        arr.scale.set(0.7 / 512);
+        arr.rotation = Math.PI / -2;
+        arr.position.set(0.35, y_pos + 0.1);
+        this.graphic.addChild(arr);
+      } // Center
+
+
+      this.graphic.position.set(0.35, 1.5);
+    }
+  }, {
+    key: "arrows",
+    get: function get() {
+      return this._arrows_remaining;
+    }
+  }]);
+
+  return ArrowIndicator;
+}();
+
+exports.ArrowIndicator = ArrowIndicator;
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./firearm":"js/weapons/firearm.js","./../math":"js/math.js","./arrow":"js/weapons/arrow.js","./../weapons":"js/weapons.js"}],"js/weapons/bullet.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Bullet = void 0;
+
+var _math = require("./../math");
+
+var _projectile = require("./projectile");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Bullet =
+/*#__PURE__*/
+function (_Projectile) {
+  _inherits(Bullet, _Projectile);
+
+  /**
+    * Initializes
+    */
+  function Bullet(weapon) {
+    var radians_offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+    _classCallCheck(this, Bullet);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Bullet).call(this, weapon, new _math.Vec2D(0.2, 0.2), 150, 0.5, radians_offset));
+  }
+  /**
+    * Update
+    */
+
+
+  _createClass(Bullet, [{
+    key: "Update",
+    value: function Update(dt) {
+      _get(_getPrototypeOf(Bullet.prototype), "Update", this).call(this, dt);
+    }
+  }]);
+
+  return Bullet;
+}(_projectile.Projectile);
+
+exports.Bullet = Bullet;
+Bullet.Name = 'Bullet';
+},{"./../math":"js/math.js","./projectile":"js/weapons/projectile.js"}],"js/weapons/gun.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Gun = void 0;
+
+var _firearm = require("./firearm");
+
+var _math = require("./../math");
+
+var _bullet = require("./bullet");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/**
+  * Weapon specialization. Shoots fast (not yet)
+  */
+var Gun =
+/*#__PURE__*/
+function (_Firearm) {
+  _inherits(Gun, _Firearm);
+
+  /**
+    * Initializes
+    */
+  function Gun() {
+    var _this;
+
+    _classCallCheck(this, Gun);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Gun).call(this, new _math.Vec2D(0, 0.4), 400));
+    _this.ammunition = _bullet.Bullet;
+    return _this;
+  }
+
+  return Gun;
+}(_firearm.Firearm);
+
+exports.Gun = Gun;
+Gun.Name = 'Gun';
+},{"./firearm":"js/weapons/firearm.js","./../math":"js/math.js","./bullet":"js/weapons/bullet.js"}],"js/weapons/minigun.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Minigun = void 0;
+
+var _firearm = require("./firearm");
+
+var _bullet = require("./bullet");
+
+var _math = require("./../math");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Minigun =
+/*#__PURE__*/
+function (_Firearm) {
+  _inherits(Minigun, _Firearm);
+
+  function Minigun() {
+    var _this;
+
+    _classCallCheck(this, Minigun);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Minigun).call(this, new _math.Vec2D(0, 0.25), 100));
+    _this.ammunition = _bullet.Bullet;
+    return _this;
+  }
+
+  return Minigun;
+}(_firearm.Firearm);
+
+exports.Minigun = Minigun;
+Minigun.Name = 'Minigun';
+},{"./firearm":"js/weapons/firearm.js","./bullet":"js/weapons/bullet.js","./../math":"js/math.js"}],"js/weapons/shotgun.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Shotgun = void 0;
+
+var _weapon = require("./weapon");
+
+var _math = require("../math");
+
+var _bullet = require("./bullet");
+
+var _sounds = require("../sounds");
+
+var _util = require("../util");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Shotgun =
+/*#__PURE__*/
+function (_Weapon) {
+  _inherits(Shotgun, _Weapon);
+
+  function Shotgun() {
+    var _this;
+
+    _classCallCheck(this, Shotgun);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Shotgun).call(this, new _math.Vec2D(0, 0.3), 750));
+    _this._number_bullets = 6;
+    return _this;
+  }
+  /*
+   * Shoot projectile given as parameter and return recoil
+   */
+
+
+  _createClass(Shotgun, [{
+    key: "Shoot",
+    value: function Shoot() {
+      if (this._hasCooldown) return new _math.Vec2D(0, 0);
+      var vel_dir = new _math.Vec2D(0, 0); // Sum up velocity direction
+
+      var impulse = 0.0; // Sum up impulse
+
+      for (var i = 0; i < this._number_bullets; ++i) {
+        // Create Bullet with direction offset
+        var radians_offset = 2 * (i - this._number_bullets / 2) * (Math.PI / 180);
+        var bullet = new _bullet.Bullet(this, radians_offset); // Spawn, add to average velocity and to impulse
+
+        this._SpawnProjectile(bullet);
+
+        vel_dir = _math.Vec2D.Add(vel_dir, bullet.vel);
+        impulse += bullet.GetImpulse();
+      }
+
+      if (!(0, _util.GetUrlParam)('no_sound')) _sounds.Sounds.Play('shotgun'); // Return summed up impulse and average velocity direction
+
+      return _math.Vec2D.Mult(_math.Vec2D.Mult(_math.Vec2D.Normalize(vel_dir), -1), impulse);
+    }
+  }]);
+
+  return Shotgun;
+}(_weapon.Weapon);
+
+exports.Shotgun = Shotgun;
+Shotgun.Name = 'Shotgun';
+},{"./weapon":"js/weapons/weapon.js","../math":"js/math.js","./bullet":"js/weapons/bullet.js","../sounds":"js/sounds.js","../util":"js/util.js"}],"js/weapons.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "Bow", {
+  enumerable: true,
+  get: function () {
+    return _bow.Bow;
+  }
+});
+Object.defineProperty(exports, "Gun", {
+  enumerable: true,
+  get: function () {
+    return _gun.Gun;
+  }
+});
+Object.defineProperty(exports, "Minigun", {
+  enumerable: true,
+  get: function () {
+    return _minigun.Minigun;
+  }
+});
+Object.defineProperty(exports, "Shotgun", {
+  enumerable: true,
+  get: function () {
+    return _shotgun.Shotgun;
+  }
+});
+exports.Weapons = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _bow = require("./weapons/bow");
+
+var _gun = require("./weapons/gun");
+
+var _minigun = require("./weapons/minigun");
+
+var _shotgun = require("./weapons/shotgun");
+
+var _graphics = require("./graphics");
+
+var _game_config = require("./game_config");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Weapons =
+/*#__PURE__*/
+function () {
+  function Weapons() {
+    _classCallCheck(this, Weapons);
+  }
+
+  _createClass(Weapons, null, [{
+    key: "GetRandomWeapon",
+    value: function GetRandomWeapon() {
+      var wpn = Weapons._weapons[Math.floor(Math.random() * Weapons._weapons.length)];
+
+      return new wpn();
+    }
+  }, {
+    key: "GetProjectileSprite",
+    value: function GetProjectileSprite(wpn) {
+      var variant = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var projectile = undefined;
+      var cl_proj = 0xFFFFFF;
+      var proj_width = 0.3;
+      var proj_height = 0.15;
+
+      switch (wpn.constructor) {
+        case _bow.Bow:
+          projectile = _graphics.Graphics.textures.GetSprite('arrow_' + variant);
+          projectile.scale.set(1 / 747, -1 / 747);
+          projectile.anchor.set(0.5, 1);
+          break;
+
+        default:
+          projectile = _graphics.Graphics.CreateRectangle(0, 0, proj_height, proj_width, cl_proj, cl_proj);
+          break;
+      }
+
+      return projectile;
+    }
+  }, {
+    key: "GetSprite",
+    value: function GetSprite(wpn, variant) {
+      var weapon = undefined;
+      if ("development" === 'development') console.log("Requesting weapon sprite '".concat(wpn.constructor.Name.toLowerCase(), "'"));
+      weapon = _graphics.Graphics.textures.GetSprite("".concat(wpn.constructor.Name.toLowerCase(), "_").concat(variant)); // const length = conf.size[weapon.constructor.Name.toLowerCase()] ? conf.size[weapon.Name.toLowerCase()] : 1
+
+      var length = _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] ? _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] : 1;
+      var mod = weapon.width > weapon.height ? length / weapon.width : length / weapon.height;
+      weapon.width *= mod;
+      weapon.height *= mod;
+      weapon.anchor.set(0.5, 0.5);
+
+      if (_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()]) {
+        weapon.anchor.set(_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][1], _game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][0]);
+      }
+
+      return weapon;
+    }
+  }]);
+
+  return Weapons;
+}();
+
+exports.Weapons = Weapons;
+Weapons._weapons = [_gun.Gun, _bow.Bow, _minigun.Minigun, _shotgun.Shotgun];
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./weapons/bow":"js/weapons/bow.js","./weapons/gun":"js/weapons/gun.js","./weapons/minigun":"js/weapons/minigun.js","./weapons/shotgun":"js/weapons/shotgun.js","./graphics":"js/graphics.js","./game_config":"js/game_config.js"}],"js/player.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Player = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _math = require("./math");
+
+var _graphics = require("./graphics");
+
+var _game_object = require("./game_object");
+
+var _game_config = require("./game_config");
+
+var _weapons = require("./weapons");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+var Player =
+/*#__PURE__*/
+function (_Movable) {
+  _inherits(Player, _Movable);
+
+  /*
+   * Constructor
+   */
+  function Player(number, input) {
+    var _this;
+
+    var pos = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : new _math.Vec2D(0, 0);
+    var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : new _math.Vec2D(0.7, 1.3);
+
+    _classCallCheck(this, Player);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Player).call(this, pos, scale));
+    if ("development" === 'development') console.log('spawn player at ', pos);
+    _this._player_number = number;
+    _this._player_number = Player.counter;
+    Player.counter++;
+    _this._move_acc = _game_config.game_config.player_move_acc;
+    _this._move_vel = _game_config.game_config.player_move_vel;
+    _this.graphic = new PIXI.Container();
+
+    _this._SetBody('standing');
+
+    _this._last_jump = new Date().getTime();
+    _this._jump_vel = _game_config.game_config.gravity ? Math.sqrt(2) * Math.sqrt(_game_config.game_config.gravity) * Math.sqrt(_game_config.game_config.player_jump_height) : 0.5;
+    _this.has_ground_contact = false;
+    _this.jump_counter = 0;
+    _this._mass = 30;
+    _this._score = 0; // Create weapon holster
+    // This will later be more useful for rotating the weapon around the player
+
+    _this._weapon_holster = new PIXI.Container();
+
+    _this._weapon_holster.position.set(scale.x / 2, scale.y * (2 / 3));
+
+    _this.graphic.addChild(_this._weapon_holster); // player health
+
+
+    _this._hp_total = _game_config.game_config.player_hp;
+    _this._hp_current = _this._hp_total;
+    _this._alive = true;
+    _this._dashing = false;
+    _this._dash_time = _game_config.game_config.player_dash_time;
+    _this._dash_vel = _game_config.game_config.player_dash_vel;
+    _this._move_dir = null;
+
+    if (input) {
+      _this._input = input;
+
+      _this._input.Init(_assertThisInitialized(_assertThisInitialized(_this)));
+    }
+
+    return _this;
+  }
+  /**
+   * Update
+   */
+
+
+  _createClass(Player, [{
+    key: "Update",
+    value: function Update(dt) {
+      // slow down if not moving or dashing
+      if (!this._moved && !this._dashing) {
+        this._move_dir = null;
+        if (Math.abs(this.vel.x) > 0.0001) this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000);else this.vel.x = 0;
+
+        this._SetBody('standing');
+      } // dash
+
+
+      if (this._dashing) {
+        var dir = this._move_dir == 'right' ? 1 : -1;
+
+        if (new Date().getTime() - this._dash_start >= this._dash_time) {
+          this._dashing = false;
+          this._last_dash = Date.now();
+          if (!this._dash_up) this.vel.x = this._move_vel * dir;else this.vel.y = this._jump_vel / 4;
+        } else {
+          if (this._dash_up) this.vel.y = this._dash_vel;else this.vel.x = this._dash_vel * dir;
+        }
+      } // Check if player can heal
+
+
+      if (Date.now() - this._last_damage_taken > _game_config.game_config.healing.cooldown) {
+        // Increase health until max health is reached
+        this._hp_current = Math.min(this._hp_current + _game_config.game_config.healing.amount_per_sec / 1000 * dt, this._hp_total); // If max => unset _last_damage_taken attribute
+
+        if (this._hp_current >= this._hp_total) this._last_damage_taken = undefined;
+      } // If ground contact => reset jump counter
+
+
+      if (this.has_ground_contact) this.jump_counter = 0;else this._SetBody('jump'); // Shoot when mouse down
+
+      if (this._input) this._input.Update(); // Update Weapon
+
+      if (this._weapon) this._weapon.Update(this._input);
+
+      _get(_getPrototypeOf(Player.prototype), "Update", this).call(this, dt);
+
+      this._moved = false;
+    }
+  }, {
+    key: "_SetBody",
+    value: function _SetBody(sprite_name) {
+      if (this._body) {
+        if (this._body.sprite == sprite_name) return;
+        this.graphic.removeChild(this._body);
+      }
+
+      var dir = this._body && this._body.scale.x < 0 ? 'left' : 'right';
+      var sprite = "pl".concat(this._player_number + 1, "_").concat(sprite_name);
+      this._body = _graphics.Graphics.textures.GetSprite(sprite);
+      this._body.sprite = sprite_name;
+
+      this._body.scale.set(this.height / this._body.height);
+
+      this._body.scale.y *= -1;
+      this._body.anchor.y = 1;
+
+      if (dir == 'left') {
+        this._body.scale.x *= -1;
+        this._body.anchor.x = 1;
+      }
+
+      if (this.dead) {
+        this._body.tint = 0x8C8C8C;
+      }
+
+      this.graphic.addChildAt(this._body, 0);
+    }
+    /**
+     * Set the players weapon
+     */
+
+  }, {
+    key: "SetWeapon",
+    value: function SetWeapon(weapon) {
+      if ("development" === 'development') console.log('picked up ' + weapon.constructor.name); // Remove the weapon
+
+      if (this._weapon) {
+        this._weapon_holster.removeChild(this._weapon.graphic); // If weapon was a bow, also remove the arrow indicator
+
+
+        if (this._weapon.constructor === _weapons.Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic);
+      } // Assign new weapon to attribute and the weapon holster
+
+
+      this._weapon = weapon;
+      this._weapon.player = this;
+
+      this._weapon.paintWeapon(this._player_number);
+
+      this._weapon_holster.addChild(this._weapon.graphic); // If new weapon is a bow, also add the arrow indicator
+
+
+      if (this._weapon.constructor === _weapons.Bow) this.graphic.addChild(this._weapon.arrow_indicator.graphic);
+    }
+    /**
+     * Move
+     */
+
+  }, {
+    key: "Move",
+    value: function Move(dir) {
+      var dt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : -1;
+      if (dt == -1) console.error('call move with delta time!');
+      this._moved = true;
+      this._move_dir = dir;
+      if (!this._alive || this._dashing) return;
+
+      this._SetBody('run');
+
+      this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000);
+      if (Math.abs(this.vel.x) > this._move_vel) this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1);
+
+      if (dir == 'right' && this._body.scale.x < 0) {
+        this._body.scale.x *= -1;
+        this._body.anchor.x = 0;
+      } else if (dir == 'left' && this._body.scale.x > 0) {
+        this._body.scale.x *= -1;
+        this._body.anchor.x = 1;
+      }
+    }
+  }, {
+    key: "MoveRight",
+    value: function MoveRight(dt) {
+      this.Move('right', dt);
+    }
+  }, {
+    key: "MoveLeft",
+    value: function MoveLeft(dt) {
+      this.Move('left', dt);
+    }
+  }, {
+    key: "Dash",
+    value: function Dash() {
+      if (!this._move_dir && !this._input.IsDashUp() || Date.now() - this._last_dash <= _game_config.game_config.player_dash_cooldown) return;
+      if (this._input.IsDashUp()) this._dash_up = true;else this._dash_up = false;
+      this._dash_start = new Date().getTime();
+      console.log('dash up: ' + this._dash_up);
+      this._dashing = true;
+    }
+  }, {
+    key: "Jump",
+
+    /**
+     * Jump
+     */
+    value: function Jump() {
+      if (!this._alive) return;
+      var now = new Date().getTime(); // jump_counter >= 2 => player has already jumped twice
+
+      if (this.jump_counter >= 2) return;
+      this._last_jump = now;
+      this.vel.y = this._jump_vel; // On jump has never ground contact. Also increase jump counter
+
+      this.has_ground_contact = false;
+      this.jump_counter += 1;
+    }
+    /*
+     * Attack
+     */
+
+  }, {
+    key: "Attack",
+    value: function Attack() {
+      if (!this._weapon) return;
+
+      var recoil = _math.Vec2D.Div(this._weapon.Shoot(), this._mass);
+
+      this.vel = _math.Vec2D.Add(this.vel, recoil);
+    }
+    /**
+     * Damage Player Health
+     */
+
+  }, {
+    key: "Damage",
+    value: function Damage(hp) {
+      this._hp_current -= hp;
+      this._last_damage_taken = Date.now();
+      if (this._hp_current <= 0) this.Die();
+    }
+  }, {
+    key: "DamagePercent",
+    value: function DamagePercent(hp) {
+      this.Damage(hp / 100 * this._hp_total);
+    }
+    /*
+     * Kill (cause and trigger on death)
+     */
+
+  }, {
+    key: "Kill",
+    value: function Kill() {
+      var _this$_weapon_holster;
+
+      this._hp_current = 0;
+      this._alive = false;
+      this._last_damage_taken = undefined;
+
+      this._SetBody('dead'); // Remove weapon upon death
+
+
+      this._weapon = undefined;
+
+      (_this$_weapon_holster = this._weapon_holster).removeChild.apply(_this$_weapon_holster, _toConsumableArray(this._weapon_holster.children));
+
+      if ("development" === 'development') console.log('player died');
+    }
+  }, {
+    key: "Die",
+    value: function Die() {
+      this.Kill();
+    }
+  }, {
+    key: "Respawn",
+
+    /*
+     * Respawn
+     */
+    value: function Respawn(spawn_pos) {
+      var _this2 = this;
+
+      if (!spawn_pos || this._respawn_pending) return;
+      this._respawn_pending = true;
+      setTimeout(function () {
+        console.log('respawn player', spawn_pos);
+        _this2._alive = true;
+        _this2._respawn_pending = false;
+        _this2._hp_current = _this2._hp_total;
+
+        _this2.pos.Set(spawn_pos.x, spawn_pos.y);
+
+        _this2.vel.Set(0, 0);
+      }, _game_config.game_config.respawn_time);
+    }
+  }, {
+    key: "player_number",
+    get: function get() {
+      return this._player_number;
+    }
+  }, {
+    key: "score",
+    get: function get() {
+      return this._score;
+    },
+    set: function set(score) {
+      this._score = score;
+    }
+  }, {
+    key: "dead",
+    get: function get() {
+      return !this._alive;
+    }
+  }, {
+    key: "mass",
+    get: function get() {
+      return this._mass;
+    }
+  }, {
+    key: "health",
+    get: function get() {
+      return this._hp_current;
+    }
+  }]);
+
+  return Player;
+}(_game_object.Movable);
+
+exports.Player = Player;
+Player.counter = 0;
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./math":"js/math.js","./graphics":"js/graphics.js","./game_object":"js/game_object.js","./game_config":"js/game_config.js","./weapons":"js/weapons.js"}],"js/trophy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Trophy = void 0;
+
+var _graphics = require("./graphics");
+
+var _math = require("./math");
+
+var _game_config = require("./game_config");
+
+var _player = require("./player");
+
+var _sounds = require("./sounds");
+
+var _util = require("./util");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Trophy =
+/*#__PURE__*/
+function () {
+  function Trophy(lvl) {
+    _classCallCheck(this, Trophy);
+
+    this.scale = new _math.Vec2D(1); // Create graphic
+
+    this.graphic = _graphics.Graphics.textures.GetSprite('money');
+    this.graphic.anchor.set(0, 1);
+    this.moveToLevel(lvl);
+  }
+
+  _createClass(Trophy, [{
+    key: "moveToLevel",
+    value: function moveToLevel(lvl) {
+      var spawn_at_pos = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      if (!lvl) return;
+
+      if (spawn_at_pos) {
+        this.pos = new _math.Vec2D(spawn_at_pos.x, spawn_at_pos.y + 1);
+      } else {
+        this.pos = new _math.Vec2D(lvl.width / 2 - 0.5, lvl.height / 2 - 0.5);
+      }
+
+      this.graphic.scale.set(1 / 512, -1 / 512);
+      this.graphic.position.set(this.pos.x, this.pos.y);
+      if (this.graphic.parent) this.graphic.parent.removeChild(this.graphic);
+
+      lvl._parent_scene.addChild(this.graphic);
+
+      this._player = undefined;
+    }
+  }, {
+    key: "Update",
+    value: function Update(dt) {
+      if (this._player) {
+        this._player.score += _game_config.game_config.trophy.passive_income * (dt / 1000) / 3.5; // FIXME: Why isn't a 1000 dt = 1 second??
+      }
+    }
+  }, {
+    key: "moveToPlayer",
+    value: function moveToPlayer(player) {
+      if (!player) return;
+      this._player = player;
+      this._player.score += _game_config.game_config.trophy.pickup_bounty;
+      if (this.graphic.parent) this.graphic.parent.removeChild(this.graphic);
+
+      this._player.graphic.addChildAt(this.graphic, 0);
+
+      this.graphic.position.set(0.05, 1.5);
+      this.graphic.scale.set(0.5 / 512);
+      if (!(0, _util.GetUrlParam)('no_sound')) _sounds.Sounds.Play('reward');
+    }
+  }, {
+    key: "player",
+    get: function get() {
+      return this._player;
+    }
+  }, {
+    key: "isPickedUp",
+    get: function get() {
+      return this._player && this._player.constructor === _player.Player;
+    }
+  }]);
+
+  return Trophy;
+}();
+
+exports.Trophy = Trophy;
+},{"./graphics":"js/graphics.js","./math":"js/math.js","./game_config":"js/game_config.js","./player":"js/player.js","./sounds":"js/sounds.js","./util":"js/util.js"}],"js/physics.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Physics = void 0;
+
+var _math = require("./math");
+
+var _game_config = require("./game_config");
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Physics =
+/*#__PURE__*/
+function () {
+  function Physics() {
+    _classCallCheck(this, Physics);
+  }
+
+  _createClass(Physics, null, [{
+    key: "Update",
+
+    /*
+     * Update
+     */
+    value: function Update(dt, lvl) {
+      lvl._players.forEach(function (player) {
+        if (player.dead) return; // No physics when dead
+        // apply gravity to player
+
+        Physics._Accelerate(player.vel, lvl._gravity, dt); // update player position
+
+
+        player.Update(dt); // Update trophy
+
+        if (lvl.trophy) lvl.trophy.Update(dt);
+      }); // update projectiles
+
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = lvl._projectiles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var prj = _step.value;
+
+          // If any collision => remove projectiles
+          var collisions = Physics._GetColliding(prj, lvl._block_grid);
+
+          if (prj.lifespanExpired || collisions && collisions.length !== 0) {
+            lvl.RemoveProjectiles(prj);
+            continue; // no need to update a projectile that just got removed
+          }
+
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
+
+          try {
+            for (var _iterator3 = lvl._players[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var player = _step3.value;
+              if (player.dead) continue; // Dont proceed if player already died with one of the last projectiles
+
+              if (Physics.DoBoxesIntersect(prj, player)) {
+                var damage = _game_config.game_config.damage.base * prj.damage;
+                var old_pos = player.pos;
+                player.Damage(damage);
+
+                if (player.dead && player === lvl.trophy.player) {
+                  var hitman = prj.weapon.player; // Get the player who fired the shot
+                  // Only give steal bounty if the target has the trophy and if it is not suicide
+
+                  if (hitman !== player) {
+                    hitman.score += _game_config.game_config.trophy.steal_bounty;
+                  }
+
+                  lvl.trophy.moveToLevel(lvl, old_pos);
+                }
+
+                lvl.RemoveProjectiles(prj);
+              }
+            } // apply gravity to bullet
+
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+                _iterator3.return();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
+              }
+            }
+          }
+
+          Physics._Accelerate(prj.vel, lvl._gravity, dt);
+
+          prj.Update(dt); // Update projectile
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      lvl._players.forEach(function (player) {
+        if (player.dead) return; // No physics when dead
+        // Check collision with level trophy
+
+        if (!lvl.trophy.isPickedUp && Physics.DoBoxesIntersect(lvl.trophy, player)) {
+          lvl.trophy.moveToPlayer(player);
+        } // check for collisions
+
+
+        var collisions = Physics._GetColliding(player, lvl._block_grid);
+
+        if (collisions.length > 0) {
+          // solve collisions
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = collisions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var col = _step2.value;
+
+              Physics._SolveCollision(player, col);
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+        } else {
+          // no collision => in air
+          if (player.has_ground_contact) {
+            player.jump_counter++;
+            player.has_ground_contact = false;
+          }
+        }
+      });
+    }
+    /*
+     * Solve Collision
+     */
+
+  }, {
+    key: "_SolveCollision",
+    value: function _SolveCollision(rect1, rect2) {
+      var GetCollisionFace = function GetCollisionFace() {
+        var faces = []; //rect2.x + rect2.width - rect1.x
+
+        if (rect2._collision_sides.right) faces.push({
+          name: 'right',
+          value: rect2.x + rect2.width - rect1.x
+        });
+        if (rect2._collision_sides.bottom) faces.push({
+          name: 'bottom',
+          value: rect1.y + rect1.height - rect2.y
+        });
+        if (rect2._collision_sides.left) faces.push({
+          name: 'left',
+          value: rect1.x + rect1.width - rect2.x
+        });
+        if (rect2._collision_sides.top) faces.push({
+          name: 'top',
+          value: rect2.y + rect2.height - rect1.y
+        });
+
+        for (var _i = 0; _i < faces.length; _i++) {
+          var face = faces[_i];
+          if (face.value > rect1.width * 2) faces.splice(faces.indexOf(face), 1);
+        }
+
+        return faces.length ? faces.find(function (face) {
+          return face.value == Math.min.apply(Math, _toConsumableArray(faces.map(function (face) {
+            return face.value;
+          })));
+        }).name : null;
+      };
+
+      var offset = 0.000001;
+
+      switch (GetCollisionFace()) {
+        case 'top':
+          rect1.has_ground_contact = true;
+          if (rect1.vel.y < 0) rect1.vel.y = 0;
+          rect1.pos.y = rect2.y + rect2.height + offset;
+          break;
+
+        case 'bottom':
+          if (rect1.vel.y > 0) rect1.vel.y = 0;
+          rect1.pos.y = rect2.y - rect1.height - offset;
+          break;
+
+        case 'right':
+          if (rect1.vel.x < 0) rect1.vel.x = 0;
+          rect1.pos.x = rect2.pos.x + rect2.width + offset;
+          break;
+
+        case 'left':
+          if (rect1.vel.x > 0) rect1.vel.x = 0;
+          rect1.pos.x = rect2.pos.x - rect1.width - offset;
+          break;
+      }
+
+      if (rect1._dashing && !rect1.has_ground_contact) {
+        rect1._dashing = false;
+        rect1.vel.Set(0, 0);
+      }
+    }
+  }, {
+    key: "_SolveCollisionVec",
+    value: function _SolveCollisionVec(rect1, rect2) {
+      if (!rect1._last_vert) return;
+      var vertex_lines = [];
+      var vertices = rect1.GetVertices();
+
+      for (var i in vertices) {
+        vertex_lines.push(new _math.Line(rect1._last_vert[i], vertices[i]));
+      }
+
+      var solve_vectors = [];
+      var col_segments = rect2.GetActiveCollisionSegments();
+
+      for (var _i2 = 0; _i2 < vertex_lines.length; _i2++) {
+        var line = vertex_lines[_i2];
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+          for (var _iterator4 = col_segments[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var seg = _step4.value;
+
+            var t = _math.Line.Intersect(line, seg);
+
+            if (t >= 0 && t <= 1) {
+              var intersect_point = _math.Line.IntersectPoint(line, t);
+
+              var resolve = _math.Vec2D.Sub(line.p1, intersect_point);
+
+              solve_vectors.push(resolve);
+            }
+          }
+        } catch (err) {
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+              _iterator4.return();
+            }
+          } finally {
+            if (_didIteratorError4) {
+              throw _iteratorError4;
+            }
+          }
+        }
+      } // const solve = Math.max(solve_vectors.map(vec => vec.Magnitude))
+
+
+      var mags = solve_vectors.map(function (vec) {
+        return vec.Magnitude;
+      });
+      if (mags.length == 0) return;
+      var solve = Math.max.apply(Math, _toConsumableArray(mags));
+      console.log(solve);
+      rect1.pos.y += solve * 10;
+      rect1.vel.y = 0;
+    }
+    /**
+     * bool DoBoxesIntersect(Box a, Box b) {
+     * return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+     *      (abs(a.y - b.y) * 2 < (a.height + b.height));
+     * }
+     */
+
+  }, {
+    key: "DoBoxesIntersect",
+    value: function DoBoxesIntersect(a, b) {
+      return a.pos.x < b.pos.x + b.scale.x && a.pos.x + a.scale.x > b.pos.x && a.pos.y < b.pos.y + b.scale.y && a.pos.y + a.scale.y > b.pos.y;
+    } //
+    // Get Colliding
+    // returns array of blocks that rect collides with
+    //
+
+  }, {
+    key: "_GetColliding",
+    value: function _GetColliding(rect, grid_comp) {
+      var collision_func = rect.is_fast ? this._GetCollidingVec : this._GetCollidingStep;
+      return collision_func(rect, grid_comp);
+    }
+  }, {
+    key: "_GetCollidingStep",
+    value: function _GetCollidingStep(rect, grid_comp) {
+      // rasterize player
+      var collision_points = [];
+
+      for (var x = Math.floor(rect.x); x <= Math.floor(rect.x + rect.width); x++) {
+        for (var y = Math.floor(rect.y); y <= Math.floor(rect.y + rect.height); y++) {
+          collision_points.push(new _math.Vec2D(x, y));
+        }
+      } // get collisions
+
+
+      var collisions = [];
+
+      for (var _i3 = 0; _i3 < collision_points.length; _i3++) {
+        var p = collision_points[_i3];
+        if (p.x < 0 || p.y < 0) continue;
+        if (p.x >= grid_comp.length || p.y >= grid_comp[p.x].length) continue;
+        if (grid_comp[p.x][p.y]) collisions.push(grid_comp[p.x][p.y]);
+      }
+
+      return collisions;
+    }
+  }, {
+    key: "_GetCollidingVec",
+    value: function _GetCollidingVec(rect, grid_comp) {
+      if (!rect._last_vert) return;
+      var vertex_lines = [];
+      var vertices = rect.GetVertices();
+
+      for (var i in vertices) {
+        vertex_lines.push(new _math.Line(rect._last_vert[i], vertices[i]));
+      }
+
+      var collisions = [];
+
+      for (var _i4 = 0; _i4 < vertex_lines.length; _i4++) {
+        var line = vertex_lines[_i4];
+        // coordinates of line
+        var x1 = Math.floor(line.x1),
+            y1 = Math.floor(line.y1),
+            x2 = Math.floor(line.x2),
+            y2 = Math.floor(line.y2); // continue if out of level
+
+        if (x1 < 0 && x2 < 0 || y1 < 0 && y2 < 0 || x1 >= grid_comp.length && x2 >= grid_comp.length || y1 >= grid_comp[0].length && y2 >= grid_comp[0].length) {
+          continue;
+        }
+
+        var match_bounds = function match_bounds(num, max) {
+          if (num < 0) return 0;
+          if (num > max) return max;
+          return num;
+        };
+
+        x1 = match_bounds(x1, grid_comp.length - 1);
+        x2 = match_bounds(x2, grid_comp.length - 1);
+        y1 = match_bounds(y1, grid_comp[0].length - 1);
+        y2 = match_bounds(y2, grid_comp[0].length - 1); // check blocks in movement range for collisions
+
+        for (var x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+          for (var y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+            // console.log(x, y)
+            if (grid_comp[x][y]) {
+              collisions.push(grid_comp[x][y]);
+            }
+          }
+        }
+      }
+
+      return collisions;
+    } //
+    // Apply Acceleration
+    //
+
+  }, {
+    key: "_Accelerate",
+    value: function _Accelerate(tar, acc, dt) {
+      var tar_new = _math.Vec2D.Add(tar, _math.Vec2D.Mult(acc, dt / 1000));
+
+      tar.Set(tar_new.x, tar_new.y);
+    }
+  }]);
+
+  return Physics;
+}();
+
+exports.Physics = Physics;
+},{"./math":"js/math.js","./game_config":"js/game_config.js"}],"js/weapon_spawns/weapon_spawn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WeaponSpawn = void 0;
+
+var _math = require("../math");
+
+var _graphics = require("../graphics");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var WeaponSpawn =
+/*#__PURE__*/
+function () {
+  function WeaponSpawn(pos, cooldown) {
+    _classCallCheck(this, WeaponSpawn);
+
+    // This ES6 snippet prevents direct instatiation in order to ensure an "abstract" class
+    if ((this instanceof WeaponSpawn ? this.constructor : void 0) === WeaponSpawn) {
+      throw new TypeError('Cannot construct abstract WeaponSpawn instances directly');
+    } // Set attributes
+
+
+    this.pos = pos;
+    this.scale = new _math.Vec2D(1, 1);
+    this._cooldown = cooldown;
+    this._on_cooldown = false;
+    this._last_use = 0; // Create base graphic
+
+    this._PaintSpawn();
+  }
+
+  _createClass(WeaponSpawn, [{
+    key: "Update",
+    value: function Update() {
+      if (this._on_cooldown && Date.now() - this._last_use >= this._cooldown) {
+        this.ResetWeapon();
+      }
+    }
+    /**
+      * Does this weapon spawn have a weapon to take for player
+      */
+
+  }, {
+    key: "TakeWeapon",
+
+    /**
+     * Initiates the weapon spawn cooldown and redraws it
+     */
+    value: function TakeWeapon() {
+      this._on_cooldown = true;
+
+      this._PaintSpawn();
+
+      this._last_use = Date.now();
+    }
+    /**
+     * Return to the state where the player can pick up a new weapon
+     */
+
+  }, {
+    key: "ResetWeapon",
+    value: function ResetWeapon() {
+      this._on_cooldown = false;
+
+      this._PaintSpawn();
+    }
+  }, {
+    key: "_PaintSpawn",
+    value: function _PaintSpawn() {
+      if (!this.graphic) {
+        this.graphic = _graphics.Graphics.textures.GetSprite(this._TextureName);
+        this.graphic.scale.set(1 / 512, -1 / 512);
+        this.graphic.pivot.set(0, 512);
+        this.graphic.position.set(this.pos.x, this.pos.y);
+      }
+
+      this.graphic.tint = this.hasWeapon ? 0xFFFFFF : 0x8C8C8C;
+    }
+  }, {
+    key: "hasWeapon",
+    get: function get() {
+      return !this._on_cooldown;
+    }
+  }]);
+
+  return WeaponSpawn;
+}();
+
+exports.WeaponSpawn = WeaponSpawn;
+},{"../math":"js/math.js","../graphics":"js/graphics.js"}],"js/weapon_spawns/random_weapon_spawn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RandomWeaponSpawn = void 0;
+
+var _weapon_spawn = require("./weapon_spawn");
+
+var _weapons = require("./../weapons");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/**
+ * Implementation for a randomizing weapon spawn.
+ * This spawn has an equal possibility to give the player one of the games weapon.
+ * This spawn does not show the weapon beforehand. It is possible to get
+ * the same weapon you already carry.
+ */
+var RandomWeaponSpawn =
+/*#__PURE__*/
+function (_WeaponSpawn) {
+  _inherits(RandomWeaponSpawn, _WeaponSpawn);
+
+  /**
+   * Initialize
+   */
+  function RandomWeaponSpawn(pos) {
+    _classCallCheck(this, RandomWeaponSpawn);
+
+    // Position, cooldown, active color, inactive color
+    return _possibleConstructorReturn(this, _getPrototypeOf(RandomWeaponSpawn).call(this, pos, 5000));
+  }
+  /**
+   * Update the spawn
+   */
+
+
+  _createClass(RandomWeaponSpawn, [{
+    key: "Update",
+    value: function Update() {
+      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "Update", this).call(this);
+    }
+    /**
+     * Returns the new weapon
+     */
+
+  }, {
+    key: "TakeWeapon",
+    value: function TakeWeapon() {
+      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "TakeWeapon", this).call(this);
+
+      return _weapons.Weapons.GetRandomWeapon();
+    }
+  }, {
+    key: "ResetWeapon",
+    value: function ResetWeapon() {
+      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "ResetWeapon", this).call(this);
+    }
+  }, {
+    key: "_PaintSpawn",
+    value: function _PaintSpawn() {
+      _get(_getPrototypeOf(RandomWeaponSpawn.prototype), "_PaintSpawn", this).call(this);
+    }
+  }, {
+    key: "_TextureName",
+    get: function get() {
+      return 'mystery_box';
+    }
+  }]);
+
+  return RandomWeaponSpawn;
+}(_weapon_spawn.WeaponSpawn);
+
+exports.RandomWeaponSpawn = RandomWeaponSpawn;
+},{"./weapon_spawn":"js/weapon_spawns/weapon_spawn.js","./../weapons":"js/weapons.js"}],"js/weapon_spawns/normal_weapon_spawn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NormalWeaponSpawn = void 0;
+
+var _weapon_spawn = require("./weapon_spawn");
+
+var _weapons = require("./../weapons");
+
+var _graphics = require("./../graphics");
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/**
+ * Implementation for the normal weapon spawn
+ * Holds a single weapon which a player can pick up.
+ * The weapon is displayed beforehand and respawns every 5 seconds (random weapon)
+ */
+var NormalWeaponSpawn =
+/*#__PURE__*/
+function (_WeaponSpawn) {
+  _inherits(NormalWeaponSpawn, _WeaponSpawn);
+
+  /**
+   * Initialize
+   */
+  function NormalWeaponSpawn(pos) {
+    var _this;
+
+    _classCallCheck(this, NormalWeaponSpawn);
+
+    // Position, cooldown, active color, inactive color
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(NormalWeaponSpawn).call(this, pos, 5000)); // Next weapon
+
+    _this._SetNextWeapon();
+
+    return _this;
+  }
+  /**
+   * Update the spawn
+   */
+
+
+  _createClass(NormalWeaponSpawn, [{
+    key: "Update",
+    value: function Update() {
+      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "Update", this).call(this);
+    }
+    /**
+     * Returns the new weapon and removes the old
+     */
+
+  }, {
+    key: "TakeWeapon",
+    value: function TakeWeapon() {
+      var _this$graphic;
+
+      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "TakeWeapon", this).call(this);
+
+      var wpn = this._next_weapon;
+      this._next_weapon = null;
+
+      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
+
+      return wpn;
+    }
+  }, {
+    key: "ResetWeapon",
+
+    /**
+     * Resets the weapon spawn. Sets the new weapon
+     */
+    value: function ResetWeapon() {
+      _get(_getPrototypeOf(NormalWeaponSpawn.prototype), "ResetWeapon", this).call(this);
+
+      this._SetNextWeapon();
+    }
+    /**
+     * Render the next weapon at an 45° angle inside the weapon spawn block
+     */
+
+  }, {
+    key: "_SetNextWeapon",
+    value: function _SetNextWeapon() {
+      this._next_weapon = _weapons.Weapons.GetRandomWeapon();
+
+      var wp_graphic = _graphics.Graphics.textures.GetSprite(this._next_weapon.constructor.Name.toLowerCase() + '_0');
+
+      wp_graphic.anchor.set(0.5);
+      wp_graphic.rotation = Math.PI / 2;
+      wp_graphic.scale.set(-0.35);
+      wp_graphic.position.set(256);
+      this.graphic.addChild(wp_graphic);
+    }
+  }, {
+    key: "_TextureName",
+    get: function get() {
+      return 'mystery_box_blank';
+    }
+  }]);
+
+  return NormalWeaponSpawn;
+}(_weapon_spawn.WeaponSpawn);
+
+exports.NormalWeaponSpawn = NormalWeaponSpawn;
+},{"./weapon_spawn":"js/weapon_spawns/weapon_spawn.js","./../weapons":"js/weapons.js","./../graphics":"js/graphics.js"}],"js/spawns.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Spawns = void 0;
+
+var _random_weapon_spawn = require("./weapon_spawns/random_weapon_spawn");
+
+var _normal_weapon_spawn = require("./weapon_spawns/normal_weapon_spawn");
+
+var _physics = require("./physics");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/**
+ * Holds all the spawn in the world
+ */
+var Spawns =
+/*#__PURE__*/
+function () {
+  function Spawns() {
+    _classCallCheck(this, Spawns);
+
+    this._weapon_spawns = [];
+    this._player_spawns = [];
+    this._trophy_spawns = [];
+  }
+  /**
+   * Update the spawn point system.
+   * Updates all spawns in the scene and checks if the player intersects with
+   * one of them. If the player does intersect, the TakeWeapon() function is triggered.
+   */
+
+
+  _createClass(Spawns, [{
+    key: "Update",
+    value: function Update(dt, player) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this._weapon_spawns[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var wp_spawn = _step.value;
+          wp_spawn.Update(dt); // Check if player can take weapon
+
+          if (wp_spawn.hasWeapon && _physics.Physics.DoBoxesIntersect(wp_spawn, player)) {
+            player.SetWeapon(wp_spawn.TakeWeapon());
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+    /**
+     * Adds a new weapon spawn to the scene.
+     * type: Type of weapon spawn. [1: RandomWeaponSpawn]
+     * pos: Position of weapon spawn
+     * scene: PIXI scene which should contain the spawn
+     */
+
+  }, {
+    key: "AddWeaponSpawn",
+    value: function AddWeaponSpawn(type, pos, scene) {
+      var spawn = null; // Create spawn that correlates to type parameter
+
+      switch (type) {
+        case 1:
+          spawn = new _random_weapon_spawn.RandomWeaponSpawn(pos);
+          break;
+
+        case 2:
+          spawn = new _normal_weapon_spawn.NormalWeaponSpawn(pos);
+          break;
+
+        default:
+          return;
+      } // Add weapon spawn to list and scene
+
+
+      this._weapon_spawns.push(spawn);
+
+      scene.addChild(spawn.graphic);
+    }
+  }, {
+    key: "AddTrophySpawn",
+    value: function AddTrophySpawn(pos) {
+      this._trophy_spawns.push(pos);
+    }
+    /**
+     * Adds another point to the collection of player spawn points
+     */
+
+  }, {
+    key: "AddPlayerSpawn",
+    value: function AddPlayerSpawn(pos) {
+      this._player_spawns.push(pos);
+    }
+  }, {
+    key: "GetRandomPlayerSpawn",
+
+    /**
+     * Gets a random spawn point from the collection
+     */
+    value: function GetRandomPlayerSpawn() {
+      return this._player_spawns[Math.floor(Math.random() * this._player_spawns.length)];
+    }
+  }, {
+    key: "GetDifferentPlayerSpawns",
+    value: function GetDifferentPlayerSpawns(number_of_spawns) {
+      if (number_of_spawns > this._player_spawns.length) {
+        throw new Error("'".concat(this._player_spawns.length, "' player spawnpoints are available. '").concat(number_of_spawns, "' were requested."));
+      } else if (number_of_spawns === this._player_spawns.length) {
+        return this._player_spawns;
+      } else {
+        var spawns = [];
+
+        while (spawns.length !== number_of_spawns) {
+          var sp = this.GetRandomPlayerSpawn();
+          if (!spawns.includes(sp)) spawns.push(sp);
+        }
+
+        return spawns;
+      }
+    }
+  }, {
+    key: "GetRandomTrophySpawn",
+    value: function GetRandomTrophySpawn() {
+      return this._trophy_spawns[Math.floor(Math.random() * this._trophy_spawns.length)];
+    }
+  }, {
+    key: "playerSpawnpointCount",
+    get: function get() {
+      return this._player_spawns.length;
+    }
+  }, {
+    key: "trophySpawnpointCount",
+    get: function get() {
+      return this._trophy_spawns.length;
+    }
+  }]);
+
+  return Spawns;
+}();
+
+exports.Spawns = Spawns;
+},{"./weapon_spawns/random_weapon_spawn":"js/weapon_spawns/random_weapon_spawn.js","./weapon_spawns/normal_weapon_spawn":"js/weapon_spawns/normal_weapon_spawn.js","./physics":"js/physics.js"}],"js/input_profile.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.InputGamepad = exports.InputKeyboard = void 0;
+
+var _interaction = require("./interaction");
+
+var _math = require("./math");
+
+var _graphics = require("./graphics");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var InputKeyboard =
+/*#__PURE__*/
+function () {
+  function InputKeyboard() {
+    _classCallCheck(this, InputKeyboard);
+  }
+
+  _createClass(InputKeyboard, [{
+    key: "Init",
+    value: function Init(player) {
+      this._player = player; // arrow keys
+
+      _interaction.Keyboard.BindKey('ArrowLeft', function (dt) {
+        return player.MoveLeft(dt);
+      });
+
+      _interaction.Keyboard.BindKey('ArrowRight', function (dt) {
+        return player.MoveRight(dt);
+      });
+
+      _interaction.Keyboard.BindKey('ArrowUp', function (dt) {
+        return player.Jump(dt);
+      }, true); // wasd
+
+
+      _interaction.Keyboard.BindKey('A', function (dt) {
+        return player.MoveLeft(dt);
+      });
+
+      _interaction.Keyboard.BindKey('D', function (dt) {
+        return player.MoveRight(dt);
+      });
+
+      _interaction.Keyboard.BindKey('W', function (dt) {
+        return player.Jump(dt);
+      }, true); // dash
+
+
+      _interaction.Keyboard.BindKey('Shift', function () {
+        return player.Dash();
+      }, true);
+    }
+  }, {
+    key: "Update",
+    value: function Update() {
+      if (_interaction.Mouse.IsDown()) this._player.Attack();
+    } // get view direction relative to position
+
+  }, {
+    key: "GetViewDir",
+    value: function GetViewDir(obj) {
+      // Get screen coordinates (bottom-left based) for the mouse
+      var screen_mouse_pos = this._GetMousePos(); // Get screen coordinates (bottom-left based) for the weapon holster
+
+
+      var screen_holster_pos = new _math.Vec2D(obj.graphic.parent.worldTransform.tx, window.innerHeight - obj.graphic.parent.worldTransform.ty); // Get the distance between the two => direction vector
+
+      var distance = _math.Vec2D.Sub(screen_mouse_pos, screen_holster_pos);
+
+      return _math.Vec2D.Div(distance, distance.Magnitude); // normalize
+    }
+  }, {
+    key: "_GetMousePos",
+    value: function _GetMousePos() {
+      return new _math.Vec2D(_graphics.renderer.plugins.interaction.mouse.global.x, window.innerHeight - _graphics.renderer.plugins.interaction.mouse.global.y);
+    }
+  }, {
+    key: "IsDashUp",
+    value: function IsDashUp() {
+      console.log(_interaction.Keyboard._GetKeyObj('w'));
+      return _interaction.Keyboard._GetKeyObj('w') || _interaction.Keyboard._GetKeyObj('arrowup');
+    }
+  }]);
+
+  return InputKeyboard;
+}();
+
+exports.InputKeyboard = InputKeyboard;
+
+var InputGamepad =
+/*#__PURE__*/
+function () {
+  function InputGamepad() {
+    _classCallCheck(this, InputGamepad);
+  }
+
+  _createClass(InputGamepad, [{
+    key: "Init",
+    value: function Init(player) {
+      var _this = this;
+
+      this._pad = InputGamepad.counter;
+      InputGamepad.counter++;
+      this._player = player;
+      console.log("bind to player ".concat(player._player_number, " to gamepad ").concat(this._pad)); // move
+
+      _interaction.Gamepad.BindInput(this._pad, 'stick_left_x', function (dt, value) {
+        if (value > 0) _this._player.MoveRight(dt);else _this._player.MoveLeft(dt);
+      }); // jump
+
+
+      _interaction.Gamepad.BindInput(this._pad, 'A', function (dt) {
+        return _this._player.Jump(dt);
+      }, true);
+
+      _interaction.Gamepad.BindInput(this._pad, 'LB', function (dt) {
+        return _this._player.Jump(dt);
+      }, true); // dash
+
+
+      _interaction.Gamepad.BindInput(this._pad, 'RB', function () {
+        return _this._player.Dash();
+      }, true); // attack
+
+
+      _interaction.Gamepad.BindInput(this._pad, 'RT', function () {
+        return _this._player.Attack();
+      });
+    }
+  }, {
+    key: "Update",
+    value: function Update() {}
+  }, {
+    key: "GetViewDir",
+    value: function GetViewDir() {
+      var stick_dir = _interaction.Gamepad.GetStick('right', this._pad);
+
+      if (stick_dir.x || stick_dir.y) return new _math.Vec2D(stick_dir.x, stick_dir.y * -1);else return null;
+    }
+  }, {
+    key: "IsDashUp",
+    value: function IsDashUp() {
+      var move_dir = _interaction.Gamepad.GetStick('left', this._pad);
+
+      move_dir.y *= -1;
+      console.log('angle: ' + _math.Vec2D.AngleDegrees(new _math.Vec2D(0, 1), move_dir));
+      if (move_dir) return _math.Vec2D.AngleDegrees(new _math.Vec2D(0, 1), move_dir) < 20;
+      return false;
+    }
+  }]);
+
+  return InputGamepad;
+}();
+
+exports.InputGamepad = InputGamepad;
+InputGamepad.counter = 0;
+},{"./interaction":"js/interaction.js","./math":"js/math.js","./graphics":"js/graphics.js"}],"data/images/win/pl1_win.png":[function(require,module,exports) {
+module.exports = "/pl1_win.cea950b0.png";
+},{}],"data/images/win/pl2_win.png":[function(require,module,exports) {
+module.exports = "/pl2_win.9daa8c52.png";
+},{}],"data/images/win/pl3_win.png":[function(require,module,exports) {
+module.exports = "/pl3_win.cc94c48d.png";
+},{}],"data/images/win/pl4_win.png":[function(require,module,exports) {
+module.exports = "/pl4_win.ab15bf5d.png";
+},{}],"data/images/win/*.png":[function(require,module,exports) {
+module.exports = {
+  "pl1_win": require("./pl1_win.png"),
+  "pl2_win": require("./pl2_win.png"),
+  "pl3_win": require("./pl3_win.png"),
+  "pl4_win": require("./pl4_win.png")
+};
+},{"./pl1_win.png":"data/images/win/pl1_win.png","./pl2_win.png":"data/images/win/pl2_win.png","./pl3_win.png":"data/images/win/pl3_win.png","./pl4_win.png":"data/images/win/pl4_win.png"}],"js/level.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Level = void 0;
+
+var _game_object = require("./game_object");
+
+var _player = require("./player");
+
+var _trophy = require("./trophy");
+
+var _math = require("./math");
+
+var _physics = require("./physics");
+
+var _game_config = require("./game_config");
+
+var _spawns = require("./spawns");
+
+var _util = require("./util");
+
+var _input_profile = require("./input_profile");
+
+var _graphics = require("./graphics");
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Level =
+/*#__PURE__*/
+function () {
+  function Level(parent_scene) {
+    _classCallCheck(this, Level);
+
+    // Declare attributes for later
+    this._gravity = null;
+    this._player = null; // List of per level entities
+
+    this._blocks = [];
+    this._block_grid = [];
+    this._projectiles = []; // Spawns system
+
+    this._spawns = new _spawns.Spawns(); // Save parent scene and current level
+
+    this._parent_scene = parent_scene;
+    Level._active_level = this;
+    this._lower_death_cap = -5; // kill below
+    // list of players
+
+    this._players = [];
+  }
+
+  _createClass(Level, [{
+    key: "Update",
+    value: function Update(dt) {
+      var _this = this;
+
+      // Apply physics to this level
+      _physics.Physics.Update(dt, this);
+
+      this._players.forEach(function (player) {
+        // if (player.dead) return
+        // Update Spawns
+        _this._spawns.Update(dt, player); // kill player if below death cap
+
+
+        if (!player.dead && player.y < _this._lower_death_cap) {
+          if (_this.trophy.player === player) _this.trophy.moveToLevel(_this, _this._spawns.GetRandomTrophySpawn());
+          player.Kill();
+        } // respawn player if dead at a random position
+
+
+        if (player.dead) player.Respawn(_this._spawns.GetRandomPlayerSpawn());
+      }); // remove projectiles below death cap
+
+
+      var delete_list = this._projectiles.filter(function (prj) {
+        return prj.pos.y <= _this._lower_death_cap;
+      });
+
+      if (delete_list.length > 0) this.RemoveProjectiles.apply(this, _toConsumableArray(delete_list)); // check score
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this._players[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var player = _step.value;
+
+          if (player.score >= _game_config.game_config.win) {
+            document.getElementsByClassName('win-screen')[0].style.display = 'block';
+
+            var img = require('../data/images/win/*.png')["pl".concat(player._player_number + 1, "_win")];
+
+            console.log(img); // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img[`pl${player._player_number + 1}_win`]}'`
+            // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img}'`
+
+            document.getElementsByClassName('win-screen')[0].style.backgroundImage = "url('".concat(require('../data/images/win/*.png')["pl".concat(player._player_number + 1, "_win")], "'");
+            return false;
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return true;
+    }
+  }, {
+    key: "AddProjectiles",
+    value: function AddProjectiles() {
+      var _this$_projectiles, _this$_parent_scene;
+
+      for (var _len = arguments.length, prj = new Array(_len), _key = 0; _key < _len; _key++) {
+        prj[_key] = arguments[_key];
+      }
+
+      (_this$_projectiles = this._projectiles).push.apply(_this$_projectiles, prj);
+
+      (_this$_parent_scene = this._parent_scene).addChild.apply(_this$_parent_scene, _toConsumableArray(prj.map(function (pr) {
+        return pr.graphic;
+      })));
+    }
+  }, {
+    key: "RemoveProjectiles",
+    value: function RemoveProjectiles() {
+      var _this$_parent_scene2;
+
+      for (var _len2 = arguments.length, prj = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        prj[_key2] = arguments[_key2];
+      }
+
+      prj.forEach(function (p) {
+        return p.RemoveMoveVec();
+      });
+
+      (_this$_parent_scene2 = this._parent_scene).removeChild.apply(_this$_parent_scene2, _toConsumableArray(prj.concat().map(function (pr) {
+        return pr.graphic;
+      })));
+
+      this._projectiles = this._projectiles.filter(function (pr) {
+        return !prj.concat().includes(pr);
+      });
+    }
+    /**
+     * This loads the scene
+     */
+
+  }, {
+    key: "Load",
+    value: function Load(lvl, scene) {
+      var data = lvl.data; // Prepare variables
+
+      var layers = data.layers;
+      var blocks = null;
+      var weapon_sp = null;
+      var player_sp = null;
+      var trophy_sp = null; // Iterate all layers and assign helpers
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = layers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var layer = _step2.value;
+
+          if (layer.name == 'world') {
+            blocks = layer.data;
+          } else if (layer.name === 'weapon_sp') {
+            weapon_sp = layer.data;
+          } else if (layer.name === 'player_sp') {
+            player_sp = layer.data;
+          } else if (layer.name === 'trophy_sp') {
+            trophy_sp = layer.data;
+          }
+        } // We need level data
+
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      if (!blocks) {
+        console.error('no world layer found in level file');
+        return;
+      } // Calculate width and height
+
+
+      this.width = data.canvas.width / 32;
+      this.height = blocks.length / this.width; // Check level intact
+
+      if (blocks.length != this.width * this.height) console.warn('number of blocks doesn\'t match up height & width'); // Iterate the data and add blocks to level
+
+      for (var i = 0; i < blocks.length; i++) {
+        var material = blocks[i];
+        if (material != 1) continue;
+        var pos = new _math.Vec2D(Math.floor(i % this.width), this.height - Math.floor(i / this.width) - 1);
+        var block = new _game_object.GameObject(pos);
+        block.graphic = _graphics.Graphics.textures.GetSprite(lvl.wall || 'wall');
+        block.graphic.width = block.width;
+        block.graphic.height = block.height;
+        block.graphic.position.set(pos.x, pos.y);
+
+        this._blocks.push(block);
+
+        scene.addChild(block.graphic);
+      } // We need at least one spawn point
+
+
+      if (!player_sp) {
+        console.error('No player_sp layer was found.');
+        return;
+      } // Iterate the "player_sp" data and add _spawnpoints
+
+
+      for (var _i = 0; _i < player_sp.length; _i++) {
+        if (player_sp[_i] !== 1) continue;
+
+        var _pos = new _math.Vec2D(Math.floor(_i % this.width), this.height - Math.floor(_i / this.width) - 1);
+
+        this._spawns.AddPlayerSpawn(_pos);
+      }
+
+      if (this._spawns.playerSpawnpointCount === 0) {
+        console.error('No player spawnpoints were found.');
+        return;
+      } // Check if any weapon spawn data was found
+
+
+      if (weapon_sp) {
+        // Iterate the "weapon_sp" data and add _spawnpoints
+        for (var _i2 = 0; _i2 < weapon_sp.length; ++_i2) {
+          var _pos2 = new _math.Vec2D(Math.floor(_i2 % this.width), this.height - Math.floor(_i2 / this.width) - 1);
+
+          this._spawns.AddWeaponSpawn(weapon_sp[_i2], _pos2, scene);
+        }
+      }
+
+      if (trophy_sp) {
+        for (var _i3 = 0; _i3 < trophy_sp.length; ++_i3) {
+          if (trophy_sp[_i3] !== 1) continue;
+
+          var _pos3 = new _math.Vec2D(Math.floor(_i3 % this.width), this.height - Math.floor(_i3 / this.width) - 1);
+
+          this._spawns.AddTrophySpawn(_pos3);
+        }
+      } // gravity
+
+
+      this._gravity = new _math.Vec2D(0, _game_config.game_config.gravity * -1);
+
+      this._GenLvlGrid();
+
+      this._GenCollisionFaces(); // Get player spawn spawnpoints
+
+
+      var spawnpoints = this._spawns.GetDifferentPlayerSpawns(4); // Create the player at a random position
+
+
+      var player = new _player.Player(0, new _input_profile.InputGamepad(), spawnpoints[0]);
+      var keyboard = new _input_profile.InputKeyboard();
+      keyboard.Init(player);
+      scene.addChild(player.graphic);
+
+      this._players.push(player);
+
+      var player2 = new _player.Player(1, new _input_profile.InputGamepad(), spawnpoints[1]);
+      scene.addChild(player2.graphic);
+
+      this._players.push(player2);
+
+      var player3 = new _player.Player(2, new _input_profile.InputGamepad(), spawnpoints[2]);
+      scene.addChild(player3.graphic);
+
+      this._players.push(player3);
+
+      var player4 = new _player.Player(3, new _input_profile.InputGamepad(), spawnpoints[3]);
+      scene.addChild(player4.graphic);
+
+      this._players.push(player4); // Create the trophy to pick up
+
+
+      this.trophy = new _trophy.Trophy(this);
+      if (this._spawns.trophySpawnpointCount > 0) this.trophy.moveToLevel(this, this._spawns.GetRandomTrophySpawn());
+      scene.addChild(this.trophy.graphic); // render collision faces
+
+      if ((0, _util.GetUrlParam)('rcf') || (0, _util.GetUrlParam)('render_collision_faces')) this._RenderCollisionFaces(scene);
+    }
+    /**
+     * Generate level grid from list of blocks
+     */
+
+  }, {
+    key: "_GenLvlGrid",
+    value: function _GenLvlGrid() {
+      var _this2 = this;
+
+      // get max x & y
+      var blocks = this._blocks;
+      if (blocks.length == 0) return [];
+      if (blocks.length == 1) return [blocks[0]];
+      var max_x = 0;
+      var max_y = 0;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = blocks[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var block = _step3.value;
+          if (block.x > max_x) max_x = block.x;
+          if (block.y > max_y) max_y = block.y;
+        } // lookup block at position
+
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      var GetBlock = function GetBlock(x, y) {
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+          for (var _iterator4 = _this2._blocks[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var block = _step4.value;
+            if (block.x == x && block.y == y) return block;
+          }
+        } catch (err) {
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
+              _iterator4.return();
+            }
+          } finally {
+            if (_didIteratorError4) {
+              throw _iteratorError4;
+            }
+          }
+        }
+
+        return null;
+      }; // generate grid
+
+
+      this._block_grid = [];
+
+      for (var x = 0; x <= max_x; x++) {
+        var column = [];
+
+        for (var y = 0; y <= max_y; y++) {
+          column.push(GetBlock(x, y));
+        }
+
+        this._block_grid.push(column);
+      }
+
+      if ("development" === 'development') this._LogGrid();
+    }
+    /*
+     * Generate Collision Faces
+     */
+
+  }, {
+    key: "_GenCollisionFaces",
+    value: function _GenCollisionFaces() {
+      var blocks = this._block_grid;
+
+      var diag_top_left = function diag_top_left(x, y) {
+        if (x == 0 || y == blocks[x].length - 1) return false;
+        return blocks[x - 1][y + 1];
+      };
+
+      var diag_top_right = function diag_top_right(x, y) {
+        if (x == blocks.length - 1 || y == blocks[x].length - 1) return false;
+        return blocks[x + 1][y + 1];
+      };
+
+      var diag_bottom_left = function diag_bottom_left(x, y) {
+        if (x == 0 || y == 0) return false;
+        return blocks[x - 1][y - 1];
+      };
+
+      var diag_bottom_right = function diag_bottom_right(x, y) {
+        if (x == blocks.length - 1 || y == 0) return false;
+        return blocks[x + 1][y - 1];
+      };
+
+      var collides_left = function collides_left(x, y) {
+        if (x == 0) return true;
+        return !blocks[x - 1][y];
+      };
+
+      var collides_right = function collides_right(x, y) {
+        if (x == blocks.length - 1) return true;
+        return !blocks[x + 1][y];
+      };
+
+      var collides_top = function collides_top(x, y) {
+        var args = [x, y]; // topmost block => false
+
+        if (y == blocks[x].length - 1) {
+          return true;
+        } // block on top...
+
+
+        if (blocks[x][y + 1]) {
+          // ...no block left & right => false
+          if (collides_left.apply(void 0, args) && collides_right.apply(void 0, args)) {
+            return false; // ...block at top...
+          } else {
+            // ...block left and no block top right or
+            // block right and no block top left ? true : false
+            return !diag_top_left.apply(void 0, args) && collides_right.apply(void 0, args) || !diag_top_right.apply(void 0, args) && collides_left.apply(void 0, args);
+          }
+        }
+
+        return true;
+      };
+
+      var collides_bottom = function collides_bottom(x, y) {
+        if (y == 0) return true;
+        if (!blocks[x][y - 1]) return true; // no block bottom left || no block bottom right
+
+        if (!diag_bottom_left(x, y) || !diag_bottom_right(x, y)) {
+          // block on top
+          if (y < blocks[0].length && blocks[x][y + 1]) {
+            // collides top => true
+            if (collides_top(x, y)) return true;
+          }
+        }
+
+        return false;
+      };
+
+      for (var y = blocks[0].length - 1; y >= 0; y--) {
+        for (var x = 0; x < blocks.length; x++) {
+          if (blocks[x][y]) {
+            blocks[x][y]['_collision_sides'] = {
+              left: collides_left(x, y),
+              top: collides_top(x, y),
+              right: collides_right(x, y),
+              bottom: collides_bottom(x, y)
+            };
+          }
+        }
+      }
+
+      if ("development" === 'development') this._LogCollisionGrid();
+    }
+    /*
+     * print block grid to console
+     */
+
+  }, {
+    key: "_LogGrid",
+    value: function _LogGrid() {
+      console.groupCollapsed('= BLOCK GRID =');
+      var str = "\u250C" + "\u2500".repeat(this._block_grid.length + 2) + "\u2510\n";
+
+      if (this._block_grid.length > 0) {
+        for (var y = this._block_grid[0].length - 1; y >= 0; y--) {
+          str += "\u2502 ";
+
+          for (var x = 0; x < this._block_grid.length; x++) {
+            str += this._block_grid[x][y] ? "\u2588" : ' ';
+          }
+
+          str += " \u2502\n";
+        }
+      }
+
+      str += "\u2514" + "\u2500".repeat(this._block_grid.length + 2) + "\u2518";
+      console.log('\n' + str);
+      console.groupEnd();
+    }
+    /*
+     * print collision grid to console
+     */
+
+  }, {
+    key: "_LogCollisionGrid",
+    value: function _LogCollisionGrid() {
+      console.groupCollapsed('= COLLISION GRID =');
+      var c_top = "\u2564",
+          c_left = "\u255F",
+          c_right = "\u2562",
+          c_bottom = "\u2567";
+      var str = "\u250C" + "\u2500".repeat(this._block_grid.length * 5 + 2) + "\u2510\n";
+
+      if (this._block_grid.length > 0) {
+        for (var y = this._block_grid[0].length - 1; y >= 0; y--) {
+          str += "\u2502 "; // top
+
+          for (var x = 0; x < this._block_grid.length; x++) {
+            str += this._block_grid[x][y] && this._block_grid[x][y]._collision_sides.top ? '  ' + c_top + '  ' : '     ';
+          }
+
+          str += " \u2502\n"; // left & right
+
+          str += "\u2502 ";
+
+          for (var _x = 0; _x < this._block_grid.length; _x++) {
+            str += !this._block_grid[_x][y] ? '     ' : (this._block_grid[_x][y]._collision_sides.left ? ' ' + c_left : '  ') + "\u2593" + (this._block_grid[_x][y]._collision_sides.right ? c_right + ' ' : '  ');
+          }
+
+          str += " \u2502\n"; // bottom
+
+          str += "\u2502 ";
+
+          for (var _x2 = 0; _x2 < this._block_grid.length; _x2++) {
+            str += this._block_grid[_x2][y] && this._block_grid[_x2][y]._collision_sides.bottom ? '  ' + c_bottom + '  ' : '     ';
+          }
+
+          str += " \u2502\n";
+        }
+      }
+
+      str += "\u2514" + "\u2500".repeat(this._block_grid.length * 5 + 2) + "\u2518";
+      console.log('%c\n' + str, 'font-size: 7px; line-height: 12px');
+      console.groupEnd();
+    }
+    /*
+     * Render Collision Faces
+     */
+
+  }, {
+    key: "_RenderCollisionFaces",
+    value: function _RenderCollisionFaces(scene) {
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
+
+      try {
+        for (var _iterator5 = this._blocks[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var block = _step5.value;
+          block.RenderCollisionFaces(scene);
+        }
+      } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+            _iterator5.return();
+          }
+        } finally {
+          if (_didIteratorError5) {
+            throw _iteratorError5;
+          }
+        }
+      }
+    }
+  }], [{
+    key: "ActiveLevel",
+    get: function get() {
+      return Level._active_level;
+    }
+  }]);
+
+  return Level;
+}();
+
+exports.Level = Level;
+},{"./game_object":"js/game_object.js","./player":"js/player.js","./trophy":"js/trophy.js","./math":"js/math.js","./physics":"js/physics.js","./game_config":"js/game_config.js","./spawns":"js/spawns.js","./util":"js/util.js","./input_profile":"js/input_profile.js","./graphics":"js/graphics.js","../data/images/win/*.png":"data/images/win/*.png"}],"js/Weapons.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "Bow", {
+  enumerable: true,
+  get: function () {
+    return _bow.Bow;
+  }
+});
+Object.defineProperty(exports, "Gun", {
+  enumerable: true,
+  get: function () {
+    return _gun.Gun;
+  }
+});
+Object.defineProperty(exports, "Minigun", {
+  enumerable: true,
+  get: function () {
+    return _minigun.Minigun;
+  }
+});
+Object.defineProperty(exports, "Shotgun", {
+  enumerable: true,
+  get: function () {
+    return _shotgun.Shotgun;
+  }
+});
+exports.Weapons = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _bow = require("./weapons/bow");
+
+var _gun = require("./weapons/gun");
+
+var _minigun = require("./weapons/minigun");
+
+var _shotgun = require("./weapons/shotgun");
+
+var _graphics = require("./graphics");
+
+var _game_config = require("./game_config");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Weapons =
+/*#__PURE__*/
+function () {
+  function Weapons() {
+    _classCallCheck(this, Weapons);
+  }
+
+  _createClass(Weapons, null, [{
+    key: "GetRandomWeapon",
+    value: function GetRandomWeapon() {
+      var wpn = Weapons._weapons[Math.floor(Math.random() * Weapons._weapons.length)];
+
+      return new wpn();
+    }
+  }, {
+    key: "GetProjectileSprite",
+    value: function GetProjectileSprite(wpn) {
+      var variant = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var projectile = undefined;
+      var cl_proj = 0xFFFFFF;
+      var proj_width = 0.3;
+      var proj_height = 0.15;
+
+      switch (wpn.constructor) {
+        case _bow.Bow:
+          projectile = _graphics.Graphics.textures.GetSprite('arrow_' + variant);
+          projectile.scale.set(1 / 747, -1 / 747);
+          projectile.anchor.set(0.5, 1);
+          break;
+
+        default:
+          projectile = _graphics.Graphics.CreateRectangle(0, 0, proj_height, proj_width, cl_proj, cl_proj);
+          break;
+      }
+
+      return projectile;
+    }
+  }, {
+    key: "GetSprite",
+    value: function GetSprite(wpn, variant) {
+      var weapon = undefined;
+      if ("development" === 'development') console.log("Requesting weapon sprite '".concat(wpn.constructor.Name.toLowerCase(), "'"));
+      weapon = _graphics.Graphics.textures.GetSprite("".concat(wpn.constructor.Name.toLowerCase(), "_").concat(variant)); // const length = conf.size[weapon.constructor.Name.toLowerCase()] ? conf.size[weapon.Name.toLowerCase()] : 1
+
+      var length = _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] ? _game_config.game_config.size[wpn.constructor.Name.toLowerCase()] : 1;
+      var mod = weapon.width > weapon.height ? length / weapon.width : length / weapon.height;
+      weapon.width *= mod;
+      weapon.height *= mod;
+      weapon.anchor.set(0.5, 0.5);
+
+      if (_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()]) {
+        weapon.anchor.set(_game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][1], _game_config.game_config.anchor[wpn.constructor.Name.toLowerCase()][0]);
+      }
+
+      return weapon;
+    }
+  }]);
+
+  return Weapons;
+}();
+
+exports.Weapons = Weapons;
+Weapons._weapons = [_gun.Gun, _bow.Bow, _minigun.Minigun, _shotgun.Shotgun];
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./weapons/bow":"js/weapons/bow.js","./weapons/gun":"js/weapons/gun.js","./weapons/minigun":"js/weapons/minigun.js","./weapons/shotgun":"js/weapons/shotgun.js","./graphics":"js/graphics.js","./game_config":"js/game_config.js"}],"js/ui/player_ui.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PlayerUI = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _game_config = require("./../game_config");
+
+var _Weapons = require("./../Weapons");
+
+var _graphics = require("../graphics");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var PlayerUI =
+/*#__PURE__*/
+function () {
+  function PlayerUI(players) {
+    _classCallCheck(this, PlayerUI);
+
+    this._players = [];
+    this.graphic = new PIXI.Container();
+
+    this._setPlayers(players);
+  }
+
+  _createClass(PlayerUI, [{
+    key: "_setPlayers",
+    value: function _setPlayers(players) {
+      var _this$graphic;
+
+      (_this$graphic = this.graphic).removeChild.apply(_this$graphic, _toConsumableArray(this.graphic.children));
+
+      PlayerHealth.total_player_count = players.length;
+
+      for (var i = 0; i < players.length; ++i) {
+        var pl_bar = new PlayerHealth(players[i], i);
+
+        this._players.push(pl_bar);
+
+        this.graphic.addChild(pl_bar.graphic);
+      }
+
+      this.graphic.position.set(0);
+    }
+  }, {
+    key: "Update",
+    value: function Update() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this._players[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var player = _step.value;
+          player.Update();
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }]);
+
+  return PlayerUI;
+}();
+
+exports.PlayerUI = PlayerUI;
+
+var PlayerHealth =
+/*#__PURE__*/
+function () {
+  function PlayerHealth(player, index) {
+    _classCallCheck(this, PlayerHealth);
+
+    // Set attributes
+    this._player = player;
+    this._player_index = index;
+    this._x_offset = index % 2 === 0 ? 64 : window.innerWidth - 230;
+    this._y_offset = index < 2 ? 64 : window.innerHeight - 64; // Create container
+
+    this.graphic = new PIXI.Graphics();
+    this.graphic.position.set(0);
+    this.graphic.scale.set(1 / window.devicePixelRatio); // Save mugs
+
+    this._mugs = []; // Static head sprite
+
+    this._head_graphic = _graphics.Graphics.textures.GetSprite("player_head_".concat(index));
+
+    this._head_graphic.position.set(this._x_offset, this._y_offset);
+
+    this._head_graphic.anchor.set(0.5);
+
+    this._head_graphic.scale.set(0.08);
+
+    this.graphic.addChild(this._head_graphic); // Static money sprite
+
+    this._money_graphic = _graphics.Graphics.textures.GetSprite('money');
+
+    this._money_graphic.position.set(this._x_offset + 72, this._y_offset - 18);
+
+    this._money_graphic.anchor.set(0.5);
+
+    this._money_graphic.scale.set(0.07);
+
+    this.graphic.addChild(this._money_graphic);
+  }
+
+  _createClass(PlayerHealth, [{
+    key: "Update",
+    value: function Update() {
+      if (this._player_dead !== this._player.dead) {
+        this._player_dead = this._player.dead;
+
+        this._PaintMugs();
+
+        this._PaintHighscore();
+
+        this._PaintWeapon();
+
+        this._head_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
+        this._money_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
+        this._score_graphic.tint = this._player.dead ? 0x8C8C8C : 0xFFFFFF;
+        return;
+      } // Out of reasons unknown to me, when first rendering the ui, the position.y is always set to 0.
+      // To prevent this we need to repaint the whole thing when position.y === 0
+
+
+      if (this._player.health !== this._player_last_health) {
+        this._player_last_health = this._player.health;
+
+        this._PaintMugs();
+      }
+
+      if (this._player.score !== this._player_last_score) {
+        this._player_last_score = this._player.score;
+
+        this._PaintHighscore();
+      }
+
+      if (this._player._weapon !== this._player_last_weapon || this._player_score_digits !== Math.floor(this._player.score).toString().length) {
+        this._player_last_weapon = this._player._weapon;
+        this._player_score_digits = Math.floor(this._player.score).toString().length;
+
+        this._PaintWeapon();
+      }
+    }
+  }, {
+    key: "_PaintWeapon",
+    value: function _PaintWeapon() {
+      // Remove weapon if player has none
+      if (!this._player._weapon) {
+        this.graphic.removeChild(this._weapon_graphic);
+        return;
+      }
+
+      this.graphic.removeChild(this._weapon_graphic);
+      this._weapon_graphic = new PIXI.Sprite(this._player._weapon.graphic.texture);
+
+      this._weapon_graphic.anchor.set(0.5);
+
+      this._weapon_graphic.position.set(this._x_offset + 140 + Math.floor(this._score_graphic.width), this._y_offset - 16);
+
+      this._weapon_graphic.scale.set(-0.05, 0.05);
+
+      this._weapon_graphic.rotation = this._player._weapon && this._player._weapon.constructor === _Weapons.Bow ? Math.PI : Math.PI / 2;
+      this.graphic.addChild(this._weapon_graphic);
+    }
+  }, {
+    key: "_PaintHighscore",
+    value: function _PaintHighscore() {
+      this.graphic.removeChild(this._score_graphic);
+      this._score_graphic = new PIXI.Text("x".concat(Math.floor(this._player.score)), {
+        fill: 0xFFFFFF,
+        fontSize: 28,
+        fontWeight: 'bold'
+      });
+
+      this._score_graphic.position.set(this._x_offset + 94, this._y_offset - 36);
+
+      this.graphic.addChild(this._score_graphic);
+    }
+  }, {
+    key: "_PaintMugs",
+    value: function _PaintMugs() {
+      var _this$graphic2;
+
+      (_this$graphic2 = this.graphic).removeChild.apply(_this$graphic2, _toConsumableArray(this._mugs));
+
+      this._mugs = []; // Get the maximum amount of mugs and the current amount
+
+      var cur_mugs = PlayerHealth._GetHalfHearts(this._player.health); // Draw mugs
+
+
+      for (var i = 0; i < cur_mugs; i += 2) {
+        var mug = _graphics.Graphics.textures.GetSprite('coffee_cup');
+
+        mug.anchor.set(0, 0.5);
+        mug.scale.set(0.1);
+        mug.position.set(this._x_offset + 15 * i + 56, this._y_offset + 20); // If half money => crop width
+
+        if (i + 1 >= cur_mugs) mug.texture = new PIXI.Texture(mug.texture, new PIXI.Rectangle(0, 0, 128, 256));
+
+        this._mugs.push(mug);
+      }
+
+      if (this.graphic && this._mugs && this._mugs.length) {
+        var _this$graphic3;
+
+        (_this$graphic3 = this.graphic).addChild.apply(_this$graphic3, _toConsumableArray(this._mugs));
+      }
+    }
+  }], [{
+    key: "_GetHalfHearts",
+    value: function _GetHalfHearts(health) {
+      return Math.ceil(10 / _game_config.game_config.player_hp * health);
+    }
+  }]);
+
+  return PlayerHealth;
+}();
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./../game_config":"js/game_config.js","./../Weapons":"js/Weapons.js","../graphics":"js/graphics.js"}],"js/ui/user_interface.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.UI = void 0;
+
+var PIXI = _interopRequireWildcard(require("pixi.js"));
+
+var _level = require("../level");
+
+var _player_ui = require("./player_ui");
+
+var _util = require("../util");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var UI =
+/*#__PURE__*/
+function () {
+  function UI() {
+    _classCallCheck(this, UI);
+
+    this.graphic = new PIXI.Container();
+    if ((0, _util.GetUrlParam)('state') == 'lvl_view') this.graphic.visible = false;
+
+    this._setLevel(_level.Level.ActiveLevel);
+  }
+
+  _createClass(UI, [{
+    key: "Update",
+    value: function Update() {
+      if (this._current_level !== _level.Level.ActiveLevel) this._setLevel(_level.Level.ActiveLevel);
+
+      this._player_ui.Update();
+    }
+  }, {
+    key: "_setLevel",
+    value: function _setLevel(lvl) {
+      this._current_level = lvl;
+      this._player_ui = new _player_ui.PlayerUI(this._current_level._players);
+      this.graphic.addChild(this._player_ui.graphic);
+    }
+  }]);
+
+  return UI;
+}();
+
+exports.UI = UI;
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","../level":"js/level.js","./player_ui":"js/ui/player_ui.js","../util":"js/util.js"}],"data/level/lvl_google.json":[function(require,module,exports) {
 module.exports = {
   "layers": [{
     "name": "background",
@@ -48815,6 +48927,8 @@ var _user_interface = require("./ui/user_interface");
 
 var _sounds = require("./sounds");
 
+var _util = require("./util");
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -48901,8 +49015,9 @@ function () {
   }, {
     key: "Update",
     value: function Update(dt) {
-      this.level.Update(dt);
+      var r = this.level.Update(dt);
       this.ui.Update();
+      return r;
     }
   }, {
     key: "LoadLevel",
@@ -48922,6 +49037,12 @@ function () {
       if (lvl) {
         var _this$scene;
 
+        if ((0, _util.GetUrlParam)('state') == 'lvl_view') {
+          lvl.background = '';
+          lvl.wall = '';
+          lvl.backgroundColor = 0xFFFFFF;
+        }
+
         console.log("load level \"".concat(lvl.name, "\" [").concat(lvl.id, "]")); // Unload old level
 
         (_this$scene = this.scene).removeChild.apply(_this$scene, _toConsumableArray(this.scene.children));
@@ -48937,9 +49058,8 @@ function () {
 
           if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
             this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio); // center on x-axis
+            // this._background.position.x -= (window.innerWidth - this._background.width) / 2
 
-
-            this._background.position.x -= (window.innerWidth - this._background.width) / 2;
           } else {
             this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio);
           }
@@ -48951,11 +49071,10 @@ function () {
 
         this.ui = new _user_interface.UI();
         this.root.addChild(this.ui.graphic);
-
-        _sounds.Sounds.Play('theme', {
-          loop: true
+        if (!(0, _util.GetUrlParam)('no_music')) _sounds.Sounds.Play('theme', {
+          loop: true,
+          volume: _game_config.game_config.sound.music_volume
         }); // Resize screen to fit new level
-
 
         this._ResizeScene();
       }
@@ -49021,7 +49140,7 @@ function () {
 }();
 
 exports.World = World;
-},{"pixi.js":"node_modules/pixi.js/lib/index.js","./graphics":"js/graphics.js","./level":"js/level.js","./game_config":"js/game_config.js","./ui/user_interface":"js/ui/user_interface.js","./sounds":"js/sounds.js","../data/level/lvl_google.json":"data/level/lvl_google.json","../data/level/lvl_ballpit.json":"data/level/lvl_ballpit.json","../data/level/lvl_code.json":"data/level/lvl_code.json","../data/level/lvl_basement.json":"data/level/lvl_basement.json"}],"data/config.json":[function(require,module,exports) {
+},{"pixi.js":"node_modules/pixi.js/lib/index.js","./graphics":"js/graphics.js","./level":"js/level.js","./game_config":"js/game_config.js","./ui/user_interface":"js/ui/user_interface.js","./sounds":"js/sounds.js","./util":"js/util.js","../data/level/lvl_google.json":"data/level/lvl_google.json","../data/level/lvl_ballpit.json":"data/level/lvl_ballpit.json","../data/level/lvl_code.json":"data/level/lvl_code.json","../data/level/lvl_basement.json":"data/level/lvl_basement.json"}],"data/config.json":[function(require,module,exports) {
 module.exports = {
   "resolution": 2,
   "str_clear_color": "999999",
@@ -49039,10 +49158,11 @@ module.exports = {
     "cooldown": 1000
   },
   "trophy": {
-    "passive_income": 0.1,
-    "pickup_bounty": 2,
-    "steal_bounty": 4
+    "passive_income": 100,
+    "pickup_bounty": 1000,
+    "steal_bounty": 2000
   },
+  "win": 10000,
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",
@@ -49076,14 +49196,17 @@ module.exports = {
     "minigun": [0.2, 1],
     "shotgun": [0.5, 0.9]
   },
-  "display_mov_vector": false
+  "display_mov_vector": false,
+  "sound": {
+    "music_volume": 0.15
+  }
 };
 },{}],"data/images/arrow/arrow_0.png":[function(require,module,exports) {
 module.exports = "/arrow_0.a9315c04.png";
-},{}],"data/images/arrow/arrow_2.png":[function(require,module,exports) {
-module.exports = "/arrow_2.fdedf762.png";
 },{}],"data/images/arrow/arrow_1.png":[function(require,module,exports) {
 module.exports = "/arrow_1.da541196.png";
+},{}],"data/images/arrow/arrow_2.png":[function(require,module,exports) {
+module.exports = "/arrow_2.fdedf762.png";
 },{}],"data/images/arrow/arrow_3.png":[function(require,module,exports) {
 module.exports = "/arrow_3.466a77fc.png";
 },{}],"data/images/bow/bow_0.png":[function(require,module,exports) {
@@ -49152,40 +49275,46 @@ module.exports = "/shotgun_3.1daf6b4b.png";
 module.exports = "/mystery_box.ae027bcf.png";
 },{}],"data/images/weapon_spawn/mystery_box_blank.png":[function(require,module,exports) {
 module.exports = "/mystery_box_blank.3b45e1b9.png";
-},{}],"data/images/player/player1/Player1jumping2.png":[function(require,module,exports) {
-module.exports = "/Player1jumping2.6d2f35d2.png";
 },{}],"data/images/player/player1/pl1_dead.png":[function(require,module,exports) {
 module.exports = "/pl1_dead.55655e88.png";
 },{}],"data/images/player/player1/pl1_jump.png":[function(require,module,exports) {
 module.exports = "/pl1_jump.a99550ff.png";
+},{}],"data/images/player/player1/pl1_run.png":[function(require,module,exports) {
+module.exports = "/pl1_run.7746e8cc.png";
+},{}],"data/images/player/player1/pl1_run_3.png":[function(require,module,exports) {
+module.exports = "/pl1_run_3.b39b0c1f.png";
 },{}],"data/images/player/player1/pl1_standing.png":[function(require,module,exports) {
 module.exports = "/pl1_standing.824d1815.png";
-},{}],"data/images/player/player1/run/pl1_run_3.png":[function(require,module,exports) {
-module.exports = "/pl1_run_3.d5d767d1.png";
-},{}],"data/images/player/player1/run/runP1-1.png":[function(require,module,exports) {
-module.exports = "/runP1-1.afbc04a2.png";
-},{}],"data/images/player/player1/run/runP1-10.png":[function(require,module,exports) {
-module.exports = "/runP1-10.bd0e7526.png";
-},{}],"data/images/player/player1/run/runP1-2.png":[function(require,module,exports) {
-module.exports = "/runP1-2.40605a68.png";
-},{}],"data/images/player/player1/run/runP1-4.png":[function(require,module,exports) {
-module.exports = "/runP1-4.966a6e44.png";
-},{}],"data/images/player/player1/run/runP1-5.png":[function(require,module,exports) {
-module.exports = "/runP1-5.7e69b7db.png";
-},{}],"data/images/player/player1/run/runP1-6.png":[function(require,module,exports) {
-module.exports = "/runP1-6.0b4c7d56.png";
-},{}],"data/images/player/player1/run/runP1-7.png":[function(require,module,exports) {
-module.exports = "/runP1-7.a474bd32.png";
-},{}],"data/images/player/player1/run/runP1-8.png":[function(require,module,exports) {
-module.exports = "/runP1-8.eb735596.png";
-},{}],"data/images/player/player1/run/runP1-9.png":[function(require,module,exports) {
-module.exports = "/runP1-9.98d28c6b.png";
+},{}],"data/images/player/player2/pl2_dead.png":[function(require,module,exports) {
+module.exports = "/pl2_dead.79cb7280.png";
+},{}],"data/images/player/player2/pl2_jump.png":[function(require,module,exports) {
+module.exports = "/pl2_jump.41bcdb6f.png";
+},{}],"data/images/player/player2/pl2_run.png":[function(require,module,exports) {
+module.exports = "/pl2_run.03ac7618.png";
+},{}],"data/images/player/player2/pl2_standing.png":[function(require,module,exports) {
+module.exports = "/pl2_standing.3b459502.png";
+},{}],"data/images/player/player3/pl3_dead.png":[function(require,module,exports) {
+module.exports = "/pl3_dead.154cacb1.png";
+},{}],"data/images/player/player3/pl3_jump.png":[function(require,module,exports) {
+module.exports = "/pl3_jump.0b8f65e4.png";
+},{}],"data/images/player/player3/pl3_run.png":[function(require,module,exports) {
+module.exports = "/pl3_run.13c9e0e8.png";
+},{}],"data/images/player/player3/pl3_standing.png":[function(require,module,exports) {
+module.exports = "/pl3_standing.f475cc9a.png";
+},{}],"data/images/player/player4/pl4_dead.png":[function(require,module,exports) {
+module.exports = "/pl4_dead.d2ee9cbc.png";
+},{}],"data/images/player/player4/pl4_jump.png":[function(require,module,exports) {
+module.exports = "/pl4_jump.e9d5e56f.png";
+},{}],"data/images/player/player4/pl4_run.png":[function(require,module,exports) {
+module.exports = "/pl4_run.e070974d.png";
+},{}],"data/images/player/player4/pl4_standing.png":[function(require,module,exports) {
+module.exports = "/pl4_standing.59006077.png";
 },{}],"data/images/**/*.png":[function(require,module,exports) {
 module.exports = {
   "arrow": {
     "arrow_0": require("./../arrow/arrow_0.png"),
-    "arrow_2": require("./../arrow/arrow_2.png"),
     "arrow_1": require("./../arrow/arrow_1.png"),
+    "arrow_2": require("./../arrow/arrow_2.png"),
     "arrow_3": require("./../arrow/arrow_3.png")
   },
   "bow": {
@@ -49237,34 +49366,64 @@ module.exports = {
     "mystery_box": require("./../weapon_spawn/mystery_box.png"),
     "mystery_box_blank": require("./../weapon_spawn/mystery_box_blank.png")
   },
+  "win": {
+    "pl1_win": require("./../win/pl1_win.png"),
+    "pl2_win": require("./../win/pl2_win.png"),
+    "pl3_win": require("./../win/pl3_win.png"),
+    "pl4_win": require("./../win/pl4_win.png")
+  },
   "player": {
     "player1": {
-      "Player1jumping2": require("./../player/player1/Player1jumping2.png"),
       "pl1_dead": require("./../player/player1/pl1_dead.png"),
       "pl1_jump": require("./../player/player1/pl1_jump.png"),
-      "pl1_standing": require("./../player/player1/pl1_standing.png"),
-      "run": {
-        "pl1_run_3": require("./../player/player1/run/pl1_run_3.png"),
-        "runP1-1": require("./../player/player1/run/runP1-1.png"),
-        "runP1-10": require("./../player/player1/run/runP1-10.png"),
-        "runP1-2": require("./../player/player1/run/runP1-2.png"),
-        "runP1-4": require("./../player/player1/run/runP1-4.png"),
-        "runP1-5": require("./../player/player1/run/runP1-5.png"),
-        "runP1-6": require("./../player/player1/run/runP1-6.png"),
-        "runP1-7": require("./../player/player1/run/runP1-7.png"),
-        "runP1-8": require("./../player/player1/run/runP1-8.png"),
-        "runP1-9": require("./../player/player1/run/runP1-9.png")
-      }
+      "pl1_run": require("./../player/player1/pl1_run.png"),
+      "pl1_run_3": require("./../player/player1/pl1_run_3.png"),
+      "pl1_standing": require("./../player/player1/pl1_standing.png")
+    },
+    "player2": {
+      "pl2_dead": require("./../player/player2/pl2_dead.png"),
+      "pl2_jump": require("./../player/player2/pl2_jump.png"),
+      "pl2_run": require("./../player/player2/pl2_run.png"),
+      "pl2_standing": require("./../player/player2/pl2_standing.png")
+    },
+    "player3": {
+      "pl3_dead": require("./../player/player3/pl3_dead.png"),
+      "pl3_jump": require("./../player/player3/pl3_jump.png"),
+      "pl3_run": require("./../player/player3/pl3_run.png"),
+      "pl3_standing": require("./../player/player3/pl3_standing.png")
+    },
+    "player4": {
+      "pl4_dead": require("./../player/player4/pl4_dead.png"),
+      "pl4_jump": require("./../player/player4/pl4_jump.png"),
+      "pl4_run": require("./../player/player4/pl4_run.png"),
+      "pl4_standing": require("./../player/player4/pl4_standing.png")
     }
   }
 };
-},{"./../arrow/arrow_0.png":"data/images/arrow/arrow_0.png","./../arrow/arrow_2.png":"data/images/arrow/arrow_2.png","./../arrow/arrow_1.png":"data/images/arrow/arrow_1.png","./../arrow/arrow_3.png":"data/images/arrow/arrow_3.png","./../bow/bow_0.png":"data/images/bow/bow_0.png","./../bow/bow_1.png":"data/images/bow/bow_1.png","./../bow/bow_2.png":"data/images/bow/bow_2.png","./../bow/bow_3.png":"data/images/bow/bow_3.png","./../diverse/coffee_cup.png":"data/images/diverse/coffee_cup.png","./../diverse/money.png":"data/images/diverse/money.png","./../gun/gun_0.png":"data/images/gun/gun_0.png","./../gun/gun_1.png":"data/images/gun/gun_1.png","./../gun/gun_2.png":"data/images/gun/gun_2.png","./../gun/gun_3.png":"data/images/gun/gun_3.png","./../levels/background_ballpit.png":"data/images/levels/background_ballpit.png","./../levels/background_basement.png":"data/images/levels/background_basement.png","./../levels/background_code.png":"data/images/levels/background_code.png","./../levels/background_google.png":"data/images/levels/background_google.png","./../levels/wall.png":"data/images/levels/wall.png","./../levels/wall_ballpit.png":"data/images/levels/wall_ballpit.png","./../levels/wall_basement.png":"data/images/levels/wall_basement.png","./../levels/wall_code.png":"data/images/levels/wall_code.png","./../levels/wall_google.png":"data/images/levels/wall_google.png","./../minigun/minigun_0.png":"data/images/minigun/minigun_0.png","./../minigun/minigun_1.png":"data/images/minigun/minigun_1.png","./../minigun/minigun_2.png":"data/images/minigun/minigun_2.png","./../minigun/minigun_3.png":"data/images/minigun/minigun_3.png","./../player_head/player_head_0.png":"data/images/player_head/player_head_0.png","./../player_head/player_head_1.png":"data/images/player_head/player_head_1.png","./../player_head/player_head_2.png":"data/images/player_head/player_head_2.png","./../player_head/player_head_3.png":"data/images/player_head/player_head_3.png","./../shotgun/shotgun_0.png":"data/images/shotgun/shotgun_0.png","./../shotgun/shotgun_1.png":"data/images/shotgun/shotgun_1.png","./../shotgun/shotgun_2.png":"data/images/shotgun/shotgun_2.png","./../shotgun/shotgun_3.png":"data/images/shotgun/shotgun_3.png","./../weapon_spawn/mystery_box.png":"data/images/weapon_spawn/mystery_box.png","./../weapon_spawn/mystery_box_blank.png":"data/images/weapon_spawn/mystery_box_blank.png","./../player/player1/Player1jumping2.png":"data/images/player/player1/Player1jumping2.png","./../player/player1/pl1_dead.png":"data/images/player/player1/pl1_dead.png","./../player/player1/pl1_jump.png":"data/images/player/player1/pl1_jump.png","./../player/player1/pl1_standing.png":"data/images/player/player1/pl1_standing.png","./../player/player1/run/pl1_run_3.png":"data/images/player/player1/run/pl1_run_3.png","./../player/player1/run/runP1-1.png":"data/images/player/player1/run/runP1-1.png","./../player/player1/run/runP1-10.png":"data/images/player/player1/run/runP1-10.png","./../player/player1/run/runP1-2.png":"data/images/player/player1/run/runP1-2.png","./../player/player1/run/runP1-4.png":"data/images/player/player1/run/runP1-4.png","./../player/player1/run/runP1-5.png":"data/images/player/player1/run/runP1-5.png","./../player/player1/run/runP1-6.png":"data/images/player/player1/run/runP1-6.png","./../player/player1/run/runP1-7.png":"data/images/player/player1/run/runP1-7.png","./../player/player1/run/runP1-8.png":"data/images/player/player1/run/runP1-8.png","./../player/player1/run/runP1-9.png":"data/images/player/player1/run/runP1-9.png"}],"data/sounds/theme.mp3":[function(require,module,exports) {
-module.exports = "/theme.0d096205.mp3";
-},{}],"data/sounds/**/*.mp3":[function(require,module,exports) {
+},{"./../arrow/arrow_0.png":"data/images/arrow/arrow_0.png","./../arrow/arrow_1.png":"data/images/arrow/arrow_1.png","./../arrow/arrow_2.png":"data/images/arrow/arrow_2.png","./../arrow/arrow_3.png":"data/images/arrow/arrow_3.png","./../bow/bow_0.png":"data/images/bow/bow_0.png","./../bow/bow_1.png":"data/images/bow/bow_1.png","./../bow/bow_2.png":"data/images/bow/bow_2.png","./../bow/bow_3.png":"data/images/bow/bow_3.png","./../diverse/coffee_cup.png":"data/images/diverse/coffee_cup.png","./../diverse/money.png":"data/images/diverse/money.png","./../gun/gun_0.png":"data/images/gun/gun_0.png","./../gun/gun_1.png":"data/images/gun/gun_1.png","./../gun/gun_2.png":"data/images/gun/gun_2.png","./../gun/gun_3.png":"data/images/gun/gun_3.png","./../levels/background_ballpit.png":"data/images/levels/background_ballpit.png","./../levels/background_basement.png":"data/images/levels/background_basement.png","./../levels/background_code.png":"data/images/levels/background_code.png","./../levels/background_google.png":"data/images/levels/background_google.png","./../levels/wall.png":"data/images/levels/wall.png","./../levels/wall_ballpit.png":"data/images/levels/wall_ballpit.png","./../levels/wall_basement.png":"data/images/levels/wall_basement.png","./../levels/wall_code.png":"data/images/levels/wall_code.png","./../levels/wall_google.png":"data/images/levels/wall_google.png","./../minigun/minigun_0.png":"data/images/minigun/minigun_0.png","./../minigun/minigun_1.png":"data/images/minigun/minigun_1.png","./../minigun/minigun_2.png":"data/images/minigun/minigun_2.png","./../minigun/minigun_3.png":"data/images/minigun/minigun_3.png","./../player_head/player_head_0.png":"data/images/player_head/player_head_0.png","./../player_head/player_head_1.png":"data/images/player_head/player_head_1.png","./../player_head/player_head_2.png":"data/images/player_head/player_head_2.png","./../player_head/player_head_3.png":"data/images/player_head/player_head_3.png","./../shotgun/shotgun_0.png":"data/images/shotgun/shotgun_0.png","./../shotgun/shotgun_1.png":"data/images/shotgun/shotgun_1.png","./../shotgun/shotgun_2.png":"data/images/shotgun/shotgun_2.png","./../shotgun/shotgun_3.png":"data/images/shotgun/shotgun_3.png","./../weapon_spawn/mystery_box.png":"data/images/weapon_spawn/mystery_box.png","./../weapon_spawn/mystery_box_blank.png":"data/images/weapon_spawn/mystery_box_blank.png","./../win/pl1_win.png":"data/images/win/pl1_win.png","./../win/pl2_win.png":"data/images/win/pl2_win.png","./../win/pl3_win.png":"data/images/win/pl3_win.png","./../win/pl4_win.png":"data/images/win/pl4_win.png","./../player/player1/pl1_dead.png":"data/images/player/player1/pl1_dead.png","./../player/player1/pl1_jump.png":"data/images/player/player1/pl1_jump.png","./../player/player1/pl1_run.png":"data/images/player/player1/pl1_run.png","./../player/player1/pl1_run_3.png":"data/images/player/player1/pl1_run_3.png","./../player/player1/pl1_standing.png":"data/images/player/player1/pl1_standing.png","./../player/player2/pl2_dead.png":"data/images/player/player2/pl2_dead.png","./../player/player2/pl2_jump.png":"data/images/player/player2/pl2_jump.png","./../player/player2/pl2_run.png":"data/images/player/player2/pl2_run.png","./../player/player2/pl2_standing.png":"data/images/player/player2/pl2_standing.png","./../player/player3/pl3_dead.png":"data/images/player/player3/pl3_dead.png","./../player/player3/pl3_jump.png":"data/images/player/player3/pl3_jump.png","./../player/player3/pl3_run.png":"data/images/player/player3/pl3_run.png","./../player/player3/pl3_standing.png":"data/images/player/player3/pl3_standing.png","./../player/player4/pl4_dead.png":"data/images/player/player4/pl4_dead.png","./../player/player4/pl4_jump.png":"data/images/player/player4/pl4_jump.png","./../player/player4/pl4_run.png":"data/images/player/player4/pl4_run.png","./../player/player4/pl4_standing.png":"data/images/player/player4/pl4_standing.png"}],"data/sounds/**/*.mp3":[function(require,module,exports) {
+module.exports = {};
+},{}],"data/sounds/bow.wav":[function(require,module,exports) {
+module.exports = "/bow.4832db75.wav";
+},{}],"data/sounds/gun.wav":[function(require,module,exports) {
+module.exports = "/gun.8a541a1e.wav";
+},{}],"data/sounds/minigun.wav":[function(require,module,exports) {
+module.exports = "/minigun.b45e6c1f.wav";
+},{}],"data/sounds/reward.wav":[function(require,module,exports) {
+module.exports = "/reward.a588e877.wav";
+},{}],"data/sounds/shotgun.wav":[function(require,module,exports) {
+module.exports = "/shotgun.2a07bb00.wav";
+},{}],"data/sounds/theme.wav":[function(require,module,exports) {
+module.exports = "/theme.cfb6ebac.wav";
+},{}],"data/sounds/**/*.wav":[function(require,module,exports) {
 module.exports = {
-  "theme": require("./../theme.mp3")
+  "bow": require("./../bow.wav"),
+  "gun": require("./../gun.wav"),
+  "minigun": require("./../minigun.wav"),
+  "reward": require("./../reward.wav"),
+  "shotgun": require("./../shotgun.wav"),
+  "theme": require("./../theme.wav")
 };
-},{"./../theme.mp3":"data/sounds/theme.mp3"}],"js/game.js":[function(require,module,exports) {
+},{"./../bow.wav":"data/sounds/bow.wav","./../gun.wav":"data/sounds/gun.wav","./../minigun.wav":"data/sounds/minigun.wav","./../reward.wav":"data/sounds/reward.wav","./../shotgun.wav":"data/sounds/shotgun.wav","./../theme.wav":"data/sounds/theme.wav"}],"js/game.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49316,8 +49475,7 @@ function () {
       var pics = require('../data/images/**/*.png'); // all PNG's in data/images/
 
 
-      var sounds = require('../data/sounds/**/*.mp3');
-
+      var sounds = [require('../data/sounds/**/*.mp3'), require('../data/sounds/**/*.wav')];
       if ("development" === 'development') console.log(pics);
 
       _graphics.Graphics.LoadTextures(pics, // create game world
@@ -49348,7 +49506,12 @@ function () {
 
       _interaction.Gamepad.Update(dt);
 
-      if (this._world) this._world.Update(dt);
+      if (this._world) {
+        if (!this._world.Update(dt)) {
+          // player won
+          _graphics.app.ticker.stop();
+        }
+      }
     }
   }]);
 
@@ -49367,7 +49530,7 @@ function Clone(src, tar) {
     }
   }
 }
-},{"./game_config":"js/game_config.js","./graphics":"js/graphics.js","./interaction":"js/interaction.js","./world":"js/world.js","./sounds":"js/sounds.js","../data/config.json":"data/config.json","../data/images/**/*.png":"data/images/**/*.png","../data/sounds/**/*.mp3":"data/sounds/**/*.mp3"}],"js/menus.js":[function(require,module,exports) {
+},{"./game_config":"js/game_config.js","./graphics":"js/graphics.js","./interaction":"js/interaction.js","./world":"js/world.js","./sounds":"js/sounds.js","../data/config.json":"data/config.json","../data/images/**/*.png":"data/images/**/*.png","../data/sounds/**/*.mp3":"data/sounds/**/*.mp3","../data/sounds/**/*.wav":"data/sounds/**/*.wav"}],"js/menus.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -49572,7 +49735,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64034" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64997" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
