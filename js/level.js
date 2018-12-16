@@ -55,6 +55,16 @@ class Level {
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
     if (delete_list.length > 0) this.RemoveProjectiles(...delete_list)
 
+    // check score
+    // this._players.forEach(player => {
+    for (let player of this._players) {
+      if (player.score >= conf.win) {
+        return false
+      }
+    }
+
+    return true
+
   }
 
   static get ActiveLevel() {

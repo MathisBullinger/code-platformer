@@ -63,8 +63,12 @@ class World {
     * Update world
     */
   Update(dt) {
-    this.level.Update(dt)
+    if (!this.level.Update(dt)) {
+      console.log('false')
+      return false
+    }
     this.ui.Update()
+    return true
   }
 
   LoadLevel(id_or_name) {

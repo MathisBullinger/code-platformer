@@ -53,5 +53,6 @@
     "shotgun": [0.5, 0.9]
 
   },
-  "display_mov_vector": false
+  "display_mov_vector": false,
+  "win": 6
 }
