@@ -4,6 +4,7 @@ import { Level } from './level'
 import { game_config } from './game_config'
 import { UI } from './ui/user_interface'
 import { Sounds } from './sounds'
+import { GetUrlParam } from './util'
 
 const level_data = [
   {
@@ -78,6 +79,11 @@ class World {
       throw TypeError(`${id_or_name} is of invalid type ${ typeof id_or_name }. Expected 'number' or 'string'.`)
     }
     if (lvl) {
+      if (GetUrlParam('state') == 'lvl_view') {
+        lvl.background = ''
+        lvl.wall = ''
+        lvl.backgroundColor = 0xFFFFFF
+      }
       console.log(`load level "${lvl.name}" [${lvl.id}]`)
       // Unload old level
       this.scene.removeChild(...this.scene.children)

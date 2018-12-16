@@ -1,11 +1,14 @@
 import * as PIXI from 'pixi.js'
-import { Level } from './../level'
+import { Level } from '../level'
 import { PlayerUI } from './player_ui'
+import { GetUrlParam } from '../util'
 
 class UI {
 
   constructor() {
     this.graphic = new PIXI.Container()
+    if (GetUrlParam('state') == 'lvl_view')
+      this.graphic.visible = false
     this._setLevel(Level.ActiveLevel)
   }
 
