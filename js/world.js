@@ -100,7 +100,7 @@ class World {
         if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
           this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
           // center on x-axis
-          this._background.position.x -= (window.innerWidth - this._background.width) / 2
+          // this._background.position.x -= (window.innerWidth - this._background.width) / 2
         } else {
           this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
         }
