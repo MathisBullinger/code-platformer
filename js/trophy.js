@@ -30,7 +30,7 @@ class Trophy {
 
   Update(dt) {
     if (this._player) {
-      this._player.score += conf.trophy.passive_income / 1000 * dt
+      this._player.score += conf.trophy.passive_income * (dt / 1000) / 3.5 // FIXME: Why isn't a 1000 dt = 1 second??
     }
   }
 

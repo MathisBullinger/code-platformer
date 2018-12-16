@@ -63,8 +63,9 @@ class World {
     * Update world
     */
   Update(dt) {
-    this.level.Update(dt)
+    const r = this.level.Update(dt)
     this.ui.Update()
+    return r
   }
 
   LoadLevel(id_or_name) {

@@ -15,10 +15,11 @@
     "cooldown": 1000
   },
   "trophy": {
-    "passive_income": 0.1,
-    "pickup_bounty": 2,
-    "steal_bounty": 4
+    "passive_income": 100,
+    "pickup_bounty": 1000,
+    "steal_bounty": 2000
   },
+  "win": 10000,
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",
