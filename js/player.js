@@ -149,7 +149,7 @@ class Player extends Movable {
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
-    this._SetBody('run_3')
+    this._SetBody('run')
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)

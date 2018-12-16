@@ -56,9 +56,15 @@ class Level {
     if (delete_list.length > 0) this.RemoveProjectiles(...delete_list)
 
     // check score
-    // this._players.forEach(player => {
     for (let player of this._players) {
       if (player.score >= conf.win) {
+        document.getElementsByClassName('win-screen')[0].style.display = 'block'
+        const img = require('../data/images/win/*.png')[`pl${player._player_number + 1}_win`]
+        console.log(img)
+        // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img[`pl${player._player_number + 1}_win`]}'`
+        // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img}'`
+        document.getElementsByClassName('win-screen')[0].style.backgroundImage =
+          `url('${require('../data/images/win/*.png')[`pl${player._player_number + 1}_win`]}'`
         return false
       }
     }

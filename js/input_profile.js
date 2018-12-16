@@ -80,9 +80,11 @@ class InputGamepad {
   }
 
   IsDashUp() {
-    const view_dir = this.GetViewDir()
-    if (view_dir)
-      return Vec2D.AngleDegrees(Vec2D(0, 1), view_dir) < 10
+    const move_dir = Gamepad.GetStick('left', this._pad)
+    move_dir.y *= -1
+    console.log('angle: ' + Vec2D.AngleDegrees(new Vec2D(0, 1), move_dir))
+    if (move_dir)
+      return Vec2D.AngleDegrees(new Vec2D(0, 1), move_dir) < 20
     return false
   }
 }
