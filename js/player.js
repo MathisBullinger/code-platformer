@@ -19,7 +19,7 @@ class Player extends Movable {
     this._move_acc = conf.player_move_acc
     this._move_vel = conf.player_move_vel
     this.graphic = new PIXI.Container()
-    this._SetBody('pl1_standing')
+    this._SetBody('standing')
     this._last_jump = new Date().getTime()
     this._jump_vel = conf.gravity ? Math.sqrt(2) * Math.sqrt(conf.gravity) * Math.sqrt(conf.player_jump_height) : 0.5
     this.has_ground_contact = false
@@ -60,7 +60,7 @@ class Player extends Movable {
         this.vel.x /= 1 + (this._move_acc - 1) * (dt / 1000)
       else
         this.vel.x = 0
-      this._SetBody('pl1_standing')
+      this._SetBody('standing')
     }
     // dash
     if (this._dashing) {
@@ -83,7 +83,7 @@ class Player extends Movable {
     if (this.has_ground_contact)
       this.jump_counter = 0
     else
-      this._SetBody('pl1_jump')
+      this._SetBody('jump')
     // Shoot when mouse down
     if (this._input) this._input.Update()
     // Update Weapon
@@ -98,7 +98,8 @@ class Player extends Movable {
       this.graphic.removeChild(this._body)
     }
     const dir = this._body && this._body.scale.x < 0 ? 'left' : 'right'
-    this._body = Graphics.textures.GetSprite(sprite_name)
+    const sprite = `pl${this._player_number + 1}_${sprite_name}`
+    this._body = Graphics.textures.GetSprite(sprite)
     this._body.sprite = sprite_name
     this._body.scale.set(this.height / this._body.height)
     this._body.scale.y *= -1
@@ -141,7 +142,7 @@ class Player extends Movable {
     this._moved = true
     this._move_dir = dir
     if (!this._alive || this._dashing) return
-    this._SetBody('pl1_run_3')
+    this._SetBody('run_3')
     this.vel.x += this._move_acc * (dir == 'right' ? 1 : -1) * (dt / 1000)
     if (Math.abs(this.vel.x) > this._move_vel)
       this.vel.x = this._move_vel * (this.vel.x > 0 ? 1 : -1)
@@ -224,7 +225,7 @@ class Player extends Movable {
     this._hp_current = 0
     this._alive = false
     this._last_damage_taken = undefined
-    this._SetBody('pl1_dead')
+    this._SetBody('dead')
     // Remove weapon upon death
     this._weapon = undefined
     this._weapon_holster.removeChild(...this._weapon_holster.children)
