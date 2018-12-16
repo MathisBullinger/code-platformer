@@ -55,6 +55,22 @@ class Level {
     const delete_list = this._projectiles.filter(prj => prj.pos.y <= this._lower_death_cap)
     if (delete_list.length > 0) this.RemoveProjectiles(...delete_list)
 
+    // check score
+    for (let player of this._players) {
+      if (player.score >= conf.win) {
+        document.getElementsByClassName('win-screen')[0].style.display = 'block'
+        const img = require('../data/images/win/*.png')[`pl${player._player_number + 1}_win`]
+        console.log(img)
+        // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img[`pl${player._player_number + 1}_win`]}'`
+        // document.getElementsByClassName('win-screen')[0].style.backgroundImage = `url('${img}'`
+        document.getElementsByClassName('win-screen')[0].style.backgroundImage =
+          `url('${require('../data/images/win/*.png')[`pl${player._player_number + 1}_win`]}'`
+        return false
+      }
+    }
+
+    return true
+
   }
 
   static get ActiveLevel() {
@@ -157,7 +173,9 @@ class Level {
     // Get player spawn spawnpoints
     const spawnpoints = this._spawns.GetDifferentPlayerSpawns(4)
     // Create the player at a random position
-    const player = new Player(0, new InputKeyboard(), spawnpoints[0])
+    const player = new Player(0, new InputGamepad(), spawnpoints[0])
+    const keyboard = new InputKeyboard()
+    keyboard.Init(player)
     scene.addChild(player.graphic)
     this._players.push(player)
 

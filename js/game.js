@@ -23,7 +23,7 @@ class Game {
 
     // proceed when textures are loaded
     const pics = require('../data/images/**/*.png') // all PNG's in data/images/
-    const sounds = require('../data/sounds/**/*.mp3')
+    const sounds = [require('../data/sounds/**/*.mp3'), require('../data/sounds/**/*.wav')]
     if (process.env.NODE_ENV === 'development') console.log(pics)
     Graphics.LoadTextures(pics,
       // create game world
@@ -47,7 +47,12 @@ class Game {
     if (dt > max_timestep) dt = max_timestep
     Keyboard.Update(dt)
     Gamepad.Update(dt)
-    if (this._world) this._world.Update(dt)
+    if (this._world) {
+      if (!this._world.Update(dt)) {
+        // player won
+        app.ticker.stop()
+      }
+    }
   }
 }
 

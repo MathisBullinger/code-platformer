@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js'
 
+const RadiansToDegrees = rad => rad * (180 / Math.PI)
+
 /*
  * 2-dimensional Vector
  */
@@ -60,6 +62,18 @@ class Vec2D {
 
   static Normalize(vec) {
     return Vec2D.Div(vec, vec.Magnitude)
+  }
+
+  static DotProduct(v1, v2) {
+    return v1.x * v2.x + v1.y * v2.y
+  }
+
+  static Angle(v1, v2) {
+    return Math.acos(Vec2D.DotProduct(v1, v2) / (v1.Magnitude * v2.Magnitude))
+  }
+
+  static AngleDegrees(v1, v2) {
+    return RadiansToDegrees(Vec2D.Angle(v1, v2))
   }
 
   ToPixiPoint() {

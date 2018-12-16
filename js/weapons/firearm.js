@@ -1,5 +1,7 @@
 import { Weapon } from './weapon'
-import { Vec2D } from './../math'
+import { Vec2D } from '../math'
+import { Sounds } from '../sounds'
+import { GetUrlParam } from '../util'
 
 /*
  * Firearm Class
@@ -18,6 +20,8 @@ class Firearm extends Weapon {
     if (this._hasCooldown) return new Vec2D(0, 0)
     const projectile = new this.ammunition(this)
     this._SpawnProjectile(projectile)
+    if (!GetUrlParam('no_sound'))
+      Sounds.Play(this.constructor.Name.toLowerCase(), { volume: this.constructor.Name == 'Bow' ? 1.5 : 0.5 })
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse())
   }
 

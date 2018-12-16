@@ -4,6 +4,7 @@ import { Level } from './level'
 import { game_config } from './game_config'
 import { UI } from './ui/user_interface'
 import { Sounds } from './sounds'
+import { GetUrlParam } from './util'
 
 const level_data = [
   {
@@ -63,8 +64,9 @@ class World {
     * Update world
     */
   Update(dt) {
-    this.level.Update(dt)
+    const r = this.level.Update(dt)
     this.ui.Update()
+    return r
   }
 
   LoadLevel(id_or_name) {
@@ -77,6 +79,11 @@ class World {
       throw TypeError(`${id_or_name} is of invalid type ${ typeof id_or_name }. Expected 'number' or 'string'.`)
     }
     if (lvl) {
+      if (GetUrlParam('state') == 'lvl_view') {
+        lvl.background = ''
+        lvl.wall = ''
+        lvl.backgroundColor = 0xFFFFFF
+      }
       console.log(`load level "${lvl.name}" [${lvl.id}]`)
       // Unload old level
       this.scene.removeChild(...this.scene.children)
@@ -93,7 +100,7 @@ class World {
         if (this._background.width / window.innerWidth >= Math.abs(this._background.height / window.innerHeight)) {
           this._background.scale.set(window.innerHeight / this._background.height / window.devicePixelRatio)
           // center on x-axis
-          this._background.position.x -= (window.innerWidth - this._background.width) / 2
+          // this._background.position.x -= (window.innerWidth - this._background.width) / 2
         } else {
           this._background.scale.set(window.innerWidth / this._background.width / window.devicePixelRatio)
         }
@@ -104,7 +111,8 @@ class World {
       // Create UI if not already existing
       this.ui = new UI()
       this.root.addChild(this.ui.graphic)
-      Sounds.Play('theme', { loop: true })
+      if (!GetUrlParam('no_music'))
+        Sounds.Play('theme', { loop: true, volume: game_config.sound.music_volume })
       // Resize screen to fit new level
       this._ResizeScene()
     }

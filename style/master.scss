@@ -86,6 +86,14 @@ img {
     left: 0;
   }
 
+  .lvl-players {
+    position: absolute;
+    width: 35vw;
+    left: 52%;
+    transform: translateX(-50%) translateY(-2vh);
+    bottom: 0;
+  }
+
   .menu {
     position: absolute;
     z-index: 30;
@@ -195,4 +203,18 @@ $lvl-off-y: 5vh;
     top: 70vh - $lvl-off-y;
     transform: translateX(-100%) translateY(-100%);
   }
+}
+
+.win-screen {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  // background-position: 70% center;
+  background-position: 50% center;
+  background-size: cover;
+  z-index: 100;
 }

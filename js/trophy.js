@@ -2,6 +2,8 @@ import { Graphics } from './graphics'
 import { Vec2D } from './math'
 import { game_config as conf } from './game_config'
 import { Player } from './player'
+import { Sounds } from './sounds'
+import { GetUrlParam } from './util'
 
 class Trophy {
 
@@ -10,7 +12,6 @@ class Trophy {
     // Create graphic
     this.graphic = Graphics.textures.GetSprite('money')
     this.graphic.anchor.set(0, 1)
-    // this.graphic.rotation = Math.PI
     this.moveToLevel(lvl)
   }
 
@@ -30,7 +31,7 @@ class Trophy {
 
   Update(dt) {
     if (this._player) {
-      this._player.score += conf.trophy.passive_income / 1000 * dt
+      this._player.score += conf.trophy.passive_income * (dt / 1000) / 3.5 // FIXME: Why isn't a 1000 dt = 1 second??
     }
   }
 
@@ -42,6 +43,8 @@ class Trophy {
     this._player.graphic.addChildAt(this.graphic, 0)
     this.graphic.position.set(0.05, 1.5)
     this.graphic.scale.set(0.5 / 512)
+    if (!GetUrlParam('no_sound'))
+      Sounds.Play('reward')
   }
 
   get player() {

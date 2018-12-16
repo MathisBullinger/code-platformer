@@ -40,6 +40,11 @@ class InputKeyboard {
       window.innerHeight - renderer.plugins.interaction.mouse.global.y
     )
   }
+
+  IsDashUp() {
+    console.log(key._GetKeyObj('w'))
+    return key._GetKeyObj('w') || key._GetKeyObj('arrowup')
+  }
 }
 
 class InputGamepad {
@@ -72,6 +77,15 @@ class InputGamepad {
       return new Vec2D(stick_dir.x, stick_dir.y * -1)
     else
       return null
+  }
+
+  IsDashUp() {
+    const move_dir = Gamepad.GetStick('left', this._pad)
+    move_dir.y *= -1
+    console.log('angle: ' + Vec2D.AngleDegrees(new Vec2D(0, 1), move_dir))
+    if (move_dir)
+      return Vec2D.AngleDegrees(new Vec2D(0, 1), move_dir) < 20
+    return false
   }
 }
 InputGamepad.counter = 0
