@@ -68,9 +68,16 @@ class Player extends Movable {
       if (new Date().getTime() - this._dash_start >= this._dash_time) {
         this._dashing = false
         this._last_dash = Date.now()
-        this.vel.x = this._move_vel * dir
+        if (!this._dash_up)
+          this.vel.x = this._move_vel * dir
+        else
+          this.vel.y = this._jump_vel / 4
+      } else {
+        if (this._dash_up)
+          this.vel.y = this._dash_vel
+        else
+          this.vel.x = this._dash_vel * dir
       }
-      this.vel.x = this._dash_vel * dir
     }
     // Check if player can heal
     if (Date.now() - this._last_damage_taken > conf.healing.cooldown) {
@@ -163,8 +170,13 @@ class Player extends Movable {
   }
 
   Dash() {
-    if (!this._move_dir || (Date.now() - this._last_dash) <= conf.player_dash_cooldown) return
+    if ((!this._move_dir && !this._input.IsDashUp()) || (Date.now() - this._last_dash) <= conf.player_dash_cooldown) return
+    if (this._input.IsDashUp())
+      this._dash_up = true
+    else
+      this._dash_up = false
     this._dash_start = new Date().getTime()
+    console.log('dash up: ' + this._dash_up)
     this._dashing = true
   }
 
