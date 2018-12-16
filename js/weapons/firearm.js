@@ -21,7 +21,7 @@ class Firearm extends Weapon {
     const projectile = new this.ammunition(this)
     this._SpawnProjectile(projectile)
     if (!GetUrlParam('no_sound'))
-      Sounds.Play(this.constructor.Name.toLowerCase())
+      Sounds.Play(this.constructor.Name.toLowerCase(), { volume: this.constructor.Name == 'Bow' ? 1.5 : 0.5 })
     return Vec2D.Mult(Vec2D.Mult(Vec2D.Normalize(projectile.vel), -1), projectile.GetImpulse())
   }
 

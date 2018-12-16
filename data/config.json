@@ -19,7 +19,7 @@
     "pickup_bounty": 1000,
     "steal_bounty": 2000
   },
-  "win": 1500,
+  "win": 10000,
   "base_damage": 10,
   "damage": {
     "__comment__": "damage is calculated as base * projectile * weapon",

@@ -173,7 +173,9 @@ class Level {
     // Get player spawn spawnpoints
     const spawnpoints = this._spawns.GetDifferentPlayerSpawns(4)
     // Create the player at a random position
-    const player = new Player(0, new InputKeyboard(), spawnpoints[0])
+    const player = new Player(0, new InputGamepad(), spawnpoints[0])
+    const keyboard = new InputKeyboard()
+    keyboard.Init(player)
     scene.addChild(player.graphic)
     this._players.push(player)
 
