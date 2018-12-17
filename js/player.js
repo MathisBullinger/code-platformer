@@ -239,8 +239,9 @@ class Player extends Movable {
     this._last_damage_taken = undefined
     this._SetBody('dead')
     // Remove weapon upon death
-    this._weapon = undefined
+    if (this._weapon && this._weapon.constructor === Bow) this.graphic.removeChild(this._weapon.arrow_indicator.graphic)
     this._weapon_holster.removeChild(...this._weapon_holster.children)
+    this._weapon = undefined
     if (process.env.NODE_ENV === 'development') console.log('player died')
   }
 
